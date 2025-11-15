@@ -180,6 +180,98 @@ Manually refresh messages from the data source.
 PortalInboxExtention.refresh();
 ```
 
+## HTML Integration Examples
+
+### Minimal Example
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Inbox Extension</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">My Portal</a>
+            
+            <!-- Extension Container -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" id="portal-inbox-extention"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Portal Inbox Extension -->
+    <script src="portal-inbox-extention.js"></script>
+    
+    <!-- Initialize Extension -->
+    <script>
+        PortalInboxExtention.init({
+            dataSource: 'messages.json',
+            containerId: 'portal-inbox-extention'
+        });
+    </script>
+</body>
+</html>
+```
+
+### Customized Example
+
+```html
+<script>
+    PortalInboxExtention.init({
+        // Required
+        dataSource: 'messages.json',
+        containerId: 'my-custom-inbox',
+        
+        // Custom text
+        text: {
+            dropdownToggleIcon: 'bi bi-chat-dots-fill',
+            messagesHeader: 'My Notifications',
+            noUnreadMessages: 'You\'re all caught up! 🎉',
+            newBadge: '!',
+            replyButton: 'Respond'
+        },
+        
+        // Custom icons
+        icons: {
+            inbox: 'bi bi-envelope',
+            archive: 'bi bi-folder',
+            reply: 'bi bi-arrow-return-left'
+        },
+        
+        // Custom styles
+        styles: {
+            dropdownMinWidth: '450px',
+            dropdownMaxHeight: '500px'
+        },
+        
+        // Feature flags
+        features: {
+            enableArchive: true,
+            enableReply: false
+        }
+    });
+    
+    // Event listener
+    document.addEventListener('portalInboxMessageClick', function(e) {
+        console.log('Message clicked:', e.detail.message);
+    });
+</script>
+```
+
 ## Configuration Examples
 
 ### Read-Only Display (No Reply, No Archive)
