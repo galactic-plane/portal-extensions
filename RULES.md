@@ -3,7 +3,7 @@
 ## File Structure Rules
 
 ### Solution Root Files:
-1. **index.html** - Main demo page that loads all extensions
+1. **portal-demo.html** - Main demo page that loads all extensions
 2. **portal-extensions.js** - Loader that dynamically imports all extension JS files
 3. **RULES.md** - This file
 4. **README.md** - Solution-level documentation
@@ -16,7 +16,7 @@
 
 ### Total: 3 files per extension, no more, no less
 
-### HTML files are ONLY at the solution root (index.html)
+### HTML files are ONLY at the solution root (portal-demo.html)
 
 ## Documentation Rules
 
@@ -45,7 +45,7 @@
 - Must NOT auto-initialize
 
 ### HTML File:
-- Named `index.html` only
+- Named `portal-demo.html` only
 - Lives at solution root (not in extension folders)
 - Demonstrates all extensions
 - Loads portal-extensions.js which loads all extension JS files
@@ -55,7 +55,7 @@
 - ❌ No example-customized.html
 - ❌ No example-*.html
 - ❌ No HTML files in extension folders
-- ✅ Only index.html at solution root
+- ✅ Only portal-demo.html at solution root
 
 ## Before Making Any Changes:
 1. Read this RULES.md file
@@ -67,7 +67,7 @@
 ## Repository Structure:
 ```
 portal-extentions/
-├── index.html (main demo page)
+├── portal-demo.html (main demo page)
 ├── portal-extensions.js (loader for all extensions)
 ├── RULES.md (this file)
 ├── README.md (solution-level documentation)

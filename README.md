@@ -19,10 +19,11 @@ Each extension is self-contained within its own directory. Navigate to the speci
 
 ```
 portal-extentions/
+├── portal-demo.html             # Main demo page for all extensions
+├── portal-extensions.js         # Extension loader
 ├── README.md                    # This file - master documentation
 └── portal-inbox-extention/      # Individual extension projects
     ├── README.md                # Extension-specific documentation
-    ├── index.html
     ├── portal-inbox-extention.js
     └── messages.json
 ```

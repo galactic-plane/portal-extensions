@@ -441,10 +441,9 @@ Works in all modern browsers that support:
 
 - `portal-inbox-extention.js` - Main extension JavaScript file (static, no config)
 - `messages.json` - Sample JSON data file
-- `index.html` - Full demo page with all features
-- `example-minimal.html` - Minimal integration example
-- `example-customized.html` - Customized configuration example
 - `README.md` - This file
+
+**Demo:** See `portal-demo.html` in the solution root for a full demonstration.
 
 ## Important Notes
 
@@ -454,9 +453,6 @@ Works in all modern browsers that support:
 
 ✅ **Required parameters**: `dataSource` and `containerId` must be provided.
 
-## Examples
+## Demo
 
-See the included example files:
-- `example-minimal.html` - Basic setup with minimal configuration
-- `example-customized.html` - Advanced setup with custom configuration
-- `index.html` - Full demo with all features and documentation
+See `portal-demo.html` in the solution root for a complete demonstration of all features and configuration options.
