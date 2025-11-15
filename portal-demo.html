@@ -3,655 +3,671 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Extensions - Demo</title>
+    <title>Portal Extensions - Professional Components for Microsoft Power Pages</title>
     
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <style>
+        /* Power Pages-inspired Design System */
         :root {
-            --primary-color: #5b73e8;
-            --secondary-color: #4a5568;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --light-bg: #f8fafc;
-            --border-color: #e2e8f0;
-            --text-muted: #64748b;
+            --primary-blue: #0078d4;
+            --primary-dark: #005a9e;
+            --accent-orange: #ff8c00;
+            --text-primary: #323130;
+            --text-secondary: #605e5c;
+            --bg-light: #faf9f8;
+            --bg-white: #ffffff;
+            --border-color: #edebe9;
+            --shadow-sm: 0 1.6px 3.6px rgba(0,0,0,.132);
+            --shadow-md: 0 3.2px 7.2px rgba(0,0,0,.132);
+            --shadow-lg: 0 6.4px 14.4px rgba(0,0,0,.132);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            padding-top: 70px;
-            background-color: var(--light-bg);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+            line-height: 1.6;
         }
 
-        /* Navbar Styling */
-        .navbar {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            padding: 0.75rem 1rem;
-        }
-
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.25rem;
-            letter-spacing: -0.5px;
-        }
-
-        /* Navbar Separator */
-        .navbar-divider {
-            width: 1px;
-            height: 30px;
-            background-color: rgba(255, 255, 255, 0.3);
-            margin: 0 1rem;
-        }
-
-        /* Demo Content */
-        .demo-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        .hero-section {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-section h1 {
-            color: #1e293b;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .hero-section .lead {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        /* Card Styling */
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 24px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            background-color: white;
-            border-bottom: 2px solid var(--border-color);
-            padding: 20px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .card-body {
-            padding: 24px;
-        }
-
-        /* Alert Styling */
-        .alert {
-            border: none;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        /* Badge Styling */
-        #portal-inbox-badge {
-            font-size: 0.65rem;
-            padding: 0.25em 0.5em;
-            font-weight: 600;
-        }
-
-        /* Dropdown Menu Styling */
-        .dropdown-menu {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            padding: 0;
-            overflow: hidden;
-            margin-top: 0.5rem !important;
-        }
-
-        .dropdown-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 16px 20px;
-            margin: 0;
-            border-radius: 0;
-        }
-
-        .dropdown-divider {
-            margin: 0;
-            border-color: var(--border-color);
-        }
-
-        .dropdown-item {
-            padding: 16px 20px;
-            transition: background-color 0.15s;
+        /* Header Styles */
+        .site-header {
+            background-color: var(--bg-white);
             border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
         }
 
-        .dropdown-item:last-child {
-            border-bottom: none;
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .dropdown-item:hover {
-            background-color: #f1f5f9;
-        }
-
-        .dropdown-item.fw-bold {
-            background-color: #f8f9ff;
-        }
-
-        /* Message Item Styling */
-        .message-from {
-            color: #1e293b;
+        .site-logo {
+            font-size: 1.5rem;
             font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .message-subject {
-            color: var(--secondary-color);
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        .message-time {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .badge.bg-primary {
-            background-color: var(--primary-color) !important;
-            font-size: 0.7rem;
-            padding: 0.25em 0.6em;
-            font-weight: 600;
-        }
-
-        /* Nav Link Icons */
-        .nav-link {
+            color: var(--primary-blue);
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: opacity 0.2s;
-            cursor: pointer;
+            gap: 0.5rem;
         }
 
-        .nav-link:hover {
-            opacity: 0.8;
+        .site-logo:hover {
+            color: var(--primary-dark);
         }
 
-        .nav-link i {
-            font-size: 1.3rem;
+        .main-nav {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin: 0;
         }
 
-        /* Dropdown toggle cursor */
-        .dropdown-toggle {
-            cursor: pointer;
+        .main-nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
         }
 
-        /* Button Styling */
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px 24px;
+        .main-nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        .utility-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content .lead {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .btn-hero {
+            display: inline-block;
+            background-color: var(--accent-orange);
+            color: white;
+            padding: 0.875rem 2rem;
+            font-size: 1.125rem;
             font-weight: 600;
-            border-radius: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-md);
         }
 
-        .btn-primary:hover {
+        .btn-hero:hover {
+            background-color: #e67e00;
+            color: white;
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #5563d1 0%, #673d8f 100%);
         }
 
-        /* Code Block Styling */
-        pre {
+        /* Content Sections */
+        .content-section {
+            padding: 4rem 0;
+            background-color: var(--bg-white);
+        }
+
+        .content-section:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-item p {
+            color: var(--text-secondary);
+        }
+
+        /* Extension Cards */
+        .extension-card {
+            background: white;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-blue);
+            transition: all 0.2s;
+            height: 100%;
         }
 
-        pre code {
-            color: #1e293b;
-            font-size: 0.875rem;
+        .extension-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-section {
-                padding: 24px;
-            }
-            
-            .navbar-divider {
-                display: none;
-            }
+        .extension-card h3 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Empty State */
-        .dropdown-item-text {
-            padding: 20px;
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .features-list i {
+            color: var(--primary-blue);
+            font-size: 1.125rem;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin: 2rem 0;
+        }
+
+        .architecture-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .architecture-box {
+            flex: 1;
+            min-width: 180px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 1.5rem;
             text-align: center;
         }
 
-        /* Toggle View Button */
-        #portal-toggle-view {
-            transition: background-color 0.2s;
-        }
-
-        #portal-toggle-view:hover {
-            background-color: #f8f9ff !important;
-        }
-
-        /* Avatar placeholder for messages */
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .architecture-box h4 {
+            font-size: 1rem;
             font-weight: 600;
-            margin-right: 12px;
-            flex-shrink: 0;
+            margin: 0.75rem 0 0.5rem 0;
+            color: var(--primary-blue);
         }
 
-        /* Modal Styling */
-        .modal-content {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        .architecture-arrow {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            font-weight: bold;
         }
 
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .architecture-box i {
+            font-size: 2rem;
+        }
+
+        .extension-card.secondary {
+            border-left-color: #6c757d;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--text-primary);
             color: white;
-            border-radius: 12px 12px 0 0;
-            padding: 1.25rem 1.5rem;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
         }
 
-        .modal-header .btn-close {
-            filter: brightness(0) invert(1);
-            opacity: 0.8;
-        }
-
-        .modal-header .btn-close:hover {
-            opacity: 1;
-        }
-
-        .modal-title {
+        .site-footer h5 {
+            font-size: 1.125rem;
             font-weight: 600;
-            font-size: 1.1rem;
+            margin-bottom: 1rem;
         }
 
-        .modal-body {
-            padding: 1.5rem;
-            max-height: 70vh;
-            overflow-y: auto;
+        .footer-links {
+            list-style: none;
+            padding: 0;
         }
 
-        .modal-footer {
-            border-top: 1px solid var(--border-color);
-            padding: 1rem 1.5rem;
+        .footer-links li {
+            margin-bottom: 0.5rem;
         }
 
-        /* Message Modal Specific */
-        .message-header {
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .message-body {
-            padding: 1rem 0;
-            line-height: 1.6;
-            color: var(--secondary-color);
-        }
-
-        .message-body a {
-            color: var(--primary-color);
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            font-weight: 500;
-            border-bottom: 1px solid transparent;
-            transition: border-bottom-color 0.2s;
-            cursor: pointer;
+            transition: color 0.2s;
         }
 
-        .message-body a:hover {
-            border-bottom-color: var(--primary-color);
+        .footer-links a:hover {
+            color: white;
         }
 
-        /* Reply Section */
-        .reply-compose {
-            background-color: #f8f9ff;
-            padding: 1.25rem;
-            border-radius: 8px;
-            border: 2px solid var(--primary-color);
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        #portalReplyText {
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95rem;
-            resize: vertical;
-        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-        #portalReplyText:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .architecture-arrow {
+                display: none;
+            }
+
+            .architecture-flow {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Portal Demo</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="#" class="site-logo">
+                <i class="bi bi-puzzle-fill"></i>
+                Portal Extensions
+            </a>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#extensions">Extensions</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li class="utility-nav">
+                        <div id="portal-inbox-extention"></div>
                     </li>
                 </ul>
-                
-                                <!-- Portal Inbox Extention Container -->
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" id="portal-inbox-extention">
-                        <!-- Extention will be injected here -->
-                    <li class="navbar-divider"></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-person-circle"></i>
-                            <span class="d-none d-md-inline">Profile</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <div class="demo-content">
-        <div class="hero-section">
-            <h1>� Portal Extensions Demo</h1>
-            <p class="lead">Professional, self-contained extensions for Power Pages portals. All extensions are loaded dynamically through a single loader.</p>
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 hero-content">
+                    <h1>Portal Extensions Framework</h1>
+                    <p class="lead">Build powerful, self-contained extensions for Microsoft Power Pages. Modular, scalable, and production-ready.</p>
+                    <a href="#extensions" class="btn-hero">Explore Extensions</a>
+                </div>
+            </div>
         </div>
-        
-        <div class="alert alert-success">
-            <h5><i class="bi bi-info-circle-fill me-2"></i>Extension System Architecture</h5>
-            <ul class="mb-0">
-                <li><strong>Single Loader:</strong> One <code>portal-extensions.js</code> file loads all extensions dynamically</li>
-                <li><strong>Modular Design:</strong> Each extension is self-contained in its own folder</li>
-                <li><strong>No Conflicts:</strong> Extensions run in isolated namespaces</li>
-                <li><strong>Easy to Extend:</strong> Add new extensions by updating the loader configuration</li>
-            </ul>
-        </div>
+    </section>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">📬 Portal Inbox Extension</h5>
-            </div>
-            <div class="card-body">
-                <p>Look at the top-right corner of the navigation bar for the envelope icon 📨</p>
-                <ul>
-                    <li>The badge shows the number of unread messages</li>
-                    <li>Click the envelope icon to see your inbox messages</li>
-                    <li>Click on a message to mark it as read</li>
-                    <li>Reply to messages or view archived messages</li>
-                </ul>
+    <!-- Features Section -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title text-center">Why Portal Extensions?</h2>
+            <p class="section-subtitle text-center">Professional-grade components built for Microsoft Power Pages</p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <h4>Dynamic Loading</h4>
+                    <p>Single loader dynamically imports all extensions on-demand for optimal performance</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-shield-check"></i>
+                    <h4>Isolated Namespaces</h4>
+                    <p>Each extension runs in its own namespace, preventing conflicts and ensuring stability</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-gear-fill"></i>
+                    <h4>Configuration-Based</h4>
+                    <p>All configuration passed during initialization keeps extension files static and reusable</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-box-seam"></i>
+                    <h4>Modular Design</h4>
+                    <p>Self-contained extensions with clear separation of concerns and dependencies</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-globe"></i>
+                    <h4>Localization Ready</h4>
+                    <p>Built-in support for multiple languages and regional customizations</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-plugin"></i>
+                    <h4>Easy Integration</h4>
+                    <p>Simple setup with Bootstrap 5 compatibility and minimal dependencies</p>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">✨ Extension Features</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Isolated Namespace:</strong> Runs in its own IIFE, doesn't pollute global scope</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Bootstrap 5 Compatible:</strong> Uses Bootstrap 5 components and styling</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Modular Design:</strong> Self-contained with all functionality encapsulated</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Easy Integration:</strong> Just include the loader script</li>
+    <!-- Extensions Section -->
+    <section class="content-section" id="extensions">
+        <div class="container">
+            <h2 class="section-title">Available Extensions</h2>
+            <p class="section-subtitle">Production-ready components for your Power Pages portal</p>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="extension-card">
+                        <h3><i class="bi bi-envelope-fill"></i> Portal Inbox Extension</h3>
+                        <p>A comprehensive messaging system for Power Pages portals with real-time notifications and message management.</p>
+                        <ul class="features-list">
+                            <li><i class="bi bi-check-circle-fill"></i> Unread message badges</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Message read/unread tracking</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Reply functionality with templates</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Archive and organize messages</li>
+                            <li><i class="bi bi-check-circle-fill"></i> External link warnings</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Custom events for integration</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Fully customizable UI text and icons</li>
                         </ul>
+                        <p class="mt-3"><strong>Status:</strong> <span class="badge bg-success">Production Ready</span></p>
                     </div>
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>No Conflicts:</strong> Won't interfere with other JavaScript on the page</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Dynamic Loading:</strong> Extensions loaded on demand</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Configuration-Based:</strong> All config passed during init</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Custom Events:</strong> Fires events for external integration</li>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="extension-card secondary">
+                        <h3><i class="bi bi-plus-circle-fill"></i> More Extensions Coming Soon</h3>
+                        <p>We're continuously developing new extensions to enhance your Power Pages portal experience.</p>
+                        <ul class="features-list">
+                            <li><i class="bi bi-hourglass-split"></i> Notification Center</li>
+                            <li><i class="bi bi-hourglass-split"></i> User Profile Widget</li>
+                            <li><i class="bi bi-hourglass-split"></i> Document Manager</li>
+                            <li><i class="bi bi-hourglass-split"></i> Calendar Integration</li>
+                            <li><i class="bi bi-hourglass-split"></i> Task Manager</li>
+                            <li><i class="bi bi-hourglass-split"></i> Search Enhancement</li>
                         </ul>
+                        <p class="mt-3"><strong>Status:</strong> <span class="badge bg-secondary">In Development</span></p>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">🔧 Integration Code</h5>
+    <!-- Architecture Section -->
+    <section class="content-section" id="architecture">
+        <div class="container">
+            <h2 class="section-title">System Architecture</h2>
+            <p class="section-subtitle">Understanding the Portal Extensions framework</p>
+            
+            <div class="architecture-diagram">
+                <h4 class="text-center mb-4">Extension Loading Flow</h4>
+                <div class="architecture-flow">
+                    <div class="architecture-box">
+                        <i class="bi bi-file-code-fill"></i>
+                        <h4>portal-demo.html</h4>
+                        <p class="small mb-0">Main page loads</p>
+                    </div>
+                    <div class="architecture-arrow">→</div>
+                    <div class="architecture-box">
+                        <i class="bi bi-cloud-download-fill"></i>
+                        <h4>portal-extensions.js</h4>
+                        <p class="small mb-0">Loader script</p>
+                    </div>
+                    <div class="architecture-arrow">→</div>
+                    <div class="architecture-box">
+                        <i class="bi bi-boxes"></i>
+                        <h4>Extension Files</h4>
+                        <p class="small mb-0">Dynamic import</p>
+                    </div>
+                    <div class="architecture-arrow">→</div>
+                    <div class="architecture-box">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <h4>Initialize</h4>
+                        <p class="small mb-0">Configure & run</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <p class="text-muted">To use these extensions on any page:</p>
-                <pre class="bg-light p-3 rounded"><code>&lt;!-- Add extension containers to your navbar --&gt;
-&lt;li class="nav-item" id="portal-inbox-extention"&gt;&lt;/li&gt;
 
-&lt;!-- Include the extensions loader (loads all extensions) --&gt;
-&lt;script src="portal-extensions.js"&gt;&lt;/script&gt;
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="text-primary"><i class="bi bi-folder-fill"></i> File Structure</h4>
+                            <p>Each extension contains exactly 3 files:</p>
+                            <ul class="list-unstyled">
+                                <li><code>extension.js</code> - Core logic</li>
+                                <li><code>data.json</code> - Sample data</li>
+                                <li><code>README.md</code> - Documentation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="text-primary"><i class="bi bi-code-square"></i> Static Extensions</h4>
+                            <p>Extension JS files are completely static:</p>
+                            <ul class="list-unstyled">
+                                <li>✓ No hardcoded config</li>
+                                <li>✓ Reusable across sites</li>
+                                <li>✓ Version control friendly</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="text-primary"><i class="bi bi-sliders"></i> Configuration</h4>
+                            <p>All config passed at runtime:</p>
+                            <ul class="list-unstyled">
+                                <li>✓ Text & translations</li>
+                                <li>✓ Icons & styling</li>
+                                <li>✓ Feature flags</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-&lt;!-- Initialize extensions after they load --&gt;
-&lt;script src="portal-inbox-extention.js"&gt;&lt;/script&gt;
-
-&lt;!-- Initialize with configuration --&gt;
-&lt;script&gt;
+    <!-- Integration Section -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">Quick Integration</h2>
+            <p class="section-subtitle">Get started in minutes</p>
+            
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>1. Include the loader script</h4>
+                            <pre class="bg-light p-3 rounded"><code>&lt;script src="portal-extensions.js"&gt;&lt;/script&gt;</code></pre>
+                            
+                            <h4 class="mt-4">2. Add extension containers</h4>
+                            <pre class="bg-light p-3 rounded"><code>&lt;div id="portal-inbox-extention"&gt;&lt;/div&gt;</code></pre>
+                            
+                            <h4 class="mt-4">3. Initialize after load</h4>
+                            <pre class="bg-light p-3 rounded"><code>document.addEventListener('portalExtensionsLoaded', function() {
     PortalInboxExtention.init({
-        dataSource: 'messages.json',
+        dataSource: 'portal-inbox-extention/messages.json',
         containerId: 'portal-inbox-extention'
     });
-&lt;/script&gt;</code></pre>
-                
-                <p class="mt-4 text-muted">Full custom configuration example:</p>
-                <pre class="bg-light p-3 rounded"><code>&lt;script&gt;
-    PortalInboxExtention.init({
-        // Required configuration
-        dataSource: 'api/messages',  // Your API endpoint or JSON file
-        containerId: 'portal-inbox-extention',
-        
-        // Customize text labels
-        text: {
-            messagesHeader: 'My Messages',
-            noUnreadMessages: 'All caught up!',
-            replyButton: 'Respond'
-            // ... see full list in demo source
-        },
-        
-        // Customize icons (Bootstrap Icons)
-        icons: {
-            inbox: 'bi bi-envelope',
-            reply: 'bi bi-arrow-left'
-        },
-        
-        // Feature toggles
-        features: {
-            enableArchive: true,
-            enableReply: false,  // Disable reply feature
-            enableExternalLinkWarning: false
-        }
-    });
-    
-    // Listen for custom events
-    document.addEventListener('portalInboxMessageClick', function(e) {
-        console.log('Message clicked:', e.detail.message);
-    });
-    
-    document.addEventListener('portalInboxReplySent', function(e) {
-        console.log('Reply sent:', e.detail);
-    });
-    
-    // Manually refresh messages
-    // PortalInboxExtention.refresh();
-&lt;/script&gt;</code></pre>
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">📋 JSON Data Format</h5>
-            </div>
-            <div class="card-body">
-                <p class="text-muted">The extention expects JSON in the following format:</p>
-                <pre class="bg-light p-3 rounded"><code>{
-    "messages": [
-        {
-            "id": "msg-001",
-            "from": "Sender Name",
-            "subject": "Message Subject",
-            "date": "2025-11-15T10:30:00Z",
-            "read": false,
-            "body": "Message body content"
-        }
-    ]
-}</code></pre>
+    <!-- Contact Section -->
+    <section class="content-section" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3 text-center">
+                    <h2 class="section-title">Get Started Today</h2>
+                    <p class="section-subtitle">Ready to enhance your Power Pages portal?</p>
+                    <a href="https://github.com" class="btn-hero me-2"><i class="bi bi-github"></i> View on GitHub</a>
+                    <a href="#" class="btn btn-outline-primary btn-lg"><i class="bi bi-book"></i> Documentation</a>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="text-center mt-4 mb-5">
-            <button class="btn btn-primary btn-lg" onclick="PortalInboxExtention.refresh()">
-                <i class="bi bi-arrow-clockwise me-2"></i> Refresh Messages
-            </button>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Portal Extensions</h5>
+                    <p>Professional extensions for Microsoft Power Pages portals.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#extensions">Extensions</a></li>
+                        <li><a href="#architecture">Architecture</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Resources</h5>
+                    <ul class="footer-links">
+                        <li><a href="https://learn.microsoft.com/en-us/power-pages/">Power Pages Documentation</a></li>
+                        <li><a href="https://github.com">GitHub Repository</a></li>
+                        <li><a href="#">Contributing Guide</a></li>
+                        <li><a href="#">License</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Portal Extensions. Built for Microsoft Power Pages.</p>
+            </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Portal Extensions Loader - Loads all extension JS files -->
+    <!-- Portal Extensions Loader -->
     <script src="portal-extensions.js"></script>
     
-    <!-- Initialize Extensions After They Load -->
+    <!-- Initialize Extensions -->
     <script>
-        // Wait for all extensions to be loaded
-        document.addEventListener('portalExtensionsLoaded', function(e) {
-            console.log('All extensions loaded:', e.detail);
+        // Wait for all extensions to load
+        document.addEventListener('portalExtensionsLoaded', function() {
+            console.log('All portal extensions loaded successfully');
             
             // Initialize Portal Inbox Extension
-            if (window.PortalInboxExtention) {
-                PortalInboxExtention.init({
-                    // Required: Data source and container
-                    dataSource: 'portal-inbox-extention/messages.json',
-                    containerId: 'portal-inbox-extention',
-            
-            // Optional: Customize UI text (showing defaults, you can override any)
-            text: {
-                dropdownToggleIcon: 'bi bi-envelope-fill',
-                messagesHeader: 'Messages',
-                archivedHeader: 'Archived Messages',
-                unreadLabel: 'unread',
-                noUnreadMessages: 'No unread messages',
-                noArchivedMessages: 'No archived messages',
-                viewArchived: 'View Archived Messages',
-                viewUnread: 'View Unread Messages',
-                loadingMessages: 'Loading messages...',
-                failedToLoad: 'Failed to load messages',
-                modalTitle: 'Message',
-                closeButton: 'Close',
-                replyButton: 'Reply',
-                sendReplyButton: 'Send Reply',
-                cancelButton: 'Cancel',
-                replyPlaceholder: 'Type your reply here...',
-                replyLabel: 'Your Reply:',
-                originalMessageLabel: 'Original Message:',
-                toLabel: 'To: You',
-                newBadge: 'New',
-                justNow: 'Just now',
-                minuteAgo: 'minute ago',
-                minutesAgo: 'minutes ago',
-                hourAgo: 'hour ago',
-                hoursAgo: 'hours ago',
-                dayAgo: 'day ago',
-                daysAgo: 'days ago',
-                replyPrompt: 'Please enter a reply message.',
-                confirmSend: 'Are you sure you want to send this reply?',
-                replySent: 'Reply sent successfully!',
-                externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
-            },
-            
-            // Optional: Customize icons (Bootstrap Icons classes)
-            icons: {
-                inbox: 'bi bi-inbox-fill',
-                archive: 'bi bi-archive-fill',
-                reply: 'bi bi-reply-fill',
-                send: 'bi bi-send-fill'
-            },
-            
-            // Optional: Customize styles
-            styles: {
-                dropdownMinWidth: '350px',
-                dropdownMaxHeight: '400px',
-                badgeDisplay: 'inline-block'
-            },
-            
-            // Optional: Feature flags
-            features: {
-                enableArchive: true,           // Show archive toggle
-                enableReply: true,             // Show reply button
-                enableExternalLinkWarning: true, // Warn before opening external links
-                allowHtmlInMessages: true      // Allow HTML (links) in message bodies
-            }
-        });
-            } else {
-                console.error('Portal Inbox Extension failed to load');
-            }
-        });
-    </script>
-    
-    <!-- Demo event listeners -->
-    <script>
-        // Listen for message click events
-        document.addEventListener('portalInboxMessageClick', function(e) {
-            console.log('Message clicked:', e.detail.message);
-            // You can add custom handling here, such as:
-            // - Opening a modal with full message content
-            // - Navigating to a message detail page
-            // - Making an API call to mark as read on the server
-        });
-
-        // Listen for reply sent events
-        document.addEventListener('portalInboxReplySent', function(e) {
-            console.log('Reply sent:', e.detail);
-            // You can add custom handling here, such as:
-            // - Making an API call to send the reply to the server
-            // - Updating the UI to show the reply was sent
-            // - Adding the reply to a conversation thread
-            console.log('Original Message ID:', e.detail.originalMessage.id);
-            console.log('Reply Text:', e.detail.replyText);
-            console.log('Timestamp:', e.detail.timestamp);
+            PortalInboxExtention.init({
+                dataSource: 'portal-inbox-extention/messages.json',
+                containerId: 'portal-inbox-extention',
+                config: {
+                    text: {
+                        inboxLabel: 'Messages',
+                        headerText: 'Inbox',
+                        noMessagesText: 'No messages',
+                        viewAllLabel: 'View All Messages',
+                        fromLabel: 'From:',
+                        subjectLabel: 'Subject:',
+                        replyLabel: 'Reply',
+                        archiveLabel: 'Archive',
+                        markReadLabel: 'Mark as Read',
+                        markUnreadLabel: 'Mark as Unread',
+                        externalLinkWarning: 'This link will open in a new window. Continue?'
+                    },
+                    icons: {
+                        inbox: 'bi-envelope-fill',
+                        unread: 'bi-circle-fill',
+                        read: 'bi-circle',
+                        reply: 'bi-reply-fill',
+                        archive: 'bi-archive-fill',
+                        externalLink: 'bi-box-arrow-up-right'
+                    },
+                    styles: {
+                        badgeClass: 'bg-danger',
+                        primaryColor: '#0078d4',
+                        hoverColor: '#f1f5f9'
+                    },
+                    features: {
+                        enableReplies: true,
+                        enableArchive: true,
+                        enableMarkRead: true,
+                        enableExternalLinkWarning: true,
+                        autoRefresh: false,
+                        refreshInterval: 30000
+                    }
+                }
+            });
         });
     </script>
 </body>

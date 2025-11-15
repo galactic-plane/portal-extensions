@@ -136,8 +136,108 @@
          * Setup the widget
          */
         setup: function() {
+            this.injectStyles();
             this.createWidget();
             this.loadMessages();
+        },
+        
+        /**
+         * Inject CSS styles for the extension
+         */
+        injectStyles: function() {
+            // Check if styles already injected
+            if (document.getElementById('portal-inbox-extension-styles')) {
+                return;
+            }
+            
+            const styleElement = document.createElement('style');
+            styleElement.id = 'portal-inbox-extension-styles';
+            styleElement.textContent = `
+                /* Portal Inbox Extension Styles */
+                .message-avatar {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 600;
+                    font-size: 0.875rem;
+                    flex-shrink: 0;
+                    margin-right: 0.75rem;
+                }
+                
+                .message-from {
+                    color: #1e293b;
+                    font-weight: 600;
+                    font-size: 0.95rem;
+                }
+                
+                .message-subject {
+                    color: #64748b;
+                    font-size: 0.875rem;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                
+                .message-time {
+                    color: #94a3b8;
+                    font-size: 0.75rem;
+                }
+                
+                #portal-inbox-badge {
+                    font-size: 0.65rem;
+                    padding: 0.25em 0.5em;
+                    font-weight: 600;
+                }
+                
+                .dropdown-menu {
+                    border: none;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                    padding: 0;
+                    overflow: hidden;
+                    margin-top: 0.5rem !important;
+                }
+                
+                .dropdown-header {
+                    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1rem;
+                    padding: 16px 20px;
+                    margin: 0;
+                    border-radius: 0;
+                }
+                
+                .dropdown-divider {
+                    margin: 0;
+                    border-color: #e2e8f0;
+                }
+                
+                .dropdown-item {
+                    padding: 16px 20px;
+                    transition: background-color 0.15s;
+                    border-bottom: 1px solid #e2e8f0;
+                }
+                
+                .dropdown-item:last-child {
+                    border-bottom: none;
+                }
+                
+                .dropdown-item:hover {
+                    background-color: #f1f5f9;
+                }
+                
+                .dropdown-item.fw-bold {
+                    background-color: #f8f9ff;
+                }
+            `;
+            
+            document.head.appendChild(styleElement);
         },
         
         /**

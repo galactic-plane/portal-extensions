@@ -37,17 +37,28 @@
 
 ## Code Rules
 
+### Extension Isolation (CRITICAL):
+- Each extension MUST be completely self-contained
+- Extensions MUST inject their own CSS styles into the page
+- Extensions MUST NOT rely on external stylesheets
+- All extension dependencies must be injected by the extension itself
+- The host page (portal-demo.html) should have ZERO extension-specific styles
+- Extensions should check if their styles are already injected to avoid duplicates
+
 ### Extension JavaScript File:
 - Must be completely static
 - No hardcoded configuration values
 - All dynamic config passed during initialization
 - Must validate required configuration
 - Must NOT auto-initialize
+- Must inject its own CSS styles on initialization
+- Must use unique IDs for injected style elements (e.g., `{extension-name}-styles`)
 
 ### HTML File:
 - Named `portal-demo.html` only
 - Lives at solution root (not in extension folders)
 - Demonstrates all extensions
+- Contains NO extension-specific styles (only demo page styles)
 - Loads portal-extensions.js which loads all extension JS files
 
 ### No Multiple Example Files:

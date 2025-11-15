@@ -1,14 +1,16 @@
 # Portal Inbox Extention
 
-A self-contained, namespace-isolated JavaScript extention for displaying inbox messages in Power Pages portals. Built with Bootstrap 5 and designed to work without conflicts with other JavaScript on the page.
+A completely self-contained, namespace-isolated JavaScript extention for displaying inbox messages in Power Pages portals. Built with Bootstrap 5 and designed to work without conflicts with other JavaScript on the page.
 
 ## Features
 
-- **Isolated Namespace**: Runs in its own IIFE (Immediately Invoked Function Expression) to prevent global scope pollution
+- **Completely Isolated**: Runs in its own IIFE (Immediately Invoked Function Expression) to prevent global scope pollution
+- **Self-Contained Styling**: Injects its own CSS styles - no external stylesheets required
+- **Zero Dependencies on Host Page**: Only requires Bootstrap 5 JavaScript and Icons
 - **Bootstrap 5 Compatible**: Uses Bootstrap 5 components and styling
-- **Modular Design**: Self-contained with all functionality encapsulated
+- **Modular Design**: All functionality, styles, and dependencies encapsulated in the extension file
 - **Easy Integration**: Simply include the script and add a container element
-- **No Conflicts**: Won't interfere with other JavaScript running on the page
+- **No Conflicts**: Won't interfere with other JavaScript or CSS on the page
 - **JSON Data Source**: Loads messages from JSON (easily replaceable with Dataverse Web API)
 - **Read/Unread Tracking**: Tracks and displays unread message counts
 - **Custom Events**: Fires events for external integration and custom handling
@@ -16,6 +18,14 @@ A self-contained, namespace-isolated JavaScript extention for displaying inbox m
 - **Fully Configurable**: All text, icons, styles, and features can be customized via configuration
 - **Localization Ready**: Easy to translate to any language
 - **Static Extension File**: All dynamic configuration is in the initialization, keeping the .js file static
+
+## Architecture
+
+This extension follows a strict isolation pattern:
+- **Injects its own CSS** on initialization (no external stylesheets needed)
+- **Self-contained namespace** using IIFE pattern
+- **No global variables** except the extension namespace (`PortalInboxExtention`)
+- **No host page pollution** - all styles and scripts are contained
 
 ## Quick Start
 
