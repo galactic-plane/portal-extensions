@@ -1,16 +1,16 @@
 /**
- * Portal Inbox Widget
- * A self-contained, namespaced widget for displaying inbox messages
+ * Portal Inbox Extention
+ * A self-contained, namespaced extention for displaying inbox messages
  * Compatible with Bootstrap 5
  */
 (function() {
     'use strict';
     
     // Create isolated namespace
-    const PortalInboxWidget = {
+    const PortalInboxExtention = {
         config: {
             dataSource: 'messages.json',
-            containerId: 'portal-inbox-widget',
+            containerId: 'portal-inbox-extention',
             autoInit: true
         },
         
@@ -23,7 +23,7 @@
         },
         
         /**
-         * Initialize the widget
+         * Initialize the extention
          */
         init: function(options) {
             // Merge user options with defaults
@@ -638,12 +638,12 @@
         }
     };
     
-    // Expose widget to global scope
-    window.PortalInboxWidget = PortalInboxWidget;
+    // Expose extention to global scope
+    window.PortalInboxExtention = PortalInboxExtention;
     
     // Auto-initialize if configured
-    if (PortalInboxWidget.config.autoInit) {
-        PortalInboxWidget.init();
+    if (PortalInboxExtention.config.autoInit) {
+        PortalInboxExtention.init();
     }
     
 })();

@@ -5,10 +5,10 @@ This solution contains multiple portal extension projects that enhance and exten
 ## Extensions
 
 ### Portal Inbox Extension
-A widget that displays inbox messages within the portal interface.
+An extention that displays inbox messages within the portal interface.
 
 - **Location:** `portal-inbox-extention/`
-- **Description:** Provides an inbox widget for displaying messages
+- **Description:** Provides an inbox extention for displaying messages
 - **Documentation:** [View Extension README](./portal-inbox-extention/README.md)
 
 ## Getting Started
@@ -23,7 +23,7 @@ portal-extentions/
 └── portal-inbox-extention/      # Individual extension projects
     ├── README.md                # Extension-specific documentation
     ├── index.html
-    ├── portal-inbox-widget.js
+    ├── portal-inbox-extention.js
     └── messages.json
 ```
 

@@ -1,6 +1,6 @@
-# Portal Inbox Widget
+# Portal Inbox Extention
 
-A self-contained, namespace-isolated JavaScript widget for displaying inbox messages in Power Pages portals. Built with Bootstrap 5 and designed to work without conflicts with other JavaScript on the page.
+A self-contained, namespace-isolated JavaScript extention for displaying inbox messages in Power Pages portals. Built with Bootstrap 5 and designed to work without conflicts with other JavaScript on the page.
 
 ## Features
 
@@ -22,16 +22,16 @@ A self-contained, namespace-isolated JavaScript widget for displaying inbox mess
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 ```
 
-2. Add the widget container in your navbar:
+2. Add the extention container in your navbar:
 ```html
 <ul class="navbar-nav ms-auto">
-    <li class="nav-item" id="portal-inbox-widget"></li>
+    <li class="nav-item" id="portal-inbox-extention"></li>
 </ul>
 ```
 
-3. Include the widget script:
+3. Include the extention script:
 ```html
-<script src="portal-inbox-widget.js"></script>
+<script src="portal-inbox-extention.js"></script>
 ```
 
 4. Include Bootstrap 5 JavaScript:
@@ -39,33 +39,32 @@ A self-contained, namespace-isolated JavaScript widget for displaying inbox mess
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 ```
 
-That's it! The widget will automatically initialize and load messages from `messages.json`.
+That's it! The extention will automatically initialize and load messages from `messages.json`.
 
 ## Configuration
 
 ### Default Configuration
-The widget auto-initializes with these defaults:
+## Configuration
+
+The extention auto-initializes with these defaults:
+
 ```javascript
 {
-    dataSource: 'messages.json',
-    containerId: 'portal-inbox-widget',
-    autoInit: true
-}
-```
+    containerId: 'portal-inbox-extention',
 
 ### Custom Configuration
-To customize the widget, set `autoInit: false` and manually initialize:
+To customize the extention, set `autoInit: false` and manually initialize:
 ```javascript
-PortalInboxWidget.init({
+PortalInboxExtention.init({
     dataSource: 'https://your-api-endpoint.com/messages',
     containerId: 'custom-container-id',
     autoInit: false
 });
 ```
 
-## JSON Data Format
+## Message Data Format
 
-The widget expects JSON in the following format:
+The extention expects JSON in the following format:
 ```json
 {
     "messages": [
@@ -94,10 +93,15 @@ The widget expects JSON in the following format:
 ### `PortalInboxWidget.init(options)`
 Initialize the widget with custom options.
 ```javascript
-PortalInboxWidget.init({
-    dataSource: 'custom-messages.json',
-    containerId: 'my-widget-container'
-});
+## API
+
+### `PortalInboxExtention.init(options)`
+Initialize the extention with custom options.
+
+```javascript
+PortalInboxExtention.init({
+    messagesUrl: '/api/messages',
+    containerId: 'my-extention-container'
 ```
 
 ### `PortalInboxWidget.refresh()`
