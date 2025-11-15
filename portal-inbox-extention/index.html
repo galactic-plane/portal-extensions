@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Inbox Widget - Demo</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-color: #5b73e8;
+            --secondary-color: #4a5568;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-muted: #64748b;
+        }
+
+        body {
+            padding-top: 70px;
+            background-color: var(--light-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            padding: 0.75rem 1rem;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        /* Navbar Separator */
+        .navbar-divider {
+            width: 1px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 0 1rem;
+        }
+
+        /* Demo Content */
+        .demo-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .hero-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-section h1 {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hero-section .lead {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 2px solid var(--border-color);
+            padding: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Alert Styling */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Badge Styling */
+        #portal-inbox-badge {
+            font-size: 0.65rem;
+            padding: 0.25em 0.5em;
+            font-weight: 600;
+        }
+
+        /* Dropdown Menu Styling */
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            overflow: hidden;
+            margin-top: 0.5rem !important;
+        }
+
+        .dropdown-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 16px 20px;
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .dropdown-divider {
+            margin: 0;
+            border-color: var(--border-color);
+        }
+
+        .dropdown-item {
+            padding: 16px 20px;
+            transition: background-color 0.15s;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        .dropdown-item.fw-bold {
+            background-color: #f8f9ff;
+        }
+
+        /* Message Item Styling */
+        .message-from {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .message-subject {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .badge.bg-primary {
+            background-color: var(--primary-color) !important;
+            font-size: 0.7rem;
+            padding: 0.25em 0.6em;
+            font-weight: 600;
+        }
+
+        /* Nav Link Icons */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .nav-link i {
+            font-size: 1.3rem;
+        }
+
+        /* Dropdown toggle cursor */
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 24px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5563d1 0%, #673d8f 100%);
+        }
+
+        /* Code Block Styling */
+        pre {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        pre code {
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 24px;
+            }
+            
+            .navbar-divider {
+                display: none;
+            }
+        }
+
+        /* Empty State */
+        .dropdown-item-text {
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Toggle View Button */
+        #portal-toggle-view {
+            transition: background-color 0.2s;
+        }
+
+        #portal-toggle-view:hover {
+            background-color: #f8f9ff !important;
+        }
+
+        /* Avatar placeholder for messages */
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+        }
+
+        /* Message Modal Specific */
+        .message-header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .message-body {
+            padding: 1rem 0;
+            line-height: 1.6;
+            color: var(--secondary-color);
+        }
+
+        .message-body a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom-color 0.2s;
+            cursor: pointer;
+        }
+
+        .message-body a:hover {
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Reply Section */
+        .reply-compose {
+            background-color: #f8f9ff;
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+        }
+
+        #portalReplyText {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        #portalReplyText:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Portal Demo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                </ul>
+                
+                <!-- Portal Inbox Widget Container -->
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item" id="portal-inbox-widget">
+                        <!-- Widget will be injected here -->
+                    </li>
+                    <li class="navbar-divider"></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="d-none d-md-inline">Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="demo-content">
+        <div class="hero-section">
+            <h1>📬 Portal Inbox Widget Demo</h1>
+            <p class="lead">Experience a professional, self-contained messaging widget designed for Power Pages portals.</p>
+        </div>
+        
+        <div class="alert alert-info">
+            <h5><i class="bi bi-info-circle-fill me-2"></i>How to Use</h5>
+            <ul class="mb-0">
+                <li>Look at the top-right corner of the navigation bar for the envelope icon 📨</li>
+                <li>The badge shows the number of unread messages</li>
+                <li>Click the envelope icon to see your inbox messages</li>
+                <li>Click on a message to mark it as read</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">✨ Widget Features</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Isolated Namespace:</strong> Runs in its own IIFE, doesn't pollute global scope</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Bootstrap 5 Compatible:</strong> Uses Bootstrap 5 components and styling</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Modular Design:</strong> Self-contained with all functionality encapsulated</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Easy Integration:</strong> Just include the script and add a container div</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>No Conflicts:</strong> Won't interfere with other JavaScript on the page</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>JSON Data Source:</strong> Loads messages from a JSON file (can be replaced with API)</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Read/Unread Tracking:</strong> Tracks message read status</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Custom Events:</strong> Fires events for external integration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🔧 Integration Code</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">To use this widget on any page, simply include:</p>
+                <pre class="bg-light p-3 rounded"><code>&lt;!-- Add container in your navbar --&gt;
+&lt;li class="nav-item" id="portal-inbox-widget"&gt;&lt;/li&gt;
+
+&lt;!-- Include the widget script --&gt;
+&lt;script src="portal-inbox-widget.js"&gt;&lt;/script&gt;</code></pre>
+                
+                <p class="mt-4 text-muted">Optional custom configuration:</p>
+                <pre class="bg-light p-3 rounded"><code>&lt;script&gt;
+    // Custom configuration
+    PortalInboxWidget.init({
+        dataSource: 'custom-messages.json',
+        containerId: 'portal-inbox-widget',
+        autoInit: false
+    });
+
+    // Listen for message clicks
+    document.addEventListener('portalInboxMessageClick', function(e) {
+        console.log('Message clicked:', e.detail.message);
+        // Handle message click (e.g., open modal, navigate to message)
+    });
+
+    // Manually refresh messages
+    // PortalInboxWidget.refresh();
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📋 JSON Data Format</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">The widget expects JSON in the following format:</p>
+                <pre class="bg-light p-3 rounded"><code>{
+    "messages": [
+        {
+            "id": "msg-001",
+            "from": "Sender Name",
+            "subject": "Message Subject",
+            "date": "2025-11-15T10:30:00Z",
+            "read": false,
+            "body": "Message body content"
+        }
+    ]
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 mb-5">
+            <button class="btn btn-primary btn-lg" onclick="PortalInboxWidget.refresh()">
+                <i class="bi bi-arrow-clockwise me-2"></i> Refresh Messages
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Portal Inbox Widget -->
+    <script src="portal-inbox-widget.js"></script>
+    
+    <!-- Demo event listener -->
+    <script>
+        // Listen for message click events
+        document.addEventListener('portalInboxMessageClick', function(e) {
+            console.log('Message clicked:', e.detail.message);
+            // You can add custom handling here, such as:
+            // - Opening a modal with full message content
+            // - Navigating to a message detail page
+            // - Making an API call to mark as read on the server
+        });
+
+        // Listen for reply sent events
+        document.addEventListener('portalInboxReplySent', function(e) {
+            console.log('Reply sent:', e.detail);
+            // You can add custom handling here, such as:
+            // - Making an API call to send the reply to the server
+            // - Updating the UI to show the reply was sent
+            // - Adding the reply to a conversation thread
+            console.log('Original Message ID:', e.detail.originalMessage.id);
+            console.log('Reply Text:', e.detail.replyText);
+            console.log('Timestamp:', e.detail.timestamp);
+        });
+    </script>
+</body>
+</html>

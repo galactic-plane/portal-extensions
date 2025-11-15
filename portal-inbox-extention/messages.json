@@ -1,0 +1,52 @@
+{
+    "messages": [
+        {
+            "id": "msg-001",
+            "from": "System Administrator",
+            "subject": "Welcome to the Portal - Please review important updates",
+            "date": "2025-11-15T10:30:00Z",
+            "read": false,
+            "body": "Welcome to the portal. Please review the latest updates and guidelines. Visit our <a href='https://portal.example.com/help' target='_blank'>Help Center</a> for more information or check out the <a href='https://portal.example.com/getting-started' target='_blank'>Getting Started Guide</a>."
+        },
+        {
+            "id": "msg-002",
+            "from": "Support Team",
+            "subject": "Your support ticket #12345 has been resolved",
+            "date": "2025-11-15T09:15:00Z",
+            "read": false,
+            "body": "Your support ticket has been resolved. Please review the <a href='https://support.example.com/tickets/12345' target='_blank'>resolution details</a> and let us know if you need any further assistance."
+        },
+        {
+            "id": "msg-003",
+            "from": "Billing Department",
+            "subject": "Invoice #INV-2025-001 is ready",
+            "date": "2025-11-14T16:45:00Z",
+            "read": true,
+            "body": "Your invoice is ready for download. <a href='https://billing.example.com/invoices/INV-2025-001' target='_blank'>Click here to view your invoice</a> or visit the <a href='https://billing.example.com/dashboard' target='_blank'>Billing Dashboard</a>."
+        },
+        {
+            "id": "msg-004",
+            "from": "Account Manager",
+            "subject": "Scheduled maintenance this weekend",
+            "date": "2025-11-14T14:20:00Z",
+            "read": false,
+            "body": "Please be aware of scheduled maintenance on Saturday from 2am-6am EST. For more details, visit our <a href='https://status.example.com' target='_blank'>System Status Page</a>. If you have questions, please review our <a href='https://portal.example.com/maintenance-faq' target='_blank'>Maintenance FAQ</a>."
+        },
+        {
+            "id": "msg-005",
+            "from": "HR Department",
+            "subject": "Benefits enrollment deadline approaching",
+            "date": "2025-11-13T11:00:00Z",
+            "read": true,
+            "body": "Don't forget to complete your benefits enrollment by November 30th. Access the <a href='https://benefits.example.com/enrollment' target='_blank'>Benefits Enrollment Portal</a> or download the <a href='https://benefits.example.com/guide.pdf' target='_blank'>Benefits Guide PDF</a>."
+        },
+        {
+            "id": "msg-006",
+            "from": "Security Team",
+            "subject": "Password reset required for compliance",
+            "date": "2025-11-12T08:30:00Z",
+            "read": false,
+            "body": "As part of our security policy, please reset your password within 7 days. <a href='https://account.example.com/password-reset' target='_blank'>Reset your password here</a>. For security best practices, review our <a href='https://security.example.com/guidelines' target='_blank'>Security Guidelines</a>."
+        }
+    ]
+}
