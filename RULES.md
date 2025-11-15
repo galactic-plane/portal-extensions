@@ -57,6 +57,11 @@
   - If `enabled: false`, extension must not initialize at all
   - If `enabled: true` or omitted, extension runs normally
   - Extension must check this flag before any initialization logic
+- **All colors MUST be configurable**
+  - No hardcoded color values in injected CSS
+  - Colors must be passed via configuration and used in CSS generation
+  - Must provide sensible default colors
+  - Users must be able to customize all colors to match their site branding
 
 ### HTML File:
 - Named `portal-demo.html` only

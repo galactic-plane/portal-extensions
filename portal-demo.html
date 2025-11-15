@@ -160,13 +160,6 @@
         }
 
         /* Feature Grid */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
         .feature-item {
             text-align: center;
             padding: 2rem;
@@ -365,8 +358,8 @@
     <!-- Hero Section -->
     <section class="hero-section" id="home">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-7 hero-content">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center hero-content">
                     <h1>Portal Extensions Framework</h1>
                     <p class="lead">Build powerful, self-contained extensions for Microsoft Power Pages. Modular, scalable, and production-ready.</p>
                     <a href="#extensions" class="btn-hero">Explore Extensions</a>
@@ -381,36 +374,48 @@
             <h2 class="section-title text-center">Why Portal Extensions?</h2>
             <p class="section-subtitle text-center">Professional-grade components built for Microsoft Power Pages</p>
             
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <i class="bi bi-lightning-charge-fill"></i>
-                    <h4>Dynamic Loading</h4>
-                    <p>Single loader dynamically imports all extensions on-demand for optimal performance</p>
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        <h4>Dynamic Loading</h4>
+                        <p>Single loader dynamically imports all extensions on-demand for optimal performance</p>
+                    </div>
                 </div>
-                <div class="feature-item">
-                    <i class="bi bi-shield-check"></i>
-                    <h4>Isolated Namespaces</h4>
-                    <p>Each extension runs in its own namespace, preventing conflicts and ensuring stability</p>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-shield-check"></i>
+                        <h4>Isolated Namespaces</h4>
+                        <p>Each extension runs in its own namespace, preventing conflicts and ensuring stability</p>
+                    </div>
                 </div>
-                <div class="feature-item">
-                    <i class="bi bi-gear-fill"></i>
-                    <h4>Configuration-Based</h4>
-                    <p>All configuration passed during initialization keeps extension files static and reusable</p>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-gear-fill"></i>
+                        <h4>Configuration-Based</h4>
+                        <p>All configuration passed during initialization keeps extension files static and reusable</p>
+                    </div>
                 </div>
-                <div class="feature-item">
-                    <i class="bi bi-box-seam"></i>
-                    <h4>Modular Design</h4>
-                    <p>Self-contained extensions with clear separation of concerns and dependencies</p>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-box-seam"></i>
+                        <h4>Modular Design</h4>
+                        <p>Self-contained extensions with clear separation of concerns and dependencies</p>
+                    </div>
                 </div>
-                <div class="feature-item">
-                    <i class="bi bi-globe"></i>
-                    <h4>Localization Ready</h4>
-                    <p>Built-in support for multiple languages and regional customizations</p>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-globe"></i>
+                        <h4>Localization Ready</h4>
+                        <p>Built-in support for multiple languages and regional customizations</p>
+                    </div>
                 </div>
-                <div class="feature-item">
-                    <i class="bi bi-plugin"></i>
-                    <h4>Easy Integration</h4>
-                    <p>Simple setup with Bootstrap 5 compatibility and minimal dependencies</p>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-plugin"></i>
+                        <h4>Easy Integration</h4>
+                        <p>Simple setup with Bootstrap 5 compatibility and minimal dependencies</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -632,6 +637,16 @@
                 enabled: true, // Set to false to disable this extension
                 dataSource: 'portal-inbox-extention/messages.json',
                 containerId: 'portal-inbox-extention',
+                colors: {
+                    // Customize colors to match your site branding
+                    avatarGradientStart: '#0078d4',
+                    avatarGradientEnd: '#005a9e',
+                    headerGradientStart: '#0078d4',
+                    headerGradientEnd: '#005a9e',
+                    primaryColor: '#0078d4',
+                    badgeBackground: '#dc3545'
+                    // See README for all available color options
+                },
                 config: {
                     text: {
                         inboxLabel: 'Messages',

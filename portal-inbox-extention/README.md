@@ -9,6 +9,7 @@ A completely self-contained, namespace-isolated JavaScript extention for display
 - **Zero Dependencies on Host Page**: Only requires Bootstrap 5 JavaScript and Icons
 - **Bootstrap 5 Compatible**: Uses Bootstrap 5 components and styling
 - **Bootstrap 5 Modals**: Uses Bootstrap modals for all confirmations, alerts, and dialogs (no native popups)
+- **Fully Customizable Colors**: All colors configurable to match your site branding - no hardcoded colors
 - **Modular Design**: All functionality, styles, and dependencies encapsulated in the extension file
 - **Easy Integration**: Simply include the script and add a container element
 - **No Conflicts**: Won't interfere with other JavaScript or CSS on the page
@@ -137,13 +138,48 @@ PortalInboxExtention.init({
     dataSource: string,       // URL to fetch messages
     containerId: string,      // Container element ID
     
-    // Optional
+    // Optional - Colors (all customizable to match your site)
+    colors: {
+        // Avatar colors
+        avatarGradientStart: string,   // Default: '#0078d4'
+        avatarGradientEnd: string,     // Default: '#005a9e'
+        avatarText: string,            // Default: '#ffffff'
+        
+        // Header colors
+        headerGradientStart: string,   // Default: '#0078d4'
+        headerGradientEnd: string,     // Default: '#005a9e'
+        headerText: string,            // Default: '#ffffff'
+        
+        // Message text colors
+        messageFrom: string,           // Default: '#1e293b'
+        messageSubject: string,        // Default: '#64748b'
+        messageTime: string,           // Default: '#94a3b8'
+        
+        // Dropdown colors
+        dropdownBorder: string,        // Default: '#e2e8f0'
+        dropdownShadow: string,        // Default: 'rgba(0, 0, 0, 0.15)'
+        
+        // Item states
+        itemHoverBackground: string,   // Default: '#f1f5f9'
+        itemUnreadBackground: string,  // Default: '#f8f9ff'
+        itemBorderColor: string,       // Default: '#e2e8f0'
+        
+        // Badge colors
+        badgeBackground: string,       // Default: '#dc3545'
+        badgeText: string,             // Default: '#ffffff'
+        
+        // Primary action color
+        primaryColor: string           // Default: '#0078d4'
+    },
+    
+    // Optional - Text labels
     text: {                   // All UI text labels
         messagesHeader: string,
         noUnreadMessages: string,
-        // ... see config-examples.md for full list
+        // ... see below for full list
     },
     
+    // Optional - Icons
     icons: {                  // Bootstrap Icons classes
         inbox: string,
         archive: string,
@@ -151,17 +187,42 @@ PortalInboxExtention.init({
         send: string
     },
     
+    // Optional - Styles
     styles: {                 // Style customizations
         dropdownMinWidth: string,
         dropdownMaxHeight: string,
         badgeDisplay: string
     },
     
+    // Optional - Features
     features: {               // Feature flags
         enableArchive: boolean,
         enableReply: boolean,
         enableExternalLinkWarning: boolean,
         allowHtmlInMessages: boolean
+    }
+});
+```
+
+### Color Customization Example
+
+Match the inbox to your site's branding:
+
+```javascript
+PortalInboxExtention.init({
+    enabled: true,
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention',
+    colors: {
+        // Use your brand colors
+        avatarGradientStart: '#ff6b35',    // Orange brand color
+        avatarGradientEnd: '#f7931e',
+        headerGradientStart: '#ff6b35',
+        headerGradientEnd: '#f7931e',
+        primaryColor: '#ff6b35',
+        badgeBackground: '#e63946',        // Red for urgency
+        itemHoverBackground: '#fff5f0',    // Light orange tint
+        itemUnreadBackground: '#ffe5d9'    // Slightly darker orange tint
     }
 });
 ```

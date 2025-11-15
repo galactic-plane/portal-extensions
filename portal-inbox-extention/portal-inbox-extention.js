@@ -65,6 +65,40 @@
                 badgeDisplay: 'inline-block'
             },
             
+            // Color configuration
+            colors: {
+                // Avatar colors
+                avatarGradientStart: '#0078d4',
+                avatarGradientEnd: '#005a9e',
+                avatarText: '#ffffff',
+                
+                // Header colors
+                headerGradientStart: '#0078d4',
+                headerGradientEnd: '#005a9e',
+                headerText: '#ffffff',
+                
+                // Message text colors
+                messageFrom: '#1e293b',
+                messageSubject: '#64748b',
+                messageTime: '#94a3b8',
+                
+                // Dropdown colors
+                dropdownBorder: '#e2e8f0',
+                dropdownShadow: 'rgba(0, 0, 0, 0.15)',
+                
+                // Item states
+                itemHoverBackground: '#f1f5f9',
+                itemUnreadBackground: '#f8f9ff',
+                itemBorderColor: '#e2e8f0',
+                
+                // Badge colors
+                badgeBackground: '#dc3545',
+                badgeText: '#ffffff',
+                
+                // Primary action color
+                primaryColor: '#0078d4'
+            },
+            
             // Feature flags
             features: {
                 enableArchive: true,
@@ -156,6 +190,9 @@
                 return;
             }
             
+            const colors = this.config.colors;
+            const styles = this.config.styles;
+            
             const styleElement = document.createElement('style');
             styleElement.id = 'portal-inbox-extension-styles';
             styleElement.textContent = `
@@ -164,8 +201,8 @@
                     width: 40px;
                     height: 40px;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-                    color: white;
+                    background: linear-gradient(135deg, ${colors.avatarGradientStart} 0%, ${colors.avatarGradientEnd} 100%);
+                    color: ${colors.avatarText};
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -176,13 +213,13 @@
                 }
                 
                 .message-from {
-                    color: #1e293b;
+                    color: ${colors.messageFrom};
                     font-weight: 600;
                     font-size: 0.95rem;
                 }
                 
                 .message-subject {
-                    color: #64748b;
+                    color: ${colors.messageSubject};
                     font-size: 0.875rem;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -190,7 +227,7 @@
                 }
                 
                 .message-time {
-                    color: #94a3b8;
+                    color: ${colors.messageTime};
                     font-size: 0.75rem;
                 }
                 
@@ -198,20 +235,22 @@
                     font-size: 0.65rem;
                     padding: 0.25em 0.5em;
                     font-weight: 600;
+                    background-color: ${colors.badgeBackground} !important;
+                    color: ${colors.badgeText} !important;
                 }
                 
                 .dropdown-menu {
                     border: none;
                     border-radius: 12px;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                    box-shadow: 0 10px 40px ${colors.dropdownShadow};
                     padding: 0;
                     overflow: hidden;
                     margin-top: 0.5rem !important;
                 }
                 
                 .dropdown-header {
-                    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
-                    color: white;
+                    background: linear-gradient(135deg, ${colors.headerGradientStart} 0%, ${colors.headerGradientEnd} 100%);
+                    color: ${colors.headerText};
                     font-weight: 700;
                     font-size: 1rem;
                     padding: 16px 20px;
@@ -221,13 +260,13 @@
                 
                 .dropdown-divider {
                     margin: 0;
-                    border-color: #e2e8f0;
+                    border-color: ${colors.dropdownBorder};
                 }
                 
                 .dropdown-item {
                     padding: 16px 20px;
                     transition: background-color 0.15s;
-                    border-bottom: 1px solid #e2e8f0;
+                    border-bottom: 1px solid ${colors.itemBorderColor};
                 }
                 
                 .dropdown-item:last-child {
@@ -235,11 +274,11 @@
                 }
                 
                 .dropdown-item:hover {
-                    background-color: #f1f5f9;
+                    background-color: ${colors.itemHoverBackground};
                 }
                 
                 .dropdown-item.fw-bold {
-                    background-color: #f8f9ff;
+                    background-color: ${colors.itemUnreadBackground};
                 }
             `;
             
