@@ -95,6 +95,12 @@
                 return;
             }
             
+            // Check enabled flag first - if explicitly set to false, do not initialize
+            if (options.enabled === false) {
+                console.log('Portal Inbox Extension: Disabled via configuration');
+                return;
+            }
+            
             if (!options.dataSource) {
                 console.error('Portal Inbox Extension: dataSource is required in configuration');
                 return;
@@ -306,12 +312,160 @@
             
             document.body.insertAdjacentHTML('beforeend', modalHTML);
             
+            // Create confirmation modal for general use
+            this.createConfirmationModal();
+            
+            // Create alert modal for general use
+            this.createAlertModal();
+            
             // Add reply button event listener if feature is enabled
             if (this.config.features.enableReply) {
                 document.getElementById('portalReplyBtn').addEventListener('click', () => {
                     this.toggleReplyMode();
                 });
             }
+        },
+        
+        /**
+         * Create a reusable confirmation modal
+         */
+        createConfirmationModal: function() {
+            if (document.getElementById('portalConfirmModal')) {
+                return;
+            }
+            
+            const confirmModalHTML = `
+                <div class="modal fade" id="portalConfirmModal" tabindex="-1" aria-labelledby="portalConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="portalConfirmModalLabel">Confirm</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="portalConfirmModalBody">
+                                <!-- Confirmation message will be inserted here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="portalConfirmModalConfirmBtn">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', confirmModalHTML);
+        },
+        
+        /**
+         * Create a reusable alert modal
+         */
+        createAlertModal: function() {
+            if (document.getElementById('portalAlertModal')) {
+                return;
+            }
+            
+            const alertModalHTML = `
+                <div class="modal fade" id="portalAlertModal" tabindex="-1" aria-labelledby="portalAlertModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="portalAlertModalLabel">Alert</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="portalAlertModalBody">
+                                <!-- Alert message will be inserted here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', alertModalHTML);
+        },
+        
+        /**
+         * Show a Bootstrap confirmation dialog
+         * @param {string} message - The message to display
+         * @param {string} title - The title of the dialog (optional)
+         * @returns {Promise<boolean>} - Resolves to true if confirmed, false if cancelled
+         */
+        showConfirm: function(message, title = 'Confirm') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('portalConfirmModal');
+                const modalBody = document.getElementById('portalConfirmModalBody');
+                const modalTitle = document.getElementById('portalConfirmModalLabel');
+                const confirmBtn = document.getElementById('portalConfirmModalConfirmBtn');
+                
+                // Set content
+                modalTitle.textContent = title;
+                modalBody.innerHTML = message.replace(/\n/g, '<br>');
+                
+                // Create Bootstrap modal instance
+                const bsModal = new bootstrap.Modal(modal);
+                
+                // Remove any existing event listeners by cloning and replacing
+                const newConfirmBtn = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+                
+                // Add new event listeners
+                const handleConfirm = () => {
+                    bsModal.hide();
+                    resolve(true);
+                };
+                
+                const handleCancel = () => {
+                    bsModal.hide();
+                    resolve(false);
+                };
+                
+                newConfirmBtn.addEventListener('click', handleConfirm);
+                
+                // Handle cancel button and backdrop click
+                modal.addEventListener('hidden.bs.modal', function cancelHandler(e) {
+                    if (e.target === modal) {
+                        modal.removeEventListener('hidden.bs.modal', cancelHandler);
+                        // Only resolve false if not already resolved
+                        setTimeout(() => resolve(false), 0);
+                    }
+                }, { once: true });
+                
+                // Show modal
+                bsModal.show();
+            });
+        },
+        
+        /**
+         * Show a Bootstrap alert dialog
+         * @param {string} message - The message to display
+         * @param {string} title - The title of the dialog (optional)
+         * @returns {Promise<void>}
+         */
+        showAlert: function(message, title = 'Alert') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('portalAlertModal');
+                const modalBody = document.getElementById('portalAlertModalBody');
+                const modalTitle = document.getElementById('portalAlertModalLabel');
+                
+                // Set content
+                modalTitle.textContent = title;
+                modalBody.innerHTML = message.replace(/\n/g, '<br>');
+                
+                // Create Bootstrap modal instance
+                const bsModal = new bootstrap.Modal(modal);
+                
+                // Handle modal close
+                modal.addEventListener('hidden.bs.modal', function closeHandler() {
+                    modal.removeEventListener('hidden.bs.modal', closeHandler);
+                    resolve();
+                }, { once: true });
+                
+                // Show modal
+                bsModal.show();
+            });
         },
         
         /**
@@ -661,16 +815,18 @@
         /**
          * Send reply
          */
-        sendReply: function() {
+        sendReply: async function() {
             const replyText = document.getElementById('portalReplyText').value.trim();
             
             if (!replyText) {
-                alert(this.config.text.replyPrompt);
+                await this.showAlert(this.config.text.replyPrompt, 'Message Required');
                 return;
             }
             
             // Confirm send
-            if (confirm(this.config.text.confirmSend)) {
+            const confirmed = await this.showConfirm(this.config.text.confirmSend, 'Confirm Send');
+            
+            if (confirmed) {
                 // In a real implementation, this would make an API call
                 console.log('Sending reply:', {
                     originalMessage: this.state.currentMessage,
@@ -701,8 +857,8 @@
                 
                 // Show success message after modal closes
                 const successMessage = this.config.text.replySent;
-                modalElement.addEventListener('hidden.bs.modal', function successHandler() {
-                    alert(successMessage);
+                modalElement.addEventListener('hidden.bs.modal', async function successHandler() {
+                    await window.PortalInboxExtention.showAlert(successMessage, 'Success');
                     // Remove this event listener after it fires once
                     modalElement.removeEventListener('hidden.bs.modal', successHandler);
                 }, { once: true });
@@ -821,7 +977,7 @@
         /**
          * Handle link clicks with external domain warnings
          */
-        handleLinkClick: function(event) {
+        handleLinkClick: async function(event) {
             const link = event.target.closest('a[data-portal-link]');
             if (!link) return;
             
@@ -836,7 +992,9 @@
                 const domain = new URL(href, window.location.href).hostname;
                 const message = this.config.text.externalLinkWarning.replace('{domain}', domain);
                 
-                if (confirm(message)) {
+                const confirmed = await this.showConfirm(message, 'External Link Warning');
+                
+                if (confirmed) {
                     window.open(href, link.getAttribute('target') || '_blank', 'noopener,noreferrer');
                 }
             }

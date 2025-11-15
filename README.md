@@ -5,11 +5,13 @@ This solution contains multiple portal extension projects that enhance and exten
 ## Extensions
 
 ### Portal Inbox Extension
-An extention that displays inbox messages within the portal interface.
+An extention that displays inbox messages within the portal interface using Bootstrap 5 modals for all dialogs.
 
 - **Location:** `portal-inbox-extention/`
-- **Description:** Provides an inbox extention for displaying messages
+- **Description:** Provides an inbox extention for displaying messages with read/unread tracking, reply functionality, and archive features
+- **UI Components:** Uses Bootstrap 5 modals exclusively (no native browser popups)
 - **Documentation:** [View Extension README](./portal-inbox-extention/README.md)
+- **Demo:** See `portal-demo.html` for full demonstration
 
 ## Getting Started
 

@@ -53,6 +53,10 @@
 - Must NOT auto-initialize
 - Must inject its own CSS styles on initialization
 - Must use unique IDs for injected style elements (e.g., `{extension-name}-styles`)
+- **Must support an `enabled` flag as the FIRST configuration parameter**
+  - If `enabled: false`, extension must not initialize at all
+  - If `enabled: true` or omitted, extension runs normally
+  - Extension must check this flag before any initialization logic
 
 ### HTML File:
 - Named `portal-demo.html` only

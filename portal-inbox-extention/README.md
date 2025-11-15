@@ -8,6 +8,7 @@ A completely self-contained, namespace-isolated JavaScript extention for display
 - **Self-Contained Styling**: Injects its own CSS styles - no external stylesheets required
 - **Zero Dependencies on Host Page**: Only requires Bootstrap 5 JavaScript and Icons
 - **Bootstrap 5 Compatible**: Uses Bootstrap 5 components and styling
+- **Bootstrap 5 Modals**: Uses Bootstrap modals for all confirmations, alerts, and dialogs (no native popups)
 - **Modular Design**: All functionality, styles, and dependencies encapsulated in the extension file
 - **Easy Integration**: Simply include the script and add a container element
 - **No Conflicts**: Won't interfere with other JavaScript or CSS on the page
@@ -56,6 +57,7 @@ This extension follows a strict isolation pattern:
 ```html
 <script>
     PortalInboxExtention.init({
+        enabled: true,  // Optional: Set to false to disable
         dataSource: 'messages.json',
         containerId: 'portal-inbox-extention'
     });
@@ -64,10 +66,34 @@ This extension follows a strict isolation pattern:
 
 ## Configuration
 
+### Extension Control
+
+The extension supports an `enabled` flag that controls whether it initializes:
+
+- **`enabled: true`** (default) - Extension initializes and runs normally
+- **`enabled: false`** - Extension does not initialize at all (no DOM manipulation, no network requests)
+- **Omitted** - Treated as `true`, extension runs normally
+
+This is useful for:
+- Conditional loading based on user permissions
+- Feature flags in different environments
+- A/B testing
+- Temporary disabling without removing code
+
+```javascript
+// Disable extension completely
+PortalInboxExtention.init({
+    enabled: false,  // Extension will not initialize
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention'
+});
+```
+
 ### Minimal Configuration (Required)
 
 ```javascript
 PortalInboxExtention.init({
+    enabled: true,                      // Optional: Set to false to disable extension (default: true)
     dataSource: 'messages.json',        // Required: URL to fetch messages from
     containerId: 'portal-inbox-extention'  // Required: ID of container element
 });
@@ -77,6 +103,9 @@ PortalInboxExtention.init({
 
 ```javascript
 PortalInboxExtention.init({
+    // Extension control
+    enabled: true,                      // Set to false to completely disable this extension
+    
     // Required
     dataSource: 'api/messages',
     containerId: 'portal-inbox-extention',
@@ -101,6 +130,9 @@ PortalInboxExtention.init({
 
 ```javascript
 PortalInboxExtention.init({
+    // Extension control (FIRST parameter)
+    enabled: boolean,         // Optional: true (default) to run, false to disable entirely
+    
     // Required
     dataSource: string,       // URL to fetch messages
     containerId: string,      // Container element ID
@@ -446,6 +478,23 @@ Works in all modern browsers that support:
 - Fetch API
 - Custom Events
 - Bootstrap 5
+
+## User Interface Components
+
+### Bootstrap 5 Modals
+The extension uses **Bootstrap 5 modals exclusively** for all dialogs and confirmations. No native browser `alert()` or `confirm()` dialogs are used, ensuring:
+- Consistent branding and styling
+- Better user experience
+- Full customization control
+- Accessibility compliance
+- Mobile-friendly interactions
+
+**Modal Types Used:**
+1. **Message Detail Modal** - Displays full message content with reply options
+2. **Confirmation Modal** - Used for confirming actions (e.g., sending replies, external link warnings)
+3. **Alert Modal** - Used for informational messages (e.g., validation errors, success messages)
+
+All modals are dynamically created and managed by the extension with proper cleanup and event handling.
 
 ## Files
 
