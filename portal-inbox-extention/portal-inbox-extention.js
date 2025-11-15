@@ -116,7 +116,9 @@
             unreadCount: 0,
             showArchived: false,
             replyMode: false,
-            currentMessage: null
+            currentMessage: null,
+            isLoading: false,
+            isLoaded: false
         },
         
         /**
@@ -313,6 +315,15 @@
             `;
             
             container.innerHTML = widgetHTML;
+            
+            // Add click handler to prevent opening dropdown while loading
+            const dropdownToggle = document.getElementById('portalInboxDropdown');
+            dropdownToggle.addEventListener('show.bs.dropdown', (e) => {
+                if (!this.state.isLoaded) {
+                    e.preventDefault();
+                    console.log('Portal Inbox: Messages still loading...');
+                }
+            });
             
             // Create the message modal
             this.createMessageModal();
@@ -511,22 +522,32 @@
          * Load messages from data source
          */
         loadMessages: function() {
-            fetch(this.config.dataSource)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load messages');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    this.state.messages = data.messages || [];
-                    this.processMessages();
-                    this.renderMessages();
-                })
-                .catch(error => {
-                    console.error('Portal Inbox Widget Error:', error);
-                    this.renderError();
-                });
+            this.state.isLoading = true;
+            this.state.isLoaded = false;
+            
+            // Simulate API delay (4 seconds) for realistic loading behavior
+            setTimeout(() => {
+                fetch(this.config.dataSource)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to load messages');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.state.messages = data.messages || [];
+                        this.processMessages();
+                        this.state.isLoading = false;
+                        this.state.isLoaded = true;
+                        this.renderMessages();
+                    })
+                    .catch(error => {
+                        console.error('Portal Inbox Widget Error:', error);
+                        this.state.isLoading = false;
+                        this.state.isLoaded = true; // Still set to true so user can see error
+                        this.renderError();
+                    });
+            }, 4000); // 4 second delay
         },
         
         /**
