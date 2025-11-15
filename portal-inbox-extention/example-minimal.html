@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Inbox Extension - Minimal Example</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Simple Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">My Portal</a>
+            
+            <!-- Portal Inbox Extension Container -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" id="portal-inbox-extention"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container mt-5">
+        <h1>Minimal Integration Example</h1>
+        <p>Look at the top-right corner to see the inbox extension!</p>
+        
+        <div class="alert alert-info">
+            <h5>This example shows:</h5>
+            <ul>
+                <li>Minimal HTML structure</li>
+                <li>Required CDN links (Bootstrap 5 + Icons)</li>
+                <li>Container element with ID</li>
+                <li>Extension script inclusion</li>
+                <li>Basic initialization with required config only</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Portal Inbox Extension -->
+    <script src="portal-inbox-extention.js"></script>
+    
+    <!-- Initialize Extension (REQUIRED) -->
+    <script>
+        // Minimal initialization - only required fields
+        PortalInboxExtention.init({
+            dataSource: 'messages.json',
+            containerId: 'portal-inbox-extention'
+        });
+    </script>
+</body>
+</html>

@@ -9,9 +9,72 @@
     // Create isolated namespace
     const PortalInboxExtention = {
         config: {
-            dataSource: 'messages.json',
-            containerId: 'portal-inbox-extention',
-            autoInit: true
+            // Data source configuration
+            dataSource: null,
+            
+            // Container configuration
+            containerId: null,
+            
+            // UI Text configuration
+            text: {
+                dropdownToggleIcon: 'bi bi-envelope-fill',
+                messagesHeader: 'Messages',
+                archivedHeader: 'Archived Messages',
+                unreadLabel: 'unread',
+                noUnreadMessages: 'No unread messages',
+                noArchivedMessages: 'No archived messages',
+                viewArchived: 'View Archived Messages',
+                viewUnread: 'View Unread Messages',
+                loadingMessages: 'Loading messages...',
+                failedToLoad: 'Failed to load messages',
+                modalTitle: 'Message',
+                closeButton: 'Close',
+                replyButton: 'Reply',
+                sendReplyButton: 'Send Reply',
+                cancelButton: 'Cancel',
+                replyPlaceholder: 'Type your reply here...',
+                replyLabel: 'Your Reply:',
+                originalMessageLabel: 'Original Message:',
+                toLabel: 'To: You',
+                newBadge: 'New',
+                justNow: 'Just now',
+                minuteAgo: 'minute ago',
+                minutesAgo: 'minutes ago',
+                hourAgo: 'hour ago',
+                hoursAgo: 'hours ago',
+                dayAgo: 'day ago',
+                daysAgo: 'days ago',
+                replyPrompt: 'Please enter a reply message.',
+                confirmSend: 'Are you sure you want to send this reply?',
+                replySent: 'Reply sent successfully!',
+                externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
+            },
+            
+            // Icon configuration
+            icons: {
+                inbox: 'bi bi-inbox-fill',
+                archive: 'bi bi-archive-fill',
+                reply: 'bi bi-reply-fill',
+                send: 'bi bi-send-fill'
+            },
+            
+            // Style configuration
+            styles: {
+                dropdownMinWidth: '350px',
+                dropdownMaxHeight: '400px',
+                badgeDisplay: 'inline-block'
+            },
+            
+            // Feature flags
+            features: {
+                enableArchive: true,
+                enableReply: true,
+                enableExternalLinkWarning: true,
+                allowHtmlInMessages: true
+            },
+            
+            // Auto-init flag
+            autoInit: false
         },
         
         state: {
@@ -26,16 +89,46 @@
          * Initialize the extention
          */
         init: function(options) {
-            // Merge user options with defaults
-            if (options) {
-                Object.assign(this.config, options);
+            // Validate required options
+            if (!options) {
+                console.error('Portal Inbox Extension: Configuration object is required');
+                return;
             }
+            
+            if (!options.dataSource) {
+                console.error('Portal Inbox Extension: dataSource is required in configuration');
+                return;
+            }
+            
+            if (!options.containerId) {
+                console.error('Portal Inbox Extension: containerId is required in configuration');
+                return;
+            }
+            
+            // Deep merge user options with defaults
+            this.mergeConfig(this.config, options);
             
             // Wait for DOM to be ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => this.setup());
             } else {
                 this.setup();
+            }
+        },
+        
+        /**
+         * Deep merge configuration
+         */
+        mergeConfig: function(target, source) {
+            for (const key in source) {
+                if (source.hasOwnProperty(key)) {
+                    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                        target[key] = target[key] || {};
+                        this.mergeConfig(target[key], source[key]);
+                    } else {
+                        target[key] = source[key];
+                    }
+                }
             }
         },
         
@@ -61,15 +154,15 @@
                 <div class="dropdown">
                     <a class="nav-link dropdown-toggle position-relative" href="#" id="portalInboxDropdown" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
-                        <i class="bi bi-envelope-fill"></i>
+                        <i class="${this.config.text.dropdownToggleIcon}"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
                               id="portal-inbox-badge" style="display: none; pointer-events: none;">
                             0
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="portalInboxDropdown" 
-                        id="portal-inbox-messages" style="min-width: 350px; max-height: 400px; overflow-y: auto;">
-                        <li><h6 class="dropdown-header">Loading messages...</h6></li>
+                        id="portal-inbox-messages" style="min-width: ${this.config.styles.dropdownMinWidth}; max-height: ${this.config.styles.dropdownMaxHeight}; overflow-y: auto;">
+                        <li><h6 class="dropdown-header">${this.config.text.loadingMessages}</h6></li>
                     </ul>
                 </div>
             `;
@@ -94,17 +187,17 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="portalMessageModalLabel">Message</h5>
+                                <h5 class="modal-title" id="portalMessageModalLabel">${this.config.text.modalTitle}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body" id="portalMessageBody">
                                 <!-- Message content will be inserted here -->
                             </div>
                             <div class="modal-footer" id="portalMessageFooter">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="portalReplyBtn">
-                                    <i class="bi bi-reply-fill me-2"></i>Reply
-                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.config.text.closeButton}</button>
+                                ${this.config.features.enableReply ? `<button type="button" class="btn btn-primary" id="portalReplyBtn">
+                                    <i class="${this.config.icons.reply} me-2"></i>${this.config.text.replyButton}
+                                </button>` : ''}
                             </div>
                         </div>
                     </div>
@@ -113,10 +206,12 @@
             
             document.body.insertAdjacentHTML('beforeend', modalHTML);
             
-            // Add reply button event listener
-            document.getElementById('portalReplyBtn').addEventListener('click', () => {
-                this.toggleReplyMode();
-            });
+            // Add reply button event listener if feature is enabled
+            if (this.config.features.enableReply) {
+                document.getElementById('portalReplyBtn').addEventListener('click', () => {
+                    this.toggleReplyMode();
+                });
+            }
         },
         
         /**
@@ -158,7 +253,7 @@
             // Update badge
             if (this.state.unreadCount > 0) {
                 badge.textContent = this.state.unreadCount;
-                badge.style.display = 'inline-block';
+                badge.style.display = this.config.styles.badgeDisplay;
             } else {
                 badge.style.display = 'none';
             }
@@ -174,8 +269,8 @@
             // Add header
             const header = document.createElement('li');
             const headerText = this.state.showArchived 
-                ? `Archived Messages (${filteredMessages.length})`
-                : `Messages (${this.state.unreadCount} unread)`;
+                ? `${this.config.text.archivedHeader} (${filteredMessages.length})`
+                : `${this.config.text.messagesHeader} (${this.state.unreadCount} ${this.config.text.unreadLabel})`;
             header.innerHTML = `<h6 class="dropdown-header">${headerText}</h6>`;
             messagesContainer.appendChild(header);
             
@@ -188,8 +283,8 @@
             if (filteredMessages.length === 0) {
                 const emptyItem = document.createElement('li');
                 const emptyText = this.state.showArchived 
-                    ? 'No archived messages'
-                    : 'No unread messages';
+                    ? this.config.text.noArchivedMessages
+                    : this.config.text.noUnreadMessages;
                 emptyItem.innerHTML = `<span class="dropdown-item-text text-muted text-center py-3">${emptyText}</span>`;
                 messagesContainer.appendChild(emptyItem);
             } else {
@@ -199,30 +294,33 @@
                 });
             }
             
-            // Add divider before toggle
-            const bottomDivider = document.createElement('li');
-            bottomDivider.innerHTML = '<hr class="dropdown-divider">';
-            messagesContainer.appendChild(bottomDivider);
-            
-            // Add toggle view button
-            const toggleItem = document.createElement('li');
-            const toggleText = this.state.showArchived 
-                ? '<i class="bi bi-inbox-fill me-2"></i>View Unread Messages'
-                : '<i class="bi bi-archive-fill me-2"></i>View Archived Messages';
-            toggleItem.innerHTML = `
-                <a class="dropdown-item text-center fw-bold" href="#" id="portal-toggle-view" style="color: var(--primary-color);">
-                    ${toggleText}
-                </a>
-            `;
-            messagesContainer.appendChild(toggleItem);
-            
-            // Add toggle click handler
-            const toggleLink = document.getElementById('portal-toggle-view');
-            toggleLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation(); // Prevent dropdown from closing
-                this.toggleView();
-            });
+            // Add archive toggle if enabled
+            if (this.config.features.enableArchive) {
+                // Add divider before toggle
+                const bottomDivider = document.createElement('li');
+                bottomDivider.innerHTML = '<hr class="dropdown-divider">';
+                messagesContainer.appendChild(bottomDivider);
+                
+                // Add toggle view button
+                const toggleItem = document.createElement('li');
+                const toggleText = this.state.showArchived 
+                    ? `<i class="${this.config.icons.inbox} me-2"></i>${this.config.text.viewUnread}`
+                    : `<i class="${this.config.icons.archive} me-2"></i>${this.config.text.viewArchived}`;
+                toggleItem.innerHTML = `
+                    <a class="dropdown-item text-center fw-bold" href="#" id="portal-toggle-view" style="color: var(--primary-color);">
+                        ${toggleText}
+                    </a>
+                `;
+                messagesContainer.appendChild(toggleItem);
+                
+                // Add toggle click handler
+                const toggleLink = document.getElementById('portal-toggle-view');
+                toggleLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); // Prevent dropdown from closing
+                    this.toggleView();
+                });
+            }
         },
         
         /**
@@ -239,7 +337,7 @@
         createMessageItem: function(message, index) {
             const li = document.createElement('li');
             const unreadClass = !message.read ? 'fw-bold' : '';
-            const unreadBadge = !message.read ? '<span class="badge bg-primary rounded-pill">New</span>' : '';
+            const unreadBadge = !message.read ? `<span class="badge bg-primary rounded-pill">${this.config.text.newBadge}</span>` : '';
             const initials = this.getInitials(message.from);
             
             li.innerHTML = `
@@ -315,6 +413,10 @@
             
             modalTitle.textContent = this.escapeHtml(message.subject);
             
+            const messageContent = this.config.features.allowHtmlInMessages 
+                ? this.sanitizeHtmlForLinks(message.body)
+                : this.escapeHtml(message.body);
+            
             const messageHTML = `
                 <div id="portalMessageContent">
                     <div class="message-header mb-4">
@@ -324,37 +426,41 @@
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-1 fw-bold">${this.escapeHtml(message.from)}</h6>
-                                <small class="text-muted">To: You</small>
+                                <small class="text-muted">${this.config.text.toLabel}</small>
                             </div>
                             <small class="text-muted">${this.formatDate(message.date)}</small>
                         </div>
                     </div>
                     <div class="message-body">
-                        <p>${this.sanitizeHtmlForLinks(message.body)}</p>
+                        <p>${messageContent}</p>
                     </div>
                 </div>
             `;
             
             modalBody.innerHTML = messageHTML;
             
-            // Add link click handlers for external domain warnings
-            const links = modalBody.querySelectorAll('a[data-portal-link]');
-            links.forEach(link => {
-                link.addEventListener('click', (e) => this.handleLinkClick(e));
-            });
+            // Add link click handlers for external domain warnings if enabled
+            if (this.config.features.enableExternalLinkWarning && this.config.features.allowHtmlInMessages) {
+                const links = modalBody.querySelectorAll('a[data-portal-link]');
+                links.forEach(link => {
+                    link.addEventListener('click', (e) => this.handleLinkClick(e));
+                });
+            }
             
             // Reset footer to default state
             footer.innerHTML = `
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="portalReplyBtn">
-                    <i class="bi bi-reply-fill me-2"></i>Reply
-                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.config.text.closeButton}</button>
+                ${this.config.features.enableReply ? `<button type="button" class="btn btn-primary" id="portalReplyBtn">
+                    <i class="${this.config.icons.reply} me-2"></i>${this.config.text.replyButton}
+                </button>` : ''}
             `;
             
-            // Re-attach reply button event listener
-            document.getElementById('portalReplyBtn').addEventListener('click', () => {
-                this.toggleReplyMode();
-            });
+            // Re-attach reply button event listener if feature is enabled
+            if (this.config.features.enableReply) {
+                document.getElementById('portalReplyBtn').addEventListener('click', () => {
+                    this.toggleReplyMode();
+                });
+            }
             
             // Reset reply mode
             this.state.replyMode = false;
@@ -383,16 +489,20 @@
                 const replyBtn = document.getElementById('portalReplyBtn');
                 const footer = document.getElementById('portalMessageFooter');
                 
+                const messageContent = this.config.features.allowHtmlInMessages 
+                    ? this.sanitizeHtmlForLinks(message.body)
+                    : this.escapeHtml(message.body);
+                
                 const replyHTML = `
                     <div id="portalReplySection">
                         <div class="reply-compose mb-3">
-                            <label class="form-label fw-bold">Your Reply:</label>
+                            <label class="form-label fw-bold">${this.config.text.replyLabel}</label>
                             <textarea class="form-control" id="portalReplyText" rows="6" 
-                                      placeholder="Type your reply here..."></textarea>
+                                      placeholder="${this.config.text.replyPlaceholder}"></textarea>
                         </div>
                         <hr class="my-4">
                         <div class="text-muted mb-2">
-                            <small><strong>Original Message:</strong></small>
+                            <small><strong>${this.config.text.originalMessageLabel}</strong></small>
                         </div>
                     </div>
                     <div id="portalMessageContent">
@@ -403,30 +513,32 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1 fw-bold">${this.escapeHtml(message.from)}</h6>
-                                    <small class="text-muted">To: You</small>
+                                    <small class="text-muted">${this.config.text.toLabel}</small>
                                 </div>
                                 <small class="text-muted">${this.formatDate(message.date)}</small>
                         </div>
                     </div>
                     <div class="message-body opacity-75">
-                        <p>${this.sanitizeHtmlForLinks(message.body)}</p>
+                        <p>${messageContent}</p>
                     </div>
                 </div>
             `;
             
             modalBody.innerHTML = replyHTML;
             
-            // Add link click handlers for external domain warnings in reply mode
-            const links = modalBody.querySelectorAll('a[data-portal-link]');
-            links.forEach(link => {
-                link.addEventListener('click', (e) => this.handleLinkClick(e));
-            });
+            // Add link click handlers for external domain warnings in reply mode if enabled
+            if (this.config.features.enableExternalLinkWarning && this.config.features.allowHtmlInMessages) {
+                const links = modalBody.querySelectorAll('a[data-portal-link]');
+                links.forEach(link => {
+                    link.addEventListener('click', (e) => this.handleLinkClick(e));
+                });
+            }
             
             // Update footer buttons
             footer.innerHTML = `
-                    <button type="button" class="btn btn-secondary" id="portalCancelReplyBtn">Cancel</button>
+                    <button type="button" class="btn btn-secondary" id="portalCancelReplyBtn">${this.config.text.cancelButton}</button>
                     <button type="button" class="btn btn-primary" id="portalSendReplyBtn">
-                        <i class="bi bi-send-fill me-2"></i>Send Reply
+                        <i class="${this.config.icons.send} me-2"></i>${this.config.text.sendReplyButton}
                     </button>
                 `;
                 
@@ -453,12 +565,12 @@
             const replyText = document.getElementById('portalReplyText').value.trim();
             
             if (!replyText) {
-                alert('Please enter a reply message.');
+                alert(this.config.text.replyPrompt);
                 return;
             }
             
             // Confirm send
-            if (confirm('Are you sure you want to send this reply?')) {
+            if (confirm(this.config.text.confirmSend)) {
                 // In a real implementation, this would make an API call
                 console.log('Sending reply:', {
                     originalMessage: this.state.currentMessage,
@@ -488,8 +600,9 @@
                 this.state.currentMessage = null;
                 
                 // Show success message after modal closes
+                const successMessage = this.config.text.replySent;
                 modalElement.addEventListener('hidden.bs.modal', function successHandler() {
-                    alert('Reply sent successfully!');
+                    alert(successMessage);
                     // Remove this event listener after it fires once
                     modalElement.removeEventListener('hidden.bs.modal', successHandler);
                 }, { once: true });
@@ -502,7 +615,7 @@
         renderError: function() {
             const messagesContainer = document.getElementById('portal-inbox-messages');
             messagesContainer.innerHTML = `
-                <li><span class="dropdown-item-text text-danger">Failed to load messages</span></li>
+                <li><span class="dropdown-item-text text-danger">${this.config.text.failedToLoad}</span></li>
             `;
         },
         
@@ -517,10 +630,13 @@
             const diffHours = Math.floor(diffMs / 3600000);
             const diffDays = Math.floor(diffMs / 86400000);
             
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            if (diffMins < 1) return this.config.text.justNow;
+            if (diffMins === 1) return `1 ${this.config.text.minuteAgo}`;
+            if (diffMins < 60) return `${diffMins} ${this.config.text.minutesAgo}`;
+            if (diffHours === 1) return `1 ${this.config.text.hourAgo}`;
+            if (diffHours < 24) return `${diffHours} ${this.config.text.hoursAgo}`;
+            if (diffDays === 1) return `1 ${this.config.text.dayAgo}`;
+            if (diffDays < 7) return `${diffDays} ${this.config.text.daysAgo}`;
             
             return date.toLocaleDateString();
         },
@@ -618,11 +734,7 @@
                 
                 // Show government-style warning
                 const domain = new URL(href, window.location.href).hostname;
-                const message = `You are about to leave this website and navigate to an external site.\n\n` +
-                              `External Site: ${domain}\n\n` +
-                              `This link is being provided for your convenience. We are not responsible for ` +
-                              `the content, privacy policies, or practices of external sites.\n\n` +
-                              `Do you wish to continue?`;
+                const message = this.config.text.externalLinkWarning.replace('{domain}', domain);
                 
                 if (confirm(message)) {
                     window.open(href, link.getAttribute('target') || '_blank', 'noopener,noreferrer');
@@ -640,10 +752,5 @@
     
     // Expose extention to global scope
     window.PortalInboxExtention = PortalInboxExtention;
-    
-    // Auto-initialize if configured
-    if (PortalInboxExtention.config.autoInit) {
-        PortalInboxExtention.init();
-    }
     
 })();

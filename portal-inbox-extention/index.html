@@ -448,24 +448,55 @@
 &lt;li class="nav-item" id="portal-inbox-extention"&gt;&lt;/li&gt;
 
 &lt;!-- Include the extention script --&gt;
-&lt;script src="portal-inbox-extention.js"&gt;&lt;/script&gt;</code></pre>
-                
-                <p class="mt-4 text-muted">Optional custom configuration:</p>
-                <pre class="bg-light p-3 rounded"><code>&lt;script&gt;
-    // Custom configuration
-    PortalInboxExtention.init({
-        messagesUrl: 'messages.json',
-        containerId: 'portal-inbox-extention',
+&lt;script src="portal-inbox-extention.js"&gt;&lt;/script&gt;
 
-    // Listen for message clicks
+&lt;!-- Initialize with configuration --&gt;
+&lt;script&gt;
+    PortalInboxExtention.init({
+        dataSource: 'messages.json',
+        containerId: 'portal-inbox-extention'
+    });
+&lt;/script&gt;</code></pre>
+                
+                <p class="mt-4 text-muted">Full custom configuration example:</p>
+                <pre class="bg-light p-3 rounded"><code>&lt;script&gt;
+    PortalInboxExtention.init({
+        // Required configuration
+        dataSource: 'api/messages',  // Your API endpoint or JSON file
+        containerId: 'portal-inbox-extention',
+        
+        // Customize text labels
+        text: {
+            messagesHeader: 'My Messages',
+            noUnreadMessages: 'All caught up!',
+            replyButton: 'Respond'
+            // ... see full list in demo source
+        },
+        
+        // Customize icons (Bootstrap Icons)
+        icons: {
+            inbox: 'bi bi-envelope',
+            reply: 'bi bi-arrow-left'
+        },
+        
+        // Feature toggles
+        features: {
+            enableArchive: true,
+            enableReply: false,  // Disable reply feature
+            enableExternalLinkWarning: false
+        }
+    });
+    
+    // Listen for custom events
     document.addEventListener('portalInboxMessageClick', function(e) {
         console.log('Message clicked:', e.detail.message);
-        // Handle message click (e.g., open modal, navigate to message)
     });
-
+    
+    document.addEventListener('portalInboxReplySent', function(e) {
+        console.log('Reply sent:', e.detail);
+    });
+    
     // Manually refresh messages
-        }, 1000);
-
     // PortalInboxExtention.refresh();
 &lt;/script&gt;</code></pre>
             </div>
@@ -505,7 +536,75 @@
     <!-- Portal Inbox Extention -->
     <script src="portal-inbox-extention.js"></script>
     
-    <!-- Demo event listener -->
+    <!-- Initialize Portal Inbox Extension with Configuration -->
+    <script>
+        // Initialize the extension with all configuration
+        PortalInboxExtention.init({
+            // Required: Data source and container
+            dataSource: 'messages.json',
+            containerId: 'portal-inbox-extention',
+            
+            // Optional: Customize UI text (showing defaults, you can override any)
+            text: {
+                dropdownToggleIcon: 'bi bi-envelope-fill',
+                messagesHeader: 'Messages',
+                archivedHeader: 'Archived Messages',
+                unreadLabel: 'unread',
+                noUnreadMessages: 'No unread messages',
+                noArchivedMessages: 'No archived messages',
+                viewArchived: 'View Archived Messages',
+                viewUnread: 'View Unread Messages',
+                loadingMessages: 'Loading messages...',
+                failedToLoad: 'Failed to load messages',
+                modalTitle: 'Message',
+                closeButton: 'Close',
+                replyButton: 'Reply',
+                sendReplyButton: 'Send Reply',
+                cancelButton: 'Cancel',
+                replyPlaceholder: 'Type your reply here...',
+                replyLabel: 'Your Reply:',
+                originalMessageLabel: 'Original Message:',
+                toLabel: 'To: You',
+                newBadge: 'New',
+                justNow: 'Just now',
+                minuteAgo: 'minute ago',
+                minutesAgo: 'minutes ago',
+                hourAgo: 'hour ago',
+                hoursAgo: 'hours ago',
+                dayAgo: 'day ago',
+                daysAgo: 'days ago',
+                replyPrompt: 'Please enter a reply message.',
+                confirmSend: 'Are you sure you want to send this reply?',
+                replySent: 'Reply sent successfully!',
+                externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
+            },
+            
+            // Optional: Customize icons (Bootstrap Icons classes)
+            icons: {
+                inbox: 'bi bi-inbox-fill',
+                archive: 'bi bi-archive-fill',
+                reply: 'bi bi-reply-fill',
+                send: 'bi bi-send-fill'
+            },
+            
+            // Optional: Customize styles
+            styles: {
+                dropdownMinWidth: '350px',
+                dropdownMaxHeight: '400px',
+                badgeDisplay: 'inline-block'
+            },
+            
+            // Optional: Feature flags
+            features: {
+                enableArchive: true,           // Show archive toggle
+                enableReply: true,             // Show reply button
+                enableExternalLinkWarning: true, // Warn before opening external links
+                allowHtmlInMessages: true      // Allow HTML (links) in message bodies
+            }
+        });
+    </script>
+    
+    <!-- Demo event listeners -->
     <script>
         // Listen for message click events
         document.addEventListener('portalInboxMessageClick', function(e) {

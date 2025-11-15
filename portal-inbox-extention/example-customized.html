@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Inbox Extension - Customized Example</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Custom Portal</a>
+            
+            <!-- Portal Inbox Extension Container -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" id="my-custom-inbox"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container mt-5">
+        <h1>Customized Integration Example</h1>
+        <p>This example shows custom configuration options.</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Customizations Applied</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Custom Container ID:</strong> "my-custom-inbox"</li>
+                            <li><strong>Custom Text:</strong> "My Notifications" instead of "Messages"</li>
+                            <li><strong>Different Icons:</strong> Chat icon instead of envelope</li>
+                            <li><strong>Reply Disabled:</strong> No reply functionality</li>
+                            <li><strong>Larger Dropdown:</strong> 450px wide, 500px tall</li>
+                            <li><strong>Custom Badge Text:</strong> "!" instead of "New"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Event Handling</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Click on a message to see console output.</p>
+                        <button class="btn btn-primary" onclick="PortalInboxExtention.refresh()">
+                            Refresh Messages
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Portal Inbox Extension -->
+    <script src="portal-inbox-extention.js"></script>
+    
+    <!-- Initialize Extension with Custom Configuration -->
+    <script>
+        PortalInboxExtention.init({
+            // Required configuration
+            dataSource: 'messages.json',
+            containerId: 'my-custom-inbox',  // Custom container ID
+            
+            // Customize text labels
+            text: {
+                dropdownToggleIcon: 'bi bi-chat-dots-fill',  // Different icon
+                messagesHeader: 'My Notifications',
+                archivedHeader: 'Old Notifications',
+                noUnreadMessages: 'You\'re all caught up! 🎉',
+                viewArchived: 'Show Read',
+                viewUnread: 'Show Unread',
+                newBadge: '!',  // Shorter badge text
+                replyButton: 'Respond',
+                modalTitle: 'Notification Details'
+            },
+            
+            // Customize icons
+            icons: {
+                inbox: 'bi bi-envelope',
+                archive: 'bi bi-folder',
+                reply: 'bi bi-arrow-return-left',
+                send: 'bi bi-cursor-fill'
+            },
+            
+            // Customize styles
+            styles: {
+                dropdownMinWidth: '450px',  // Wider dropdown
+                dropdownMaxHeight: '500px'  // Taller dropdown
+            },
+            
+            // Feature flags
+            features: {
+                enableArchive: true,
+                enableReply: false,  // Disable reply feature
+                enableExternalLinkWarning: true,
+                allowHtmlInMessages: true
+            }
+        });
+        
+        // Event listener for message clicks
+        document.addEventListener('portalInboxMessageClick', function(e) {
+            console.log('📬 Message Clicked!');
+            console.log('Message ID:', e.detail.messageId);
+            console.log('Message Details:', e.detail.message);
+        });
+        
+        // Event listener for reply sent (won't fire since reply is disabled)
+        document.addEventListener('portalInboxReplySent', function(e) {
+            console.log('📤 Reply Sent!');
+            console.log('Reply Details:', e.detail);
+        });
+    </script>
+</body>
+</html>

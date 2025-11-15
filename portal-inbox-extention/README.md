@@ -13,6 +13,9 @@ A self-contained, namespace-isolated JavaScript extention for displaying inbox m
 - **Read/Unread Tracking**: Tracks and displays unread message counts
 - **Custom Events**: Fires events for external integration and custom handling
 - **Responsive**: Works on all screen sizes with Bootstrap's responsive utilities
+- **Fully Configurable**: All text, icons, styles, and features can be customized via configuration
+- **Localization Ready**: Easy to translate to any language
+- **Static Extension File**: All dynamic configuration is in the initialization, keeping the .js file static
 
 ## Quick Start
 
@@ -39,26 +42,85 @@ A self-contained, namespace-isolated JavaScript extention for displaying inbox m
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 ```
 
-That's it! The extention will automatically initialize and load messages from `messages.json`.
+5. Initialize the extension with configuration:
+```html
+<script>
+    PortalInboxExtention.init({
+        dataSource: 'messages.json',
+        containerId: 'portal-inbox-extention'
+    });
+</script>
+```
 
 ## Configuration
 
-### Default Configuration
-## Configuration
+### Minimal Configuration (Required)
 
-The extention auto-initializes with these defaults:
-
-```javascript
-{
-    containerId: 'portal-inbox-extention',
-
-### Custom Configuration
-To customize the extention, set `autoInit: false` and manually initialize:
 ```javascript
 PortalInboxExtention.init({
-    dataSource: 'https://your-api-endpoint.com/messages',
-    containerId: 'custom-container-id',
-    autoInit: false
+    dataSource: 'messages.json',        // Required: URL to fetch messages from
+    containerId: 'portal-inbox-extention'  // Required: ID of container element
+});
+```
+
+### Basic Configuration with Common Customizations
+
+```javascript
+PortalInboxExtention.init({
+    // Required
+    dataSource: 'api/messages',
+    containerId: 'portal-inbox-extention',
+    
+    // Customize text labels
+    text: {
+        messagesHeader: 'My Inbox',
+        noUnreadMessages: 'All caught up! 🎉',
+        replyButton: 'Respond'
+    },
+    
+    // Feature toggles
+    features: {
+        enableArchive: true,
+        enableReply: false,  // Disable reply feature
+        enableExternalLinkWarning: false
+    }
+});
+```
+
+### Full Configuration Options
+
+```javascript
+PortalInboxExtention.init({
+    // Required
+    dataSource: string,       // URL to fetch messages
+    containerId: string,      // Container element ID
+    
+    // Optional
+    text: {                   // All UI text labels
+        messagesHeader: string,
+        noUnreadMessages: string,
+        // ... see config-examples.md for full list
+    },
+    
+    icons: {                  // Bootstrap Icons classes
+        inbox: string,
+        archive: string,
+        reply: string,
+        send: string
+    },
+    
+    styles: {                 // Style customizations
+        dropdownMinWidth: string,
+        dropdownMaxHeight: string,
+        badgeDisplay: string
+    },
+    
+    features: {               // Feature flags
+        enableArchive: boolean,
+        enableReply: boolean,
+        enableExternalLinkWarning: boolean,
+        allowHtmlInMessages: boolean
+    }
 });
 ```
 
@@ -74,7 +136,7 @@ The extention expects JSON in the following format:
             "subject": "Message Subject",
             "date": "2025-11-15T10:30:00Z",
             "read": false,
-            "body": "Message body content"
+            "body": "Message body content with <a href='https://example.com'>links</a>"
         }
     ]
 }
@@ -86,54 +148,194 @@ The extention expects JSON in the following format:
 - `subject` (string, required): Message subject line
 - `date` (string, required): ISO 8601 date format
 - `read` (boolean, required): Whether the message has been read
-- `body` (string, optional): Message body content
+- `body` (string, optional): Message body content (can contain HTML links if `allowHtmlInMessages` is enabled)
 
-## API Methods
-
-### `PortalInboxWidget.init(options)`
-Initialize the widget with custom options.
-```javascript
 ## API
 
 ### `PortalInboxExtention.init(options)`
-Initialize the extention with custom options.
+Initialize the extention with configuration options.
+
+**Parameters:**
+- `options` (object, required): Configuration object
+  - `dataSource` (string, required): URL to fetch messages from
+  - `containerId` (string, required): ID of the container element
+  - `text` (object, optional): UI text customizations
+  - `icons` (object, optional): Icon class customizations
+  - `styles` (object, optional): Style customizations
+  - `features` (object, optional): Feature flags
+
+**Example:**
+```javascript
+PortalInboxExtention.init({
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention'
+});
+```
+
+### `PortalInboxExtention.refresh()`
+Manually refresh messages from the data source.
+
+**Example:**
+```javascript
+PortalInboxExtention.refresh();
+```
+
+## Configuration Examples
+
+### Read-Only Display (No Reply, No Archive)
 
 ```javascript
 PortalInboxExtention.init({
-    messagesUrl: '/api/messages',
-    containerId: 'my-extention-container'
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention',
+    features: {
+        enableArchive: false,
+        enableReply: false
+    }
+});
 ```
 
-### `PortalInboxWidget.refresh()`
-Manually reload messages from the data source.
+### Custom Styling
+
 ```javascript
-PortalInboxWidget.refresh();
+PortalInboxExtention.init({
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention',
+    styles: {
+        dropdownMinWidth: '500px',
+        dropdownMaxHeight: '600px'
+    }
+});
+```
+
+### Spanish Localization
+
+```javascript
+PortalInboxExtention.init({
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention',
+    text: {
+        messagesHeader: 'Mensajes',
+        archivedHeader: 'Mensajes Archivados',
+        unreadLabel: 'no leídos',
+        noUnreadMessages: 'No hay mensajes sin leer',
+        viewArchived: 'Ver Mensajes Archivados',
+        viewUnread: 'Ver Mensajes No Leídos',
+        replyButton: 'Responder',
+        sendReplyButton: 'Enviar Respuesta',
+        cancelButton: 'Cancelar',
+        newBadge: 'Nuevo'
+    }
+});
+```
+
+### Custom Icons
+
+```javascript
+PortalInboxExtention.init({
+    dataSource: 'messages.json',
+    containerId: 'portal-inbox-extention',
+    text: {
+        dropdownToggleIcon: 'bi bi-chat-dots-fill'
+    },
+    icons: {
+        inbox: 'bi bi-envelope',
+        archive: 'bi bi-folder',
+        reply: 'bi bi-arrow-return-left',
+        send: 'bi bi-cursor-fill'
+    }
+});
 ```
 
 ## Events
 
 ### `portalInboxMessageClick`
 Fired when a user clicks on a message.
+
 ```javascript
 document.addEventListener('portalInboxMessageClick', function(e) {
     console.log('Message ID:', e.detail.messageId);
     console.log('Message Object:', e.detail.message);
-    // Handle message click (e.g., open modal, navigate to detail page)
+});
+```
+
+### `portalInboxReplySent`
+Fired when a user sends a reply (if reply feature is enabled).
+
+```javascript
+document.addEventListener('portalInboxReplySent', function(e) {
+    console.log('Original Message:', e.detail.originalMessage);
+    console.log('Reply Text:', e.detail.replyText);
+    console.log('Timestamp:', e.detail.timestamp);
+    
+    // Send to server
+    fetch('/api/messages/reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(e.detail)
+    });
 });
 ```
 
 ## Integration with Dataverse Web API
 
-To integrate with Power Pages Dataverse Web API, update the `dataSource` configuration:
+To integrate with Power Pages Dataverse Web API:
 
 ```javascript
-PortalInboxWidget.init({
-    dataSource: '/_api/your_entity_name?$filter=_recipient_value eq ' + userId + ' and statuscode eq 1',
-    containerId: 'portal-inbox-widget'
+PortalInboxExtention.init({
+    dataSource: '/_api/your_entity_name?$filter=_recipient_value eq ' + userId,
+    containerId: 'portal-inbox-extention'
 });
 ```
 
 You may need to transform the Dataverse response to match the expected JSON format.
+
+## Complete Text Configuration Reference
+
+All customizable text labels with their defaults:
+
+```javascript
+text: {
+    // Dropdown
+    dropdownToggleIcon: 'bi bi-envelope-fill',
+    messagesHeader: 'Messages',
+    archivedHeader: 'Archived Messages',
+    unreadLabel: 'unread',
+    noUnreadMessages: 'No unread messages',
+    noArchivedMessages: 'No archived messages',
+    viewArchived: 'View Archived Messages',
+    viewUnread: 'View Unread Messages',
+    loadingMessages: 'Loading messages...',
+    failedToLoad: 'Failed to load messages',
+    
+    // Modal
+    modalTitle: 'Message',
+    closeButton: 'Close',
+    replyButton: 'Reply',
+    sendReplyButton: 'Send Reply',
+    cancelButton: 'Cancel',
+    replyPlaceholder: 'Type your reply here...',
+    replyLabel: 'Your Reply:',
+    originalMessageLabel: 'Original Message:',
+    toLabel: 'To: You',
+    newBadge: 'New',
+    
+    // Time formatting
+    justNow: 'Just now',
+    minuteAgo: 'minute ago',
+    minutesAgo: 'minutes ago',
+    hourAgo: 'hour ago',
+    hoursAgo: 'hours ago',
+    dayAgo: 'day ago',
+    daysAgo: 'days ago',
+    
+    // Prompts
+    replyPrompt: 'Please enter a reply message.',
+    confirmSend: 'Are you sure you want to send this reply?',
+    replySent: 'Reply sent successfully!',
+    externalLinkWarning: 'You are about to leave this website...'
+}
+```
 
 ## Browser Support
 
@@ -145,20 +347,24 @@ Works in all modern browsers that support:
 
 ## Files
 
-- `portal-inbox-widget.js` - Main widget JavaScript file
+- `portal-inbox-extention.js` - Main extension JavaScript file (static, no config)
 - `messages.json` - Sample JSON data file
-- `index.html` - Demo page showing widget integration
+- `index.html` - Full demo page with all features
+- `example-minimal.html` - Minimal integration example
+- `example-customized.html` - Customized configuration example
 - `README.md` - This file
 
-## License
+## Important Notes
 
-MIT License - Feel free to use in your projects
+⚠️ **The extension does NOT auto-initialize!** You must call `init()` with configuration.
 
-## Demo
+✅ **The .js file is completely static** - all configuration is passed during initialization.
 
-Open `index.html` in a web browser to see the widget in action. The demo shows:
-- Widget integration in a Bootstrap navbar
-- Unread message badge
-- Dropdown message list
-- Message read/unread functionality
-- Integration examples and documentation
+✅ **Required parameters**: `dataSource` and `containerId` must be provided.
+
+## Examples
+
+See the included example files:
+- `example-minimal.html` - Basic setup with minimal configuration
+- `example-customized.html` - Advanced setup with custom configuration
+- `index.html` - Full demo with all features and documentation
