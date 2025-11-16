@@ -4,6 +4,8 @@ A completely self-contained, namespace-isolated JavaScript extention for display
 
 ## Features
 
+- **Environment Detection**: Automatically detects local vs portal environment
+- **Dual Data Sources**: Uses local JSON for development, Power Pages Web API for production
 - **Completely Isolated**: Runs in its own IIFE (Immediately Invoked Function Expression) to prevent global scope pollution
 - **Self-Contained Styling**: Injects its own CSS styles - no external stylesheets required
 - **Zero Dependencies on Host Page**: Only requires Bootstrap 5 JavaScript and Icons
@@ -13,8 +15,8 @@ A completely self-contained, namespace-isolated JavaScript extention for display
 - **Modular Design**: All functionality, styles, and dependencies encapsulated in the extension file
 - **Easy Integration**: Simply include the script and add a container element
 - **No Conflicts**: Won't interfere with other JavaScript or CSS on the page
-- **JSON Data Source**: Loads messages from JSON (easily replaceable with Dataverse Web API)
-- **Read/Unread Tracking**: Tracks and displays unread message counts
+- **Power Pages Web API**: Full CRUD operations via OData protocol in production
+- **Read/Unread Tracking**: Tracks and displays unread message counts (persisted to Dataverse)
 - **Custom Events**: Fires events for external integration and custom handling
 - **Responsive**: Works on all screen sizes with Bootstrap's responsive utilities
 - **Fully Configurable**: All text, icons, styles, and features can be customized via configuration
@@ -28,6 +30,8 @@ This extension follows a strict isolation pattern:
 - **Self-contained namespace** using IIFE pattern
 - **No global variables** except the extension namespace (`PortalInboxExtention`)
 - **No host page pollution** - all styles and scripts are contained
+- **Smart environment detection** - uses hostname and protocol to determine local vs portal
+- **Automatic data source switching** - JSON files locally, Web API in production
 
 ## Quick Start
 
@@ -67,27 +71,68 @@ This extension follows a strict isolation pattern:
 
 ## Configuration
 
-### Extension Control
+### Data Source Configuration
 
-The extension supports an `enabled` flag that controls whether it initializes:
+The extension supports **two data sources** that automatically switch based on environment:
 
-- **`enabled: true`** (default) - Extension initializes and runs normally
-- **`enabled: false`** - Extension does not initialize at all (no DOM manipulation, no network requests)
-- **Omitted** - Treated as `true`, extension runs normally
-
-This is useful for:
-- Conditional loading based on user permissions
-- Feature flags in different environments
-- A/B testing
-- Temporary disabling without removing code
-
+#### Local Development (JSON File)
 ```javascript
-// Disable extension completely
 PortalInboxExtention.init({
-    enabled: false,  // Extension will not initialize
-    dataSource: 'messages.json',
+    localDataSource: 'messages.json',  // Local JSON file for development
     containerId: 'portal-inbox-extention'
 });
+```
+
+#### Production (Power Pages Web API)
+```javascript
+PortalInboxExtention.init({
+    localDataSource: 'messages.json',  // Fallback for local testing
+    portalDataSource: {
+        entitySetName: 'msfed_messages',  // Dataverse table EntitySetName
+        baseUrl: '/_api',                 // Web API base URL
+        operations: {
+            read: {
+                enabled: true,
+                select: 'msfed_messageid,msfed_subject,msfed_body,msfed_from,msfed_sentdate,msfed_isread',
+                filter: '',               // Optional OData filter
+                orderBy: 'msfed_sentdate desc',
+                expand: ''                // Optional related tables
+            },
+            create: {
+                enabled: true,
+                fields: 'msfed_subject,msfed_body,msfed_from,msfed_sentdate'
+            },
+            update: {
+                enabled: true,
+                fields: 'msfed_isread'    // Allow marking as read/unread
+            },
+            delete: {
+                enabled: false            // Typically disabled for messages
+            }
+        }
+    },
+    containerId: 'portal-inbox-extention'
+});
+```
+
+#### Environment Detection
+
+The extension automatically detects the environment based on:
+- `localhost` or `127.0.0.1` → **Local**
+- `192.168.x.x` or `10.x.x.x` → **Local** (private networks)
+- `.local` domain → **Local**
+- `file://` protocol → **Local**
+- All others → **Portal** (production)
+
+**Console Output:**
+```
+Portal Inbox Extension: Environment detected as LOCAL
+Portal Inbox Extension: Using local JSON file
+```
+or
+```
+Portal Inbox Extension: Environment detected as PORTAL
+Portal Inbox Extension: Using Power Pages Web API
 ```
 
 ### Minimal Configuration (Required)
@@ -95,7 +140,8 @@ PortalInboxExtention.init({
 ```javascript
 PortalInboxExtention.init({
     enabled: true,                      // Optional: Set to false to disable extension (default: true)
-    dataSource: 'messages.json',        // Required: URL to fetch messages from
+    localDataSource: 'messages.json',   // Required: Local JSON file path
+    portalDataSource: { ... },          // Optional: Web API config (required for production)
     containerId: 'portal-inbox-extention'  // Required: ID of container element
 });
 ```

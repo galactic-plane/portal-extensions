@@ -52,6 +52,11 @@
         "bootstrapIcons": {
           "type": "string",
           "description": "Bootstrap Icons version requirement"
+        },
+        "javascript": {
+          "type": "string",
+          "enum": ["ES6+", "jQuery"],
+          "description": "JavaScript dependency type"
         }
       }
     },
@@ -79,6 +84,108 @@
               }
             }
           }
+        }
+      }
+    },
+    "initialization": {
+      "type": "object",
+      "description": "Configuration used to generate portal-extensions-init.js file",
+      "properties": {
+        "localDataSource": {
+          "type": "string",
+          "description": "Path to local JSON file for testing/development"
+        },
+        "portalDataSource": {
+          "type": "object",
+          "description": "Power Pages Web API configuration for production data",
+          "properties": {
+            "entitySetName": {
+              "type": "string",
+              "description": "Dataverse table EntitySetName (e.g., 'accounts', 'msfed_messages')"
+            },
+            "baseUrl": {
+              "type": "string",
+              "description": "Base URL for Web API operations (typically '/_api')"
+            },
+            "operations": {
+              "type": "object",
+              "description": "Web API CRUD operations configuration",
+              "properties": {
+                "read": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable read operations"
+                    },
+                    "select": {
+                      "type": "string",
+                      "description": "Comma-separated list of fields to retrieve"
+                    },
+                    "filter": {
+                      "type": "string",
+                      "description": "OData filter expression"
+                    },
+                    "orderBy": {
+                      "type": "string",
+                      "description": "OData orderby expression"
+                    },
+                    "expand": {
+                      "type": "string",
+                      "description": "Related entities to expand"
+                    }
+                  }
+                },
+                "create": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable create operations"
+                    },
+                    "fields": {
+                      "type": "string",
+                      "description": "Comma-separated list of fields allowed for creation"
+                    }
+                  }
+                },
+                "update": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable update operations"
+                    },
+                    "fields": {
+                      "type": "string",
+                      "description": "Comma-separated list of fields allowed for updates"
+                    }
+                  }
+                },
+                "delete": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable delete operations"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "containerId": {
+          "type": "string",
+          "description": "DOM element ID for extension container"
+        },
+        "colors": {
+          "type": "object",
+          "description": "Color scheme configuration"
+        },
+        "config": {
+          "type": "object",
+          "description": "Extension-specific configuration"
         }
       }
     }

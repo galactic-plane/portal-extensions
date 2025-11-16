@@ -1,8 +1,8 @@
 {
   "$schema": "../manifest.schema.json",
   "publisher": {
-    "name": "Your Organization",
-    "prefix": "cr4bc"
+    "name": "Microsoft Federal",
+    "prefix": "msfed"
   },
   "extension": {
     "id": "portal-inbox-extension",
@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "bootstrap": "5.x",
-    "bootstrapIcons": "1.11.x"
+    "bootstrapIcons": "1.11.x",
+    "javascript": "ES6+"
   },
   "deployment": {
     "webFiles": [
@@ -21,5 +22,77 @@
         "partialUrl": "portal-extensions/portal-inbox-extension.js"
       }
     ]
+  },
+  "initialization": {
+    "localDataSource": "portal-inbox-extention/messages.json",
+    "portalDataSource": {
+      "entitySetName": "msfed_messages",
+      "baseUrl": "/_api",
+      "operations": {
+        "read": {
+          "enabled": true,
+          "select": "msfed_messageid,msfed_subject,msfed_body,msfed_from,msfed_sentdate,msfed_isread,msfed_category",
+          "filter": "",
+          "orderBy": "msfed_sentdate desc",
+          "expand": ""
+        },
+        "create": {
+          "enabled": true,
+          "fields": "msfed_subject,msfed_body,msfed_from,msfed_sentdate,msfed_isread,msfed_category"
+        },
+        "update": {
+          "enabled": true,
+          "fields": "msfed_subject,msfed_isread,msfed_category"
+        },
+        "delete": {
+          "enabled": false
+        }
+      }
+    },
+    "containerId": "portal-inbox-extention",
+    "colors": {
+      "avatarGradientStart": "#0078d4",
+      "avatarGradientEnd": "#005a9e",
+      "headerGradientStart": "#0078d4",
+      "headerGradientEnd": "#005a9e",
+      "primaryColor": "#0078d4",
+      "badgeBackground": "#dc3545"
+    },
+    "config": {
+      "text": {
+        "inboxLabel": "Messages",
+        "headerText": "Inbox",
+        "noMessagesText": "No messages",
+        "viewAllLabel": "View All Messages",
+        "fromLabel": "From:",
+        "subjectLabel": "Subject:",
+        "replyLabel": "Reply",
+        "archiveLabel": "Archive",
+        "markReadLabel": "Mark as Read",
+        "markUnreadLabel": "Mark as Unread",
+        "externalLinkWarning": "This link will open in a new window. Continue?"
+      },
+      "icons": {
+        "inbox": "bi-envelope-fill",
+        "unread": "bi-circle-fill",
+        "read": "bi-circle",
+        "reply": "bi-reply-fill",
+        "archive": "bi-archive-fill",
+        "externalLink": "bi-box-arrow-up-right"
+      },
+      "styles": {
+        "badgeClass": "bg-danger",
+        "primaryColor": "#0078d4",
+        "hoverColor": "#f1f5f9"
+      },
+      "features": {
+        "enableReplies": true,
+        "enableArchive": true,
+        "enableMarkRead": true,
+        "enableExternalLinkWarning": true,
+        "autoRefresh": false,
+        "refreshInterval": 30000
+      }
+    }
   }
 }

@@ -625,65 +625,6 @@
     
     <!-- Portal Extensions Loader -->
     <script src="portal-extensions.js"></script>
-    
-    <!-- Initialize Extensions -->
-    <script>
-        // Wait for all extensions to load
-        document.addEventListener('portalExtensionsLoaded', function() {
-            console.log('All portal extensions loaded successfully');
-            
-            // Initialize Portal Inbox Extension
-            PortalInboxExtention.init({
-                dataSource: 'portal-inbox-extention/messages.json',
-                containerId: 'portal-inbox-extention',
-                colors: {
-                    // Customize colors to match your site branding
-                    avatarGradientStart: '#0078d4',
-                    avatarGradientEnd: '#005a9e',
-                    headerGradientStart: '#0078d4',
-                    headerGradientEnd: '#005a9e',
-                    primaryColor: '#0078d4',
-                    badgeBackground: '#dc3545'
-                    // See README for all available color options
-                },
-                config: {
-                    text: {
-                        inboxLabel: 'Messages',
-                        headerText: 'Inbox',
-                        noMessagesText: 'No messages',
-                        viewAllLabel: 'View All Messages',
-                        fromLabel: 'From:',
-                        subjectLabel: 'Subject:',
-                        replyLabel: 'Reply',
-                        archiveLabel: 'Archive',
-                        markReadLabel: 'Mark as Read',
-                        markUnreadLabel: 'Mark as Unread',
-                        externalLinkWarning: 'This link will open in a new window. Continue?'
-                    },
-                    icons: {
-                        inbox: 'bi-envelope-fill',
-                        unread: 'bi-circle-fill',
-                        read: 'bi-circle',
-                        reply: 'bi-reply-fill',
-                        archive: 'bi-archive-fill',
-                        externalLink: 'bi-box-arrow-up-right'
-                    },
-                    styles: {
-                        badgeClass: 'bg-danger',
-                        primaryColor: '#0078d4',
-                        hoverColor: '#f1f5f9'
-                    },
-                    features: {
-                        enableReplies: true,
-                        enableArchive: true,
-                        enableMarkRead: true,
-                        enableExternalLinkWarning: true,
-                        autoRefresh: false,
-                        refreshInterval: 30000
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="portal-extensions-init.js"></script>
 </body>
 </html>

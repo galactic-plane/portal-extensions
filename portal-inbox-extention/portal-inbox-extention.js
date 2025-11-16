@@ -2,6 +2,13 @@
  * Portal Inbox Extention
  * A self-contained, namespaced extention for displaying inbox messages
  * Compatible with Bootstrap 5
+ * 
+ * Features:
+ * - Automatic environment detection (local vs portal)
+ * - Local data source: JSON file for development/testing
+ * - Portal data source: Power Pages Web API for production
+ * - Read/Write operations via OData protocol
+ * - CSRF token authentication for Web API
  */
 (function() {
     'use strict';
@@ -10,7 +17,8 @@
     const PortalInboxExtention = {
         config: {
             // Data source configuration
-            dataSource: null,
+            localDataSource: null,
+            portalDataSource: null,
             
             // Container configuration
             containerId: null,
@@ -131,8 +139,8 @@
                 return;
             }
             
-            if (!options.dataSource) {
-                console.error('Portal Inbox Extension: dataSource is required in configuration');
+            if (!options.localDataSource && !options.portalDataSource) {
+                console.error('Portal Inbox Extension: Either localDataSource or portalDataSource is required in configuration');
                 return;
             }
             
@@ -172,6 +180,11 @@
          * Setup the widget
          */
         setup: function() {
+            // Log environment and data source info
+            const isLocal = this.isLocalEnvironment();
+            console.log(`Portal Inbox Extension: Environment detected as ${isLocal ? 'LOCAL' : 'PORTAL'}`);
+            console.log(`Portal Inbox Extension: Using ${isLocal ? 'local JSON file' : 'Power Pages Web API'}`);
+            
             this.injectStyles();
             this.createWidget();
             this.loadMessages();
@@ -515,16 +528,57 @@
         /**
          * Load messages from data source
          */
+        /**
+         * Detect if running in local environment
+         */
+        isLocalEnvironment: function() {
+            const hostname = window.location.hostname;
+            // Check for local development environments
+            return hostname === 'localhost' || 
+                   hostname === '127.0.0.1' || 
+                   hostname.startsWith('192.168.') ||
+                   hostname.startsWith('10.') ||
+                   hostname.endsWith('.local') ||
+                   window.location.protocol === 'file:';
+        },
+        
+        /**
+         * Load messages from appropriate data source
+         */
         loadMessages: function() {
             this.state.isLoading = true;
             this.state.isLoaded = false;
             
+            // Determine which data source to use
+            const isLocal = this.isLocalEnvironment();
+            
+            if (isLocal && this.config.localDataSource) {
+                console.log('Portal Inbox Extension: Using local data source');
+                this.loadMessagesFromLocal();
+            } else if (!isLocal && this.config.portalDataSource) {
+                console.log('Portal Inbox Extension: Using portal Web API data source');
+                this.loadMessagesFromPortal();
+            } else if (this.config.localDataSource) {
+                console.warn('Portal Inbox Extension: Portal data source not configured, falling back to local');
+                this.loadMessagesFromLocal();
+            } else {
+                console.error('Portal Inbox Extension: No valid data source configured');
+                this.state.isLoading = false;
+                this.state.isLoaded = true;
+                this.renderError();
+            }
+        },
+        
+        /**
+         * Load messages from local JSON file
+         */
+        loadMessagesFromLocal: function() {
             // Simulate API delay (4 seconds) for realistic loading behavior
             setTimeout(() => {
-                fetch(this.config.dataSource)
+                fetch(this.config.localDataSource)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Failed to load messages');
+                            throw new Error('Failed to load messages from local source');
                         }
                         return response.json();
                     })
@@ -538,10 +592,161 @@
                     .catch(error => {
                         console.error('Portal Inbox Widget Error:', error);
                         this.state.isLoading = false;
-                        this.state.isLoaded = true; // Still set to true so user can see error
+                        this.state.isLoaded = true;
                         this.renderError();
                     });
             }, 4000); // 4 second delay
+        },
+        
+        /**
+         * Load messages from Power Pages Web API
+         */
+        loadMessagesFromPortal: async function() {
+            try {
+                const config = this.config.portalDataSource;
+                const readOps = config.operations.read;
+                
+                if (!readOps.enabled) {
+                    throw new Error('Read operations are not enabled');
+                }
+                
+                // Build OData query parameters
+                const params = new URLSearchParams();
+                
+                if (readOps.select) {
+                    params.append('$select', readOps.select);
+                }
+                
+                if (readOps.filter) {
+                    params.append('$filter', readOps.filter);
+                }
+                
+                if (readOps.orderBy) {
+                    params.append('$orderby', readOps.orderBy);
+                }
+                
+                if (readOps.expand) {
+                    params.append('$expand', readOps.expand);
+                }
+                
+                // Build full URL
+                const url = `${config.baseUrl}/${config.entitySetName}?${params.toString()}`;
+                
+                // Get CSRF token for authentication
+                const token = await this.getPortalToken();
+                
+                // Make API request
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        '__RequestVerificationToken': token,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Map Dataverse fields to internal message format
+                this.state.messages = this.mapPortalDataToMessages(data.value || []);
+                this.processMessages();
+                this.state.isLoading = false;
+                this.state.isLoaded = true;
+                this.renderMessages();
+                
+            } catch (error) {
+                console.error('Portal Inbox Widget Error:', error);
+                this.state.isLoading = false;
+                this.state.isLoaded = true;
+                this.renderError();
+            }
+        },
+        
+        /**
+         * Get CSRF token for Power Pages Web API authentication
+         */
+        getPortalToken: function() {
+            return new Promise((resolve, reject) => {
+                // Check if shell.getTokenDeferred exists (Power Pages environment)
+                if (typeof shell !== 'undefined' && shell.getTokenDeferred) {
+                    shell.getTokenDeferred().done(function(token) {
+                        resolve(token);
+                    }).fail(function() {
+                        reject(new Error('Failed to get authentication token'));
+                    });
+                } else {
+                    // Fallback: try to get token from meta tag or cookie
+                    const tokenMeta = document.querySelector('meta[name="__RequestVerificationToken"]');
+                    if (tokenMeta) {
+                        resolve(tokenMeta.getAttribute('content'));
+                    } else {
+                        reject(new Error('Authentication token not available'));
+                    }
+                }
+            });
+        },
+        
+        /**
+         * Map Dataverse fields to internal message format
+         */
+        mapPortalDataToMessages: function(records) {
+            return records.map(record => ({
+                id: record.msfed_messageid || record.id,
+                from: record.msfed_from || 'Unknown',
+                subject: record.msfed_subject || '(No Subject)',
+                body: record.msfed_body || '',
+                date: record.msfed_sentdate || new Date().toISOString(),
+                read: record.msfed_isread || false,
+                category: record.msfed_category || 'general'
+            }));
+        },
+        
+        /**
+         * Update message read status via Web API
+         */
+        updateMessageReadStatus: async function(messageId, isRead) {
+            // Only update via API if using portal data source
+            if (this.isLocalEnvironment() || !this.config.portalDataSource) {
+                console.log('Local environment: Read status not persisted to server');
+                return;
+            }
+            
+            try {
+                const config = this.config.portalDataSource;
+                const updateOps = config.operations.update;
+                
+                if (!updateOps.enabled) {
+                    console.warn('Update operations are not enabled');
+                    return;
+                }
+                
+                const url = `${config.baseUrl}/${config.entitySetName}(${messageId})`;
+                const token = await this.getPortalToken();
+                
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        '__RequestVerificationToken': token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        msfed_isread: isRead
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                console.log('Message read status updated successfully');
+                
+            } catch (error) {
+                console.error('Failed to update message read status:', error);
+            }
         },
         
         /**
@@ -697,6 +902,8 @@
             // Mark as read
             if (!message.read) {
                 message.read = true;
+                // Update via Web API if in portal environment
+                this.updateMessageReadStatus(messageId, true);
                 this.processMessages();
                 this.renderMessages();
             }
