@@ -8,7 +8,7 @@ document.addEventListener('portalExtensionsLoaded', function() {
     // Initialize Portal Inbox Extension
     PortalInboxExtention.init({
         // Data sources for local and portal environments
-        localDataSource: 'portal-inbox-extention/messages.json',
+        localDataSource: 'portal-inbox-extention/localDataSource.json',
         portalDataSource: {
             entitySetName: 'msfed_messages',
             baseUrl: '/_api',

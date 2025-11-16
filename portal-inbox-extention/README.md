@@ -63,7 +63,7 @@ This extension follows a strict isolation pattern:
 <script>
     PortalInboxExtention.init({
         enabled: true,  // Optional: Set to false to disable
-        dataSource: 'messages.json',
+        dataSource: 'localDataSource.json',
         containerId: 'portal-inbox-extention'
     });
 </script>
@@ -78,7 +78,7 @@ The extension supports **two data sources** that automatically switch based on e
 #### Local Development (JSON File)
 ```javascript
 PortalInboxExtention.init({
-    localDataSource: 'messages.json',  // Local JSON file for development
+    localDataSource: 'localDataSource.json',  // Local JSON file for development
     containerId: 'portal-inbox-extention'
 });
 ```
@@ -86,7 +86,7 @@ PortalInboxExtention.init({
 #### Production (Power Pages Web API)
 ```javascript
 PortalInboxExtention.init({
-    localDataSource: 'messages.json',  // Fallback for local testing
+    localDataSource: 'localDataSource.json',  // Fallback for local testing
     portalDataSource: {
         entitySetName: 'msfed_messages',  // Dataverse table EntitySetName
         baseUrl: '/_api',                 // Web API base URL
@@ -140,7 +140,7 @@ Portal Inbox Extension: Using Power Pages Web API
 ```javascript
 PortalInboxExtention.init({
     enabled: true,                      // Optional: Set to false to disable extension (default: true)
-    localDataSource: 'messages.json',   // Required: Local JSON file path
+    localDataSource: 'localDataSource.json',   // Required: Local JSON file path
     portalDataSource: { ... },          // Optional: Web API config (required for production)
     containerId: 'portal-inbox-extention'  // Required: ID of container element
 });
@@ -257,7 +257,7 @@ Match the inbox to your site's branding:
 ```javascript
 PortalInboxExtention.init({
     enabled: true,
-    dataSource: 'messages.json',
+    dataSource: 'localDataSource.json',
     containerId: 'portal-inbox-extention',
     colors: {
         // Use your brand colors
@@ -316,7 +316,7 @@ Initialize the extention with configuration options.
 **Example:**
 ```javascript
 PortalInboxExtention.init({
-    dataSource: 'messages.json',
+    dataSource: 'localDataSource.json',
     containerId: 'portal-inbox-extention'
 });
 ```
@@ -368,7 +368,7 @@ PortalInboxExtention.refresh();
     <!-- Initialize Extension -->
     <script>
         PortalInboxExtention.init({
-            dataSource: 'messages.json',
+            dataSource: 'localDataSource.json',
             containerId: 'portal-inbox-extention'
         });
     </script>
@@ -382,7 +382,7 @@ PortalInboxExtention.refresh();
 <script>
     PortalInboxExtention.init({
         // Required
-        dataSource: 'messages.json',
+        dataSource: 'localDataSource.json',
         containerId: 'my-custom-inbox',
         
         // Custom text
@@ -427,7 +427,7 @@ PortalInboxExtention.refresh();
 
 ```javascript
 PortalInboxExtention.init({
-    dataSource: 'messages.json',
+    dataSource: 'localDataSource.json',
     containerId: 'portal-inbox-extention',
     features: {
         enableArchive: false,
@@ -440,7 +440,7 @@ PortalInboxExtention.init({
 
 ```javascript
 PortalInboxExtention.init({
-    dataSource: 'messages.json',
+    dataSource: 'localDataSource.json',
     containerId: 'portal-inbox-extention',
     styles: {
         dropdownMinWidth: '500px',
@@ -453,7 +453,7 @@ PortalInboxExtention.init({
 
 ```javascript
 PortalInboxExtention.init({
-    dataSource: 'messages.json',
+    dataSource: 'localDataSource.json',
     containerId: 'portal-inbox-extention',
     text: {
         messagesHeader: 'Mensajes',
@@ -474,7 +474,7 @@ PortalInboxExtention.init({
 
 ```javascript
 PortalInboxExtention.init({
-    dataSource: 'messages.json',
+    dataSource: 'localDataSource.json',
     containerId: 'portal-inbox-extention',
     text: {
         dropdownToggleIcon: 'bi bi-chat-dots-fill'
@@ -606,7 +606,7 @@ All modals are dynamically created and managed by the extension with proper clea
 ## Files
 
 - `portal-inbox-extention.js` - Main extension JavaScript file (static, no config)
-- `messages.json` - Sample JSON data file
+- `localDataSource.json` - Sample JSON data file
 - `README.md` - This file
 
 **Demo:** See `portal-demo.html` in the solution root for a full demonstration.

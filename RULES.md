@@ -121,7 +121,7 @@
     ]
   },
   "initialization": {
-    "localDataSource": "portal-inbox-extention/messages.json",
+    "localDataSource": "portal-inbox-extention/localDataSource.json",
     "portalDataSource": {
       "entitySetName": "msfed_messages",
       "baseUrl": "/_api",
@@ -174,7 +174,7 @@ portal-extentions/
 ├── .gitignore
 ├── portal-inbox-extention/
 │   ├── portal-inbox-extention.js     # Extension code (deployed)
-│   ├── messages.json                 # Local test data (NOT deployed)
+│   ├── localDataSource.json                 # Local test data (NOT deployed)
 │   ├── manifest.json                 # Deployment config
 │   └── README.md                     # Documentation
 └── another-extension/

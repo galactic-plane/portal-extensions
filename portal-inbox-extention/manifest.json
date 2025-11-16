@@ -24,7 +24,7 @@
     ]
   },
   "initialization": {
-    "localDataSource": "portal-inbox-extention/messages.json",
+    "localDataSource": "portal-inbox-extention/localDataSource.json",
     "portalDataSource": {
       "entitySetName": "msfed_messages",
       "baseUrl": "/_api",

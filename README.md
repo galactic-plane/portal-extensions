@@ -23,7 +23,7 @@ A messaging extension with environment-aware data loading and full CRUD operatio
 - **Location:** `portal-inbox-extention/`
 - **Description:** Inbox messages with read/unread tracking, reply functionality, and archive features
 - **Data Sources:** 
-  - Local: `messages.json` (development/testing)
+  - Local: `localDataSource.json` (development/testing)
   - Portal: Power Pages Web API (production)
 - **Features:** Environment detection, OData queries, CSRF authentication, field mapping
 - **Manifest:** [View manifest.json](./portal-inbox-extention/manifest.json)
@@ -63,7 +63,7 @@ portal-extentions/
     ├── manifest.json                 # Deployment manifest
     ├── README.md                     # Extension-specific documentation
     ├── portal-inbox-extention.js     # Extension code (deployed)
-    └── messages.json                 # Local test data (NOT deployed)
+    └── localDataSource.json          # Local test data (NOT deployed)
 ```
 
 ## Manifest System Features
