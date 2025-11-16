@@ -13,8 +13,9 @@
 1. **1 JS file** - `{extension-name}.js` (the extension code)
 2. **1 JSON file** - `{data-file}.json` (sample data)
 3. **1 README file** - `README.md` (documentation)
+4. **1 MANIFEST file** - `manifest.json` (deployment configuration)
 
-### Total: 3 files per extension, no more, no less
+### Total: 4 files per extension, no more, no less
 
 ### HTML files are ONLY at the solution root (portal-demo.html)
 
@@ -77,27 +78,78 @@
 - ❌ No HTML files in extension folders
 - ✅ Only portal-demo.html at solution root
 
+## Manifest File Requirements
+
+### Every Extension MUST Include manifest.json:
+- **Purpose**: Tells C# plugin where to deploy the extension JavaScript file
+- **Location**: Root of extension folder (e.g., `portal-inbox-extention/manifest.json`)
+- **Schema**: Must reference `../manifest.schema.json`
+- **Required Sections**:
+  - `publisher`: Organization name and Dataverse prefix
+  - `extension`: ID, name, and version
+  - `dependencies`: Bootstrap and Bootstrap Icons versions
+  - `deployment.webFiles`: Where to publish the JS file in the portal
+
+### Manifest Structure:
+```json
+{
+  "$schema": "../manifest.schema.json",
+  "publisher": {
+    "name": "Your Organization",
+    "prefix": "cr4bc"
+  },
+  "extension": {
+    "id": "portal-inbox-extension",
+    "name": "Portal Inbox Extension",
+    "version": "1.0.0"
+  },
+  "dependencies": {
+    "bootstrap": "5.x",
+    "bootstrapIcons": "1.11.x"
+  },
+  "deployment": {
+    "webFiles": [
+      {
+        "name": "portal-inbox-extension.js",
+        "source": "./portal-inbox-extention.js",
+        "partialUrl": "portal-extensions/portal-inbox-extension.js"
+      }
+    ]
+  }
+}
+```
+
+### Notes:
+- Each extension's own solution handles tables, permissions, and web roles
+- `messages.json` is only for local testing - actual implementation uses Web API
+- Manifest only handles portal web file deployment
+
 ## Before Making Any Changes:
 1. Read this RULES.md file
 2. Verify current structure follows rules
 3. Plan changes to comply with rules
 4. Execute changes
-5. Verify final structure has exactly 3 files per extension
+5. Verify final structure has exactly 4 files per extension (JS, JSON, README, MANIFEST)
 
 ## Repository Structure:
 ```
 portal-extentions/
 ├── portal-demo.html (main demo page)
 ├── portal-extensions.js (loader for all extensions)
+├── manifest.schema.json (JSON schema for extension manifests)
 ├── RULES.md (this file)
 ├── README.md (solution-level documentation)
 ├── .gitignore
 ├── portal-inbox-extention/
 │   ├── portal-inbox-extention.js
 │   ├── messages.json
+│   ├── manifest.json
 │   └── README.md
 └── another-extension/
     ├── another-extension.js
+    ├── data.json
+    ├── manifest.json
+    └── README.md
     ├── data.json
     └── README.md
 ```

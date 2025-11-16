@@ -131,12 +131,6 @@
                 return;
             }
             
-            // Check enabled flag first - if explicitly set to false, do not initialize
-            if (options.enabled === false) {
-                console.log('Portal Inbox Extension: Disabled via configuration');
-                return;
-            }
-            
             if (!options.dataSource) {
                 console.error('Portal Inbox Extension: dataSource is required in configuration');
                 return;

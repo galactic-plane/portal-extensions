@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/portal-extension-manifest.json",
+  "title": "Portal Extension Manifest",
+  "description": "Simple manifest for portal extension deployment",
+  "type": "object",
+  "required": ["publisher", "extension", "dependencies", "deployment"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "publisher": {
+      "type": "object",
+      "required": ["name", "prefix"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Publisher/organization name"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Publisher prefix for Dataverse entities"
+        }
+      }
+    },
+    "extension": {
+      "type": "object",
+      "required": ["id", "name", "version"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique extension identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Extension display name"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version (x.y.z)"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "bootstrap": {
+          "type": "string",
+          "description": "Bootstrap version requirement"
+        },
+        "bootstrapIcons": {
+          "type": "string",
+          "description": "Bootstrap Icons version requirement"
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "required": ["webFiles"],
+      "properties": {
+        "webFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "source", "partialUrl"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Web file name"
+              },
+              "source": {
+                "type": "string",
+                "description": "Relative path to source file"
+              },
+              "partialUrl": {
+                "type": "string",
+                "description": "Portal URL path for the file"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

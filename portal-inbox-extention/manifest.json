@@ -1,0 +1,25 @@
+{
+  "$schema": "../manifest.schema.json",
+  "publisher": {
+    "name": "Your Organization",
+    "prefix": "cr4bc"
+  },
+  "extension": {
+    "id": "portal-inbox-extension",
+    "name": "Portal Inbox Extension",
+    "version": "1.0.0"
+  },
+  "dependencies": {
+    "bootstrap": "5.x",
+    "bootstrapIcons": "1.11.x"
+  },
+  "deployment": {
+    "webFiles": [
+      {
+        "name": "portal-inbox-extension.js",
+        "source": "./portal-inbox-extention.js",
+        "partialUrl": "portal-extensions/portal-inbox-extension.js"
+      }
+    ]
+  }
+}
