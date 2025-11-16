@@ -2,25 +2,30 @@
 
 This solution contains multiple portal extension projects that enhance and extend portal functionality for Microsoft Power Pages.
 
-## 🚀 New: Automated Deployment System
+## 🚀 Architecture Overview
 
-This repository now includes a **comprehensive manifest-based deployment system** that enables C# plugins to automatically deploy extensions to Power Pages portals. Each extension includes a `manifest.json` file that describes all deployment requirements.
+This repository includes a **manifest-based deployment system** where:
+- Each extension has a `manifest.json` defining deployment configuration
+- C# plugin reads manifests and generates `portal-extensions-init.js`
+- Extensions automatically detect environment (local vs portal)
+- Dual data sources: Local JSON for dev, Power Pages Web API for production
 
 ### Quick Links
-- 📋 **[Manifest Guide](./MANIFEST_GUIDE.md)** - Complete manifest documentation
-- 📦 **[Implementation Summary](./IMPLEMENTATION_SUMMARY.md)** - Overview of the deployment system
+- 📋 **[Manifest Schema](./manifest.schema.json)** - JSON Schema for validation
 - 📐 **[Development Rules](./RULES.md)** - Repository structure and coding standards
-- 🔧 **[C# Models](./ExtensionManifest.cs)** - Ready-to-use C# classes for your plugin
-- ⚙️ **[Deployment Service](./ExtensionDeploymentService.cs)** - Reference C# implementation
+- � **[Extension README](./portal-inbox-extention/README.md)** - Detailed extension docs
 
 ## Extensions
 
 ### Portal Inbox Extension
-An extension that displays inbox messages within the portal interface using Bootstrap 5 modals for all dialogs.
+A messaging extension with environment-aware data loading and full CRUD operations.
 
 - **Location:** `portal-inbox-extention/`
-- **Description:** Provides an inbox extension for displaying messages with read/unread tracking, reply functionality, and archive features
-- **UI Components:** Uses Bootstrap 5 modals exclusively (no native browser popups)
+- **Description:** Inbox messages with read/unread tracking, reply functionality, and archive features
+- **Data Sources:** 
+  - Local: `messages.json` (development/testing)
+  - Portal: Power Pages Web API (production)
+- **Features:** Environment detection, OData queries, CSRF authentication, field mapping
 - **Manifest:** [View manifest.json](./portal-inbox-extention/manifest.json)
 - **Documentation:** [View Extension README](./portal-inbox-extention/README.md)
 - **Demo:** See `portal-demo.html` for full demonstration
@@ -33,58 +38,46 @@ Each extension is self-contained within its own directory. Navigate to the speci
 
 ### For C# Plugin Developers
 
-1. **Copy the C# files to your project:**
-   - `ExtensionManifest.cs` - Model classes for manifest deserialization
-   - `ExtensionDeploymentService.cs` - Deployment service implementation
+The C# plugin should:
 
-2. **Install required NuGet packages:**
-   ```bash
-   dotnet add package Newtonsoft.Json
-   dotnet add package Microsoft.PowerPlatform.Dataverse.Client
+1. **Read all `manifest.json` files** from extension folders
+2. **Generate `portal-extensions-init.js`** in the root with all initialization configs
+3. **Deploy web files** to Power Pages as specified in manifests
+4. **Upload to tracker code** (head content snippet):
+   ```html
+   <script src="/portal-extensions/portal-extensions.js"></script>
+   <script src="/portal-extensions/portal-extensions-init.js"></script>
    ```
-
-3. **Use the deployment service:**
-   ```csharp
-   var service = new ExtensionDeploymentService(serviceClient, websiteId, "/portal-extensions/");
-   var result = service.DeployExtension("path/to/manifest.json");
-   ```
-
-4. **Read the documentation:**
-   - [MANIFEST_GUIDE.md](./MANIFEST_GUIDE.md) - Learn about every manifest section
-   - [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) - Understand the deployment flow
 
 ## Structure
 
 ```
 portal-extentions/
-├── manifest.schema.json         # JSON Schema for manifest validation
-├── MANIFEST_GUIDE.md            # Complete manifest documentation
-├── IMPLEMENTATION_SUMMARY.md    # Deployment system overview
-├── ExtensionManifest.cs         # C# model classes
-├── ExtensionDeploymentService.cs # C# deployment service
-├── portal-demo.html             # Main demo page for all extensions
-├── portal-extensions.js         # Extension loader
-├── RULES.md                     # Development rules and standards
-├── README.md                    # This file - master documentation
-└── portal-inbox-extention/      # Individual extension projects
-    ├── manifest.json            # Deployment manifest
-    ├── README.md                # Extension-specific documentation
-    ├── portal-inbox-extention.js
-    └── messages.json
+├── manifest.schema.json              # JSON Schema for manifest validation
+├── portal-extensions-init.js         # GENERATED - Combined initialization (DO NOT EDIT)
+├── portal-demo.html                  # Demo page showing all extensions
+├── portal-extensions.js              # Extension loader (static)
+├── RULES.md                          # Development rules and standards
+├── README.md                         # This file - master documentation
+└── portal-inbox-extention/           # Individual extension projects
+    ├── manifest.json                 # Deployment manifest
+    ├── README.md                     # Extension-specific documentation
+    ├── portal-inbox-extention.js     # Extension code (deployed)
+    └── messages.json                 # Local test data (NOT deployed)
 ```
 
 ## Manifest System Features
 
-✅ **Automated Deployment** - C# plugin reads manifest and deploys automatically  
-✅ **Dataverse Integration** - Automatically creates tables, permissions, and roles  
-✅ **Web File Management** - Uploads JavaScript and data files  
-✅ **Content Snippets** - Configures tracking code and snippets  
-✅ **Site Settings** - Creates configuration settings  
-✅ **Security Configuration** - Built-in authentication and authorization  
-✅ **Dependency Management** - Validates required libraries  
-✅ **Multi-language Support** - Localization ready  
-✅ **Type Safety** - Complete C# models included  
+✅ **Environment Detection** - Auto-switches between local JSON and Web API  
+✅ **Dual Data Sources** - Development (JSON) and Production (Dataverse)  
+✅ **Generated Initialization** - C# plugin creates init file from manifests  
+✅ **Web File Management** - Uploads JavaScript files to portal  
+✅ **OData Query Support** - $select, $filter, $orderby, $expand  
+✅ **CRUD Operations** - Read, Create, Update, Delete via Web API  
+✅ **CSRF Authentication** - Secure Web API calls  
+✅ **Field Mapping** - Dataverse fields mapped to internal format  
 ✅ **JSON Schema Validation** - Real-time validation in VS Code  
+✅ **Static Extensions** - All config in init, extensions remain static  
 
 ## Adding New Extensions
 
@@ -92,58 +85,87 @@ To add a new extension to this solution:
 
 1. **Create extension folder** at the root level
 2. **Add required files** (exactly 4 files per extension):
-   - `{extension-name}.js` - Extension code
-   - `{data-file}.json` - Sample data
-   - `manifest.json` - Deployment configuration
+   - `{extension-name}.js` - Extension code (static, no hardcoded config)
+   - `{data-file}.json` - Sample data for local testing (NOT deployed)
+   - `manifest.json` - Deployment configuration with initialization section
    - `README.md` - Documentation
 
 3. **Configure manifest.json:**
    ```json
    {
      "$schema": "../manifest.schema.json",
-     "manifestVersion": "1.0.0",
+     "publisher": {
+       "name": "Your Organization",
+       "prefix": "prefix"
+     },
      "extension": {
        "id": "my-extension",
        "name": "My Extension",
        "version": "1.0.0"
      },
-     "deployment": { /* ... */ }
+     "dependencies": {
+       "bootstrap": "5.x",
+       "javascript": "ES6+"
+     },
+     "deployment": {
+       "webFiles": [
+         {
+           "name": "my-extension.js",
+           "source": "./my-extension.js",
+           "partialUrl": "portal-extensions/my-extension.js"
+         }
+       ]
+     },
+     "initialization": {
+       "localDataSource": "my-extension/data.json",
+       "portalDataSource": {
+         "entitySetName": "prefix_tablename",
+         "baseUrl": "/_api",
+         "operations": { /* CRUD config */ }
+       },
+       "containerId": "my-extension-container",
+       "config": { /* Extension-specific config */ }
+     }
    }
    ```
 
-4. **Update portal-extensions.js** - Add to the extensions array
-5. **Follow the rules** - See [RULES.md](./RULES.md) for complete guidelines
+4. **Follow the rules** - See [RULES.md](./RULES.md) for complete guidelines
 
-## Deployment with C# Plugin
+## C# Plugin Workflow
 
-The manifest-based deployment system handles:
+The C# plugin should implement this workflow:
 
-1. ✅ Dataverse table creation
-2. ✅ Table permission configuration  
-3. ✅ Web role setup
-4. ✅ Web file uploads
-5. ✅ Tracking code injection
-6. ✅ Content snippet creation
-7. ✅ Site settings configuration
-8. ✅ Dependency validation
-9. ✅ Customization publishing
+1. ✅ **Scan** extension folders for `manifest.json` files
+2. ✅ **Validate** manifests against JSON schema
+3. ✅ **Generate** `portal-extensions-init.js` from all `initialization` sections
+4. ✅ **Deploy** web files specified in `deployment.webFiles`
+5. ✅ **Upload** both scripts to tracker code (head) content snippet:
+   ```html
+   <script src="/portal-extensions/portal-extensions.js"></script>
+   <script src="/portal-extensions/portal-extensions-init.js"></script>
+   ```
+6. ✅ **Configure** Power Pages Web API site settings (if using portalDataSource)
+7. ✅ **Publish** customizations
 
-**Zero manual configuration required!** 🎉
+**Result:** Zero manual configuration! Extensions work locally and in production. 🎉
 
 ## Contributing
 
 When working on extensions, please ensure:
 - Each extension has exactly 4 files (JS, JSON, manifest, README)
+- Extension JS files are static (no hardcoded configuration)
+- All configuration goes in manifest `initialization` section
+- Local data files (JSON) are for testing only and not deployed
 - Follow the structure defined in [RULES.md](./RULES.md)
-- Update manifest.json with all deployment requirements
+- Update manifest.json with both localDataSource and portalDataSource
 - Code follows consistent formatting and style
+- Test both local and portal data sources
+- Validate manifest against schema before committing
 - Changes are committed with clear, descriptive messages
-- Test manifest validation before committing
 
 ## Documentation
 
-- **[MANIFEST_GUIDE.md](./MANIFEST_GUIDE.md)** - Complete guide to the manifest system
-- **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** - System overview and quick reference
+- **[manifest.schema.json](./manifest.schema.json)** - JSON Schema for validation
 - **[RULES.md](./RULES.md)** - Development rules and repository structure
 - **Extension READMEs** - Individual extension documentation
 

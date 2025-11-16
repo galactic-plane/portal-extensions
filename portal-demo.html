@@ -377,9 +377,23 @@
             <div class="row mt-5">
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="feature-item">
-                        <i class="bi bi-lightning-charge-fill"></i>
-                        <h4>Dynamic Loading</h4>
-                        <p>Single loader dynamically imports all extensions on-demand for optimal performance</p>
+                        <i class="bi bi-globe"></i>
+                        <h4>Environment Detection</h4>
+                        <p>Automatically switches between local JSON and Power Pages Web API based on hostname</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-database-fill"></i>
+                        <h4>Dual Data Sources</h4>
+                        <p>Local JSON files for development, Power Pages Web API with OData for production</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-file-code-fill"></i>
+                        <h4>Manifest-Based</h4>
+                        <p>C# plugin reads manifests and generates initialization automatically</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -392,29 +406,15 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="feature-item">
                         <i class="bi bi-gear-fill"></i>
-                        <h4>Configuration-Based</h4>
-                        <p>All configuration passed during initialization keeps extension files static and reusable</p>
+                        <h4>Static Extensions</h4>
+                        <p>Extension files are static with no hardcoded config - all configuration in manifest</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="feature-item">
-                        <i class="bi bi-box-seam"></i>
-                        <h4>Modular Design</h4>
-                        <p>Self-contained extensions with clear separation of concerns and dependencies</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="feature-item">
-                        <i class="bi bi-globe"></i>
-                        <h4>Localization Ready</h4>
-                        <p>Built-in support for multiple languages and regional customizations</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="feature-item">
-                        <i class="bi bi-plugin"></i>
-                        <h4>Easy Integration</h4>
-                        <p>Simple setup with Bootstrap 5 compatibility and minimal dependencies</p>
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        <h4>CRUD Operations</h4>
+                        <p>Full Create, Read, Update, Delete support via Power Pages Web API with CSRF authentication</p>
                     </div>
                 </div>
             </div>
@@ -431,15 +431,18 @@
                 <div class="col-lg-6 mb-4">
                     <div class="extension-card">
                         <h3><i class="bi bi-envelope-fill"></i> Portal Inbox Extension</h3>
-                        <p>A comprehensive messaging system for Power Pages portals with real-time notifications and message management.</p>
+                        <p>A comprehensive messaging system for Power Pages portals with dual data sources and environment detection.</p>
                         <ul class="features-list">
-                            <li><i class="bi bi-check-circle-fill"></i> Unread message badges</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Message read/unread tracking</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Environment auto-detection (local/portal)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Local JSON for development</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Power Pages Web API for production</li>
+                            <li><i class="bi bi-check-circle-fill"></i> OData queries ($select, $filter, $orderby)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> CRUD operations with CSRF auth</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Read/unread tracking persisted to Dataverse</li>
                             <li><i class="bi bi-check-circle-fill"></i> Reply functionality with templates</li>
                             <li><i class="bi bi-check-circle-fill"></i> Archive and organize messages</li>
                             <li><i class="bi bi-check-circle-fill"></i> External link warnings</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Custom events for integration</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Fully customizable UI text and icons</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Fully customizable via manifest</li>
                         </ul>
                         <p class="mt-3"><strong>Status:</strong> <span class="badge bg-success">Production Ready</span></p>
                     </div>
@@ -475,26 +478,26 @@
                 <div class="architecture-flow">
                     <div class="architecture-box">
                         <i class="bi bi-file-code-fill"></i>
-                        <h4>portal-demo.html</h4>
-                        <p class="small mb-0">Main page loads</p>
+                        <h4>C# Plugin</h4>
+                        <p class="small mb-0">Reads manifests</p>
                     </div>
                     <div class="architecture-arrow">→</div>
                     <div class="architecture-box">
-                        <i class="bi bi-cloud-download-fill"></i>
-                        <h4>portal-extensions.js</h4>
-                        <p class="small mb-0">Loader script</p>
+                        <i class="bi bi-gear-fill"></i>
+                        <h4>Generates Init</h4>
+                        <p class="small mb-0">portal-extensions-init.js</p>
                     </div>
                     <div class="architecture-arrow">→</div>
                     <div class="architecture-box">
-                        <i class="bi bi-boxes"></i>
-                        <h4>Extension Files</h4>
-                        <p class="small mb-0">Dynamic import</p>
+                        <i class="bi bi-cloud-upload-fill"></i>
+                        <h4>Deploy to Portal</h4>
+                        <p class="small mb-0">Tracker code snippet</p>
                     </div>
                     <div class="architecture-arrow">→</div>
                     <div class="architecture-box">
                         <i class="bi bi-check-circle-fill"></i>
-                        <h4>Initialize</h4>
-                        <p class="small mb-0">Configure & run</p>
+                        <h4>Auto-Load</h4>
+                        <p class="small mb-0">Environment detection</p>
                     </div>
                 </div>
             </div>
@@ -504,10 +507,11 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h4 class="text-primary"><i class="bi bi-folder-fill"></i> File Structure</h4>
-                            <p>Each extension contains exactly 3 files:</p>
+                            <p>Each extension contains exactly 4 files:</p>
                             <ul class="list-unstyled">
-                                <li><code>extension.js</code> - Core logic</li>
-                                <li><code>data.json</code> - Sample data</li>
+                                <li><code>extension.js</code> - Core logic (deployed)</li>
+                                <li><code>data.json</code> - Local test data (NOT deployed)</li>
+                                <li><code>manifest.json</code> - Config (read by C# plugin)</li>
                                 <li><code>README.md</code> - Documentation</li>
                             </ul>
                         </div>
@@ -516,12 +520,13 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h4 class="text-primary"><i class="bi bi-code-square"></i> Static Extensions</h4>
-                            <p>Extension JS files are completely static:</p>
+                            <h4 class="text-primary"><i class="bi bi-database-fill"></i> Dual Data Sources</h4>
+                            <p>Automatic environment detection:</p>
                             <ul class="list-unstyled">
-                                <li>✓ No hardcoded config</li>
-                                <li>✓ Reusable across sites</li>
-                                <li>✓ Version control friendly</li>
+                                <li>✓ Local: JSON files (dev/test)</li>
+                                <li>✓ Portal: Web API (production)</li>
+                                <li>✓ OData queries ($select, $filter)</li>
+                                <li>✓ CRUD operations</li>
                             </ul>
                         </div>
                     </div>
@@ -529,12 +534,13 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h4 class="text-primary"><i class="bi bi-sliders"></i> Configuration</h4>
-                            <p>All config passed at runtime:</p>
+                            <h4 class="text-primary"><i class="bi bi-sliders"></i> Generated Init</h4>
+                            <p>C# plugin creates initialization:</p>
                             <ul class="list-unstyled">
-                                <li>✓ Text & translations</li>
-                                <li>✓ Icons & styling</li>
-                                <li>✓ Feature flags</li>
+                                <li>✓ Reads all manifests</li>
+                                <li>✓ Combines configs</li>
+                                <li>✓ Generates init.js</li>
+                                <li>✓ Deploys to portal</li>
                             </ul>
                         </div>
                     </div>
@@ -546,26 +552,45 @@
     <!-- Integration Section -->
     <section class="content-section">
         <div class="container">
-            <h2 class="section-title">Quick Integration</h2>
-            <p class="section-subtitle">Get started in minutes</p>
+            <h2 class="section-title">C# Plugin Integration</h2>
+            <p class="section-subtitle">Automated deployment from manifest</p>
             
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
                     <div class="card">
                         <div class="card-body">
-                            <h4>1. Include the loader script</h4>
-                            <pre class="bg-light p-3 rounded"><code>&lt;script src="portal-extensions.js"&gt;&lt;/script&gt;</code></pre>
+                            <h4>1. C# Plugin reads manifest.json</h4>
+                            <pre class="bg-light p-3 rounded"><code>{
+  "initialization": {
+    "localDataSource": "messages.json",
+    "portalDataSource": {
+      "entitySetName": "msfed_messages",
+      "baseUrl": "/_api",
+      "operations": { /* CRUD config */ }
+    },
+    "containerId": "portal-inbox-extention",
+    "config": { /* Extension config */ }
+  }
+}</code></pre>
                             
-                            <h4 class="mt-4">2. Add extension containers</h4>
-                            <pre class="bg-light p-3 rounded"><code>&lt;div id="portal-inbox-extention"&gt;&lt;/div&gt;</code></pre>
-                            
-                            <h4 class="mt-4">3. Initialize after load</h4>
+                            <h4 class="mt-4">2. Plugin generates portal-extensions-init.js</h4>
                             <pre class="bg-light p-3 rounded"><code>document.addEventListener('portalExtensionsLoaded', function() {
     PortalInboxExtention.init({
-        dataSource: 'portal-inbox-extention/messages.json',
-        containerId: 'portal-inbox-extention'
+        localDataSource: 'portal-inbox-extention/messages.json',
+        portalDataSource: { /* from manifest */ },
+        containerId: 'portal-inbox-extention',
+        config: { /* from manifest */ }
     });
 });</code></pre>
+                            
+                            <h4 class="mt-4">3. Deploy to Power Pages tracker code</h4>
+                            <pre class="bg-light p-3 rounded"><code>&lt;script src="/portal-extensions/portal-extensions.js"&gt;&lt;/script&gt;
+&lt;script src="/portal-extensions/portal-extensions-init.js"&gt;&lt;/script&gt;</code></pre>
+
+                            <h4 class="mt-4">4. Extension auto-detects environment</h4>
+                            <pre class="bg-light p-3 rounded"><code>// localhost → Uses messages.json
+// portal domain → Uses /_api/msfed_messages
+// Automatic! No manual switching required.</code></pre>
                         </div>
                     </div>
                 </div>
