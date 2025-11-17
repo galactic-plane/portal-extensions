@@ -26,23 +26,17 @@
   "initialization": {
     "localDataSource": "portal-inbox-extension/localDataSource.json",
     "portalDataSource": {
-      "entitySetName": "msfed_messages",
+      "entitySetName": "adx_portalcomments",
       "baseUrl": "/_api",
       "operations": {
         "read": {
-          "enabled": true,
-          "select": "msfed_messageid,msfed_subject,msfed_body,msfed_from,msfed_sentdate,msfed_isread,msfed_category",
-          "filter": "",
-          "orderBy": "msfed_sentdate desc",
-          "expand": ""
+          "enabled": true
         },
         "create": {
-          "enabled": true,
-          "fields": "msfed_subject,msfed_body,msfed_from,msfed_sentdate,msfed_isread,msfed_category"
+          "enabled": true
         },
         "update": {
-          "enabled": true,
-          "fields": "msfed_subject,msfed_isread,msfed_category"
+          "enabled": false
         },
         "delete": {
           "enabled": false

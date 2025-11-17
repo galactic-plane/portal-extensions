@@ -1,52 +1,133 @@
 {
-    "messages": [
+    "@odata.context": "https://localhost/_api/$metadata#adx_portalcomments",
+    "value": [
         {
-            "id": "msg-001",
-            "from": "System Administrator",
+            "@odata.etag": "W/\"1001\"",
             "subject": "Welcome to the Portal - Please review important updates",
-            "date": "2025-11-15T10:30:00Z",
-            "read": false,
-            "body": "Welcome to the portal. Please review the latest updates and guidelines. Visit our <a href='https://portal.example.com/help' target='_blank'>Help Center</a> for more information or check out the <a href='https://portal.example.com/getting-started' target='_blank'>Getting Started Guide</a>."
+            "activityid": "123e4567-e89b-12d3-a456-426614174001",
+            "statuscode": 1,
+            "statecode": 0,
+            "description": "Welcome to the portal. Please review the latest updates and guidelines. Visit our <a href='https://portal.example.com/help' target='_blank'>Help Center</a> for more information or check out the <a href='https://portal.example.com/getting-started' target='_blank'>Getting Started Guide</a>.",
+            "_regardingobjectid_value": "app-001",
+            "activitytypecode": "adx_portalcomment",
+            "adx_portalcommentdirectioncode": 2,
+            "createdon": "2025-11-15T10:30:00Z",
+            "adx_portalcomment_activity_parties": [
+                {
+                    "_partyid_value": "staff-001",
+                    "activitypartyid": "party-001",
+                    "partyid_contact": null,
+                    "partyid_systemuser": {
+                        "fullname": "System Administrator",
+                        "systemuserid": "staff-001"
+                    }
+                },
+                {
+                    "_partyid_value": "contact-001",
+                    "activitypartyid": "party-002",
+                    "partyid_contact": {
+                        "fullname": "John Doe",
+                        "contactid": "contact-001"
+                    },
+                    "partyid_systemuser": null
+                }
+            ]
         },
         {
-            "id": "msg-002",
-            "from": "Support Team",
+            "@odata.etag": "W/\"1002\"",
             "subject": "Your support ticket #12345 has been resolved",
-            "date": "2025-11-15T09:15:00Z",
-            "read": false,
-            "body": "Your support ticket has been resolved. Please review the <a href='https://support.example.com/tickets/12345' target='_blank'>resolution details</a> and let us know if you need any further assistance."
+            "activityid": "123e4567-e89b-12d3-a456-426614174002",
+            "statuscode": 1,
+            "statecode": 0,
+            "description": "Your support ticket has been resolved. Please review the <a href='https://support.example.com/tickets/12345' target='_blank'>resolution details</a> and let us know if you need any further assistance.",
+            "_regardingobjectid_value": "app-002",
+            "activitytypecode": "adx_portalcomment",
+            "adx_portalcommentdirectioncode": 2,
+            "createdon": "2025-11-15T09:15:00Z",
+            "adx_portalcomment_activity_parties": [
+                {
+                    "_partyid_value": "staff-002",
+                    "activitypartyid": "party-003",
+                    "partyid_contact": null,
+                    "partyid_systemuser": {
+                        "fullname": "Support Team",
+                        "systemuserid": "staff-002"
+                    }
+                },
+                {
+                    "_partyid_value": "contact-001",
+                    "activitypartyid": "party-004",
+                    "partyid_contact": {
+                        "fullname": "John Doe",
+                        "contactid": "contact-001"
+                    },
+                    "partyid_systemuser": null
+                }
+            ]
         },
         {
-            "id": "msg-003",
-            "from": "Billing Department",
+            "@odata.etag": "W/\"1003\"",
             "subject": "Invoice #INV-2025-001 is ready",
-            "date": "2025-11-14T16:45:00Z",
-            "read": true,
-            "body": "Your invoice is ready for download. <a href='https://billing.example.com/invoices/INV-2025-001' target='_blank'>Click here to view your invoice</a> or visit the <a href='https://billing.example.com/dashboard' target='_blank'>Billing Dashboard</a>."
+            "activityid": "123e4567-e89b-12d3-a456-426614174003",
+            "statuscode": 1,
+            "statecode": 0,
+            "description": "Your invoice is ready for download. <a href='https://billing.example.com/invoices/INV-2025-001' target='_blank'>Click here to view your invoice</a> or visit the <a href='https://billing.example.com/dashboard' target='_blank'>Billing Dashboard</a>.",
+            "_regardingobjectid_value": "app-003",
+            "activitytypecode": "adx_portalcomment",
+            "adx_portalcommentdirectioncode": 2,
+            "createdon": "2025-11-14T16:45:00Z",
+            "adx_portalcomment_activity_parties": [
+                {
+                    "_partyid_value": "staff-003",
+                    "activitypartyid": "party-005",
+                    "partyid_contact": null,
+                    "partyid_systemuser": {
+                        "fullname": "Billing Department",
+                        "systemuserid": "staff-003"
+                    }
+                },
+                {
+                    "_partyid_value": "contact-001",
+                    "activitypartyid": "party-006",
+                    "partyid_contact": {
+                        "fullname": "John Doe",
+                        "contactid": "contact-001"
+                    },
+                    "partyid_systemuser": null
+                }
+            ]
         },
         {
-            "id": "msg-004",
-            "from": "Account Manager",
+            "@odata.etag": "W/\"1004\"",
             "subject": "Scheduled maintenance this weekend",
-            "date": "2025-11-14T14:20:00Z",
-            "read": false,
-            "body": "Please be aware of scheduled maintenance on Saturday from 2am-6am EST. For more details, visit our <a href='https://status.example.com' target='_blank'>System Status Page</a>. If you have questions, please review our <a href='https://portal.example.com/maintenance-faq' target='_blank'>Maintenance FAQ</a>."
-        },
-        {
-            "id": "msg-005",
-            "from": "HR Department",
-            "subject": "Benefits enrollment deadline approaching",
-            "date": "2025-11-13T11:00:00Z",
-            "read": true,
-            "body": "Don't forget to complete your benefits enrollment by November 30th. Access the <a href='https://benefits.example.com/enrollment' target='_blank'>Benefits Enrollment Portal</a> or download the <a href='https://benefits.example.com/guide.pdf' target='_blank'>Benefits Guide PDF</a>."
-        },
-        {
-            "id": "msg-006",
-            "from": "Security Team",
-            "subject": "Password reset required for compliance",
-            "date": "2025-11-12T08:30:00Z",
-            "read": false,
-            "body": "As part of our security policy, please reset your password within 7 days. <a href='https://account.example.com/password-reset' target='_blank'>Reset your password here</a>. For security best practices, review our <a href='https://security.example.com/guidelines' target='_blank'>Security Guidelines</a>."
+            "activityid": "123e4567-e89b-12d3-a456-426614174004",
+            "statuscode": 1,
+            "statecode": 0,
+            "description": "Please be aware of scheduled maintenance on Saturday from 2am-6am EST. For more details, visit our <a href='https://status.example.com' target='_blank'>System Status Page</a>. If you have questions, please review our <a href='https://portal.example.com/maintenance-faq' target='_blank'>Maintenance FAQ</a>.",
+            "_regardingobjectid_value": "app-004",
+            "activitytypecode": "adx_portalcomment",
+            "adx_portalcommentdirectioncode": 2,
+            "createdon": "2025-11-14T14:20:00Z",
+            "adx_portalcomment_activity_parties": [
+                {
+                    "_partyid_value": "staff-004",
+                    "activitypartyid": "party-007",
+                    "partyid_contact": null,
+                    "partyid_systemuser": {
+                        "fullname": "Account Manager",
+                        "systemuserid": "staff-004"
+                    }
+                },
+                {
+                    "_partyid_value": "contact-001",
+                    "activitypartyid": "party-008",
+                    "partyid_contact": {
+                        "fullname": "John Doe",
+                        "contactid": "contact-001"
+                    },
+                    "partyid_systemuser": null
+                }
+            ]
         }
     ]
 }

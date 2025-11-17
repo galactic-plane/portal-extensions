@@ -89,7 +89,9 @@
                         return response.json();
                     })
                     .then(data => {
-                        this.state.messages = data.messages || [];
+                        // Handle both old format (data.messages) and new OData format (data.value)
+                        const records = data.value || data.messages || [];
+                        this.state.messages = this.mapPortalDataToMessages(records);
                         this.processMessages();
                         this.state.isLoading = false;
                         this.state.isLoaded = true;
@@ -177,22 +179,57 @@
         },
         
         /**
-         * Map Dataverse fields to internal message format
+         * Map Dataverse adx_portalcomments fields to internal message format
          */
         mapPortalDataToMessages: function(records) {
-            return records.map(record => ({
-                id: record.msfed_messageid || record.id,
-                from: record.msfed_from || 'Unknown',
-                subject: record.msfed_subject || '(No Subject)',
-                body: record.msfed_body || '',
-                date: record.msfed_sentdate || new Date().toISOString(),
-                read: record.msfed_isread || false,
-                category: record.msfed_category || 'general'
-            }));
+            return records.map(comment => {
+                // Handle both old format (simple message) and new OData format (adx_portalcomment)
+                // If it's already in simple format, return as-is with minimal transformation
+                if (comment.from && comment.body && !comment.activityid) {
+                    return {
+                        id: comment.id,
+                        from: comment.from,
+                        subject: comment.subject || '(No Subject)',
+                        body: comment.body || '',
+                        date: comment.date,
+                        read: comment.read !== undefined ? comment.read : false,
+                        category: comment.category || 'general'
+                    };
+                }
+                
+                // New OData format - extract activity parties
+                // Activity parties come as a single array, we need to find systemuser and contact
+                const parties = comment.adx_portalcomment_activity_parties || [];
+                const fromParty = parties.find(p => p.partyid_systemuser !== null && p.partyid_systemuser !== undefined);
+                const toParty = parties.find(p => p.partyid_contact !== null && p.partyid_contact !== undefined);
+                
+                // Determine read status based on localStorage
+                const lastChecked = localStorage.getItem('portalInbox_lastCheckedComments');
+                const lastCheckedDate = lastChecked ? new Date(lastChecked) : new Date(0);
+                const createdDate = new Date(comment.createdon || comment.date || new Date());
+                const isRead = createdDate <= lastCheckedDate;
+                
+                return {
+                    id: comment.activityid,
+                    from: fromParty?.partyid_systemuser?.fullname || 'Staff',
+                    subject: comment.subject || '(No Subject)',
+                    body: comment.description || '',
+                    date: comment.createdon || new Date().toISOString(),
+                    read: isRead,
+                    category: 'portal-comment',
+                    // Additional metadata
+                    regardingObjectId: comment._regardingobjectid_value,
+                    toContact: toParty?.partyid_contact?.fullname || 'You',
+                    directionCode: comment.adx_portalcommentdirectioncode,
+                    statecode: comment.statecode,
+                    statuscode: comment.statuscode
+                };
+            });
         },
         
         /**
-         * Update message read status via Web API
+         * Update message read status via localStorage
+         * For portal comments, we track the last checked time instead of individual read status
          */
         updateMessageReadStatus: async function(messageId, isRead) {
             if (this.isLocalEnvironment() || !this.config.portalDataSource) {
@@ -201,34 +238,20 @@
             }
             
             try {
-                const config = this.config.portalDataSource;
-                const updateOps = config.operations.update;
-                
-                if (!updateOps.enabled) {
-                    console.warn('Update operations are not enabled');
-                    return;
+                // Update localStorage to mark all messages up to this point as read
+                const message = this.getMessage(messageId);
+                if (message && isRead) {
+                    const currentLastChecked = localStorage.getItem('portalInbox_lastCheckedComments');
+                    const currentLastCheckedDate = currentLastChecked ? new Date(currentLastChecked) : new Date(0);
+                    const messageDate = new Date(message.date);
+                    
+                    // Only update if this message is newer than the last checked time
+                    if (messageDate > currentLastCheckedDate) {
+                        localStorage.setItem('portalInbox_lastCheckedComments', messageDate.toISOString());
+                    }
                 }
                 
-                const url = `${config.baseUrl}/${config.entitySetName}(${messageId})`;
-                const token = await this.getPortalToken();
-                
-                const response = await fetch(url, {
-                    method: 'PATCH',
-                    headers: {
-                        '__RequestVerificationToken': token,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        msfed_isread: isRead
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                console.log('Message read status updated successfully');
+                console.log('Message read status updated in localStorage');
                 
             } catch (error) {
                 console.error('Failed to update message read status:', error);
@@ -275,6 +298,78 @@
          */
         toggleView: function() {
             this.state.showArchived = !this.state.showArchived;
+        },
+        
+        /**
+         * Create a reply to a portal comment
+         * This will create a new adx_portalcomment with direction code = 1 (outgoing from contact)
+         */
+        createReply: async function(messageId, replyText) {
+            if (this.isLocalEnvironment() || !this.config.portalDataSource) {
+                console.log('Local environment: Reply not sent to server');
+                return { success: false, message: 'Local environment - reply not persisted' };
+            }
+            
+            try {
+                const config = this.config.portalDataSource;
+                const createOps = config.operations.create;
+                
+                if (!createOps.enabled) {
+                    throw new Error('Create operations are not enabled');
+                }
+                
+                const originalMessage = this.getMessage(messageId);
+                if (!originalMessage) {
+                    throw new Error('Original message not found');
+                }
+                
+                const url = `${config.baseUrl}/${config.entitySetName}`;
+                
+                // Create the reply payload
+                const replyPayload = {
+                    subject: `Re: ${originalMessage.subject}`,
+                    description: replyText,
+                    adx_portalcommentdirectioncode: 1, // 1 = outgoing (from contact to staff)
+                    "regardingobjectid_adx_application@odata.bind": `/adx_applications(${originalMessage.regardingObjectId})`
+                    // Note: Activity parties (from/to) may need to be set separately or via plugin
+                };
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(replyPayload)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+                
+                console.log('Reply created successfully');
+                return { success: true, message: 'Reply sent successfully' };
+                
+            } catch (error) {
+                console.error('Failed to create reply:', error);
+                return { success: false, message: error.message };
+            }
+        },
+        
+        /**
+         * Mark all current messages as read
+         */
+        markAllMessagesAsRead: function() {
+            const now = new Date().toISOString();
+            localStorage.setItem('portalInbox_lastCheckedComments', now);
+            
+            // Update local state
+            this.state.messages.forEach(msg => {
+                msg.read = true;
+            });
+            
+            this.processMessages();
         }
     };
     
@@ -889,35 +984,48 @@
             const confirmed = await this.showConfirm(this.config.text.confirmSend, 'Confirm Send');
             
             if (confirmed) {
-                console.log('Sending reply:', {
-                    originalMessage: Data.state.currentMessage,
-                    replyText: replyText,
-                    timestamp: new Date().toISOString()
-                });
+                // Show loading state
+                const sendBtn = document.getElementById('portalSendReplyBtn');
+                const originalText = sendBtn.innerHTML;
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
                 
-                const event = new CustomEvent('portalInboxReplySent', {
-                    detail: {
-                        originalMessage: Data.state.currentMessage,
-                        replyText: replyText,
-                        timestamp: new Date().toISOString()
+                const result = await Data.createReply(Data.state.currentMessage.id, replyText);
+                
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = originalText;
+                
+                if (result.success) {
+                    const event = new CustomEvent('portalInboxReplySent', {
+                        detail: {
+                            originalMessage: Data.state.currentMessage,
+                            replyText: replyText,
+                            timestamp: new Date().toISOString(),
+                            success: true
+                        }
+                    });
+                    document.dispatchEvent(event);
+                    
+                    const modalElement = document.getElementById('portalMessageModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
                     }
-                });
-                document.dispatchEvent(event);
-                
-                const modalElement = document.getElementById('portalMessageModal');
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                if (modal) {
-                    modal.hide();
+                    
+                    Data.state.replyMode = false;
+                    Data.state.currentMessage = null;
+                    
+                    const successMessage = this.config.text.replySent;
+                    modalElement.addEventListener('hidden.bs.modal', async function successHandler() {
+                        await window.PortalInboxExtension.UI.showAlert(successMessage, 'Success');
+                        modalElement.removeEventListener('hidden.bs.modal', successHandler);
+                        
+                        // Refresh messages to show the new reply
+                        Data.loadMessages();
+                    }, { once: true });
+                } else {
+                    await this.showAlert(`Failed to send reply: ${result.message}`, 'Error');
                 }
-                
-                Data.state.replyMode = false;
-                Data.state.currentMessage = null;
-                
-                const successMessage = this.config.text.replySent;
-                modalElement.addEventListener('hidden.bs.modal', async function successHandler() {
-                    await window.PortalInboxExtension.UI.showAlert(successMessage, 'Success');
-                    modalElement.removeEventListener('hidden.bs.modal', successHandler);
-                }, { once: true });
             }
         },
         
