@@ -8,8 +8,8 @@
     // Configuration: List of all extensions to load
     const extensions = [
         {
-            name: 'Portal Inbox Extension',
-            path: 'portal-inbox-extention/portal-inbox-extention.js',
+            name: 'Portal Inbox',
+            path: 'portal-inbox-extension/portal-inbox-extension.js',
             enabled: true
         }
         // Add more extensions here as they are created

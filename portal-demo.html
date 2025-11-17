@@ -348,7 +348,7 @@
                     <li><a href="#architecture">Architecture</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li class="utility-nav">
-                        <div id="portal-inbox-extention"></div>
+                        <div id="portal-inbox-extension"></div>
                     </li>
                 </ul>
             </nav>
@@ -568,17 +568,17 @@
       "baseUrl": "/_api",
       "operations": { /* CRUD config */ }
     },
-    "containerId": "portal-inbox-extention",
+    "containerId": "portal-inbox-extension",
     "config": { /* Extension config */ }
   }
 }</code></pre>
                             
                             <h4 class="mt-4">2. Plugin generates portal-extensions-init.js</h4>
                             <pre class="bg-light p-3 rounded"><code>document.addEventListener('portalExtensionsLoaded', function() {
-    PortalInboxExtention.init({
-        localDataSource: 'portal-inbox-extention/messages.json',
+    PortalInboxExtension.init({
+        localDataSource: 'portal-inbox-extension/messages.json',
         portalDataSource: { /* from manifest */ },
-        containerId: 'portal-inbox-extention',
+        containerId: 'portal-inbox-extension',
         config: { /* from manifest */ }
     });
 });</code></pre>

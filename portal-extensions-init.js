@@ -6,9 +6,9 @@ document.addEventListener('portalExtensionsLoaded', function() {
     console.log('All portal extensions loaded successfully');
     
     // Initialize Portal Inbox Extension
-    PortalInboxExtention.init({
+    PortalInboxExtension.init({
         // Data sources for local and portal environments
-        localDataSource: 'portal-inbox-extention/localDataSource.json',
+        localDataSource: 'portal-inbox-extension/localDataSource.json',
         portalDataSource: {
             entitySetName: 'msfed_messages',
             baseUrl: '/_api',
@@ -33,7 +33,7 @@ document.addEventListener('portalExtensionsLoaded', function() {
                 }
             }
         },
-        containerId: 'portal-inbox-extention',
+        containerId: 'portal-inbox-extension',
         colors: {
             // Customize colors to match your site branding
             avatarGradientStart: '#0078d4',

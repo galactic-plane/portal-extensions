@@ -1,6 +1,6 @@
 /**
- * Portal Inbox Extention
- * A self-contained, namespaced extention for displaying inbox messages
+ * Portal Inbox Extension
+ * A self-contained, namespaced extension for displaying inbox messages
  * Compatible with Bootstrap 5
  * 
  * Features:
@@ -13,112 +13,11 @@
 (function() {
     'use strict';
     
-    // Create isolated namespace
-    const PortalInboxExtention = {
-        config: {
-            // Data source configuration
-            localDataSource: null,
-            portalDataSource: null,
-            
-            // Container configuration
-            containerId: null,
-            
-            // UI Text configuration
-            text: {
-                dropdownToggleIcon: 'bi bi-envelope-fill',
-                messagesHeader: 'Messages',
-                archivedHeader: 'Archived Messages',
-                unreadLabel: 'unread',
-                noUnreadMessages: 'No unread messages',
-                noArchivedMessages: 'No archived messages',
-                viewArchived: 'View Archived Messages',
-                viewUnread: 'View Unread Messages',
-                loadingMessages: 'Loading messages...',
-                failedToLoad: 'Failed to load messages',
-                modalTitle: 'Message',
-                closeButton: 'Close',
-                replyButton: 'Reply',
-                sendReplyButton: 'Send Reply',
-                cancelButton: 'Cancel',
-                replyPlaceholder: 'Type your reply here...',
-                replyLabel: 'Your Reply:',
-                originalMessageLabel: 'Original Message:',
-                toLabel: 'To: You',
-                newBadge: 'New',
-                justNow: 'Just now',
-                minuteAgo: 'minute ago',
-                minutesAgo: 'minutes ago',
-                hourAgo: 'hour ago',
-                hoursAgo: 'hours ago',
-                dayAgo: 'day ago',
-                daysAgo: 'days ago',
-                replyPrompt: 'Please enter a reply message.',
-                confirmSend: 'Are you sure you want to send this reply?',
-                replySent: 'Reply sent successfully!',
-                externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
-            },
-            
-            // Icon configuration
-            icons: {
-                inbox: 'bi bi-inbox-fill',
-                archive: 'bi bi-archive-fill',
-                reply: 'bi bi-reply-fill',
-                send: 'bi bi-send-fill'
-            },
-            
-            // Style configuration
-            styles: {
-                dropdownMinWidth: '350px',
-                dropdownMaxHeight: '400px',
-                badgeDisplay: 'inline-block'
-            },
-            
-            // Color configuration
-            colors: {
-                // Avatar colors
-                avatarGradientStart: '#0078d4',
-                avatarGradientEnd: '#005a9e',
-                avatarText: '#ffffff',
-                
-                // Header colors
-                headerGradientStart: '#0078d4',
-                headerGradientEnd: '#005a9e',
-                headerText: '#ffffff',
-                
-                // Message text colors
-                messageFrom: '#1e293b',
-                messageSubject: '#64748b',
-                messageTime: '#94a3b8',
-                
-                // Dropdown colors
-                dropdownBorder: '#e2e8f0',
-                dropdownShadow: 'rgba(0, 0, 0, 0.15)',
-                
-                // Item states
-                itemHoverBackground: '#f1f5f9',
-                itemUnreadBackground: '#f8f9ff',
-                itemBorderColor: '#e2e8f0',
-                
-                // Badge colors
-                badgeBackground: '#dc3545',
-                badgeText: '#ffffff',
-                
-                // Primary action color
-                primaryColor: '#0078d4'
-            },
-            
-            // Feature flags
-            features: {
-                enableArchive: true,
-                enableReply: true,
-                enableExternalLinkWarning: true,
-                allowHtmlInMessages: true
-            },
-            
-            // Auto-init flag
-            autoInit: false
-        },
-        
+    // ============================================================================
+    // DATA NAMESPACE
+    // Handles all data operations, API calls, and state management
+    // ============================================================================
+    const Data = {
         state: {
             messages: [],
             unreadCount: 0,
@@ -129,72 +28,274 @@
             isLoaded: false
         },
         
+        config: null,
+        
         /**
-         * Initialize the extention
+         * Initialize data namespace with configuration
          */
-        init: function(options) {
-            // Validate required options
-            if (!options) {
-                console.error('Portal Inbox Extension: Configuration object is required');
-                return;
-            }
+        init: function(config) {
+            this.config = config;
+        },
+        
+        /**
+         * Detect if running in local environment
+         */
+        isLocalEnvironment: function() {
+            const hostname = window.location.hostname;
+            return hostname === 'localhost' || 
+                   hostname === '127.0.0.1' || 
+                   hostname.startsWith('192.168.') ||
+                   hostname.startsWith('10.') ||
+                   hostname.endsWith('.local') ||
+                   window.location.protocol === 'file:';
+        },
+        
+        /**
+         * Load messages from appropriate data source
+         */
+        loadMessages: function() {
+            this.state.isLoading = true;
+            this.state.isLoaded = false;
             
-            if (!options.localDataSource && !options.portalDataSource) {
-                console.error('Portal Inbox Extension: Either localDataSource or portalDataSource is required in configuration');
-                return;
-            }
+            const isLocal = this.isLocalEnvironment();
             
-            if (!options.containerId) {
-                console.error('Portal Inbox Extension: containerId is required in configuration');
-                return;
-            }
-            
-            // Deep merge user options with defaults
-            this.mergeConfig(this.config, options);
-            
-            // Wait for DOM to be ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => this.setup());
+            if (isLocal && this.config.localDataSource) {
+                console.log('Portal Inbox Extension: Using local data source');
+                this.loadMessagesFromLocal();
+            } else if (!isLocal && this.config.portalDataSource) {
+                console.log('Portal Inbox Extension: Using portal Web API data source');
+                this.loadMessagesFromPortal();
+            } else if (this.config.localDataSource) {
+                console.warn('Portal Inbox Extension: Portal data source not configured, falling back to local');
+                this.loadMessagesFromLocal();
             } else {
-                this.setup();
+                console.error('Portal Inbox Extension: No valid data source configured');
+                this.state.isLoading = false;
+                this.state.isLoaded = true;
+                UI.renderError();
             }
         },
         
         /**
-         * Deep merge configuration
+         * Load messages from local JSON file
          */
-        mergeConfig: function(target, source) {
-            for (const key in source) {
-                if (source.hasOwnProperty(key)) {
-                    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-                        target[key] = target[key] || {};
-                        this.mergeConfig(target[key], source[key]);
+        loadMessagesFromLocal: function() {
+            setTimeout(() => {
+                fetch(this.config.localDataSource)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to load messages from local source');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.state.messages = data.messages || [];
+                        this.processMessages();
+                        this.state.isLoading = false;
+                        this.state.isLoaded = true;
+                        UI.renderMessages();
+                    })
+                    .catch(error => {
+                        console.error('Portal Inbox Widget Error:', error);
+                        this.state.isLoading = false;
+                        this.state.isLoaded = true;
+                        UI.renderError();
+                    });
+            }, 4000);
+        },
+        
+        /**
+         * Load messages from Power Pages Web API
+         */
+        loadMessagesFromPortal: async function() {
+            try {
+                const config = this.config.portalDataSource;
+                const readOps = config.operations.read;
+                
+                if (!readOps.enabled) {
+                    throw new Error('Read operations are not enabled');
+                }
+                
+                const params = new URLSearchParams();
+                
+                if (readOps.select) params.append('$select', readOps.select);
+                if (readOps.filter) params.append('$filter', readOps.filter);
+                if (readOps.orderBy) params.append('$orderby', readOps.orderBy);
+                if (readOps.expand) params.append('$expand', readOps.expand);
+                
+                const url = `${config.baseUrl}/${config.entitySetName}?${params.toString()}`;
+                const token = await this.getPortalToken();
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        '__RequestVerificationToken': token,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                this.state.messages = this.mapPortalDataToMessages(data.value || []);
+                this.processMessages();
+                this.state.isLoading = false;
+                this.state.isLoaded = true;
+                UI.renderMessages();
+                
+            } catch (error) {
+                console.error('Portal Inbox Widget Error:', error);
+                this.state.isLoading = false;
+                this.state.isLoaded = true;
+                UI.renderError();
+            }
+        },
+        
+        /**
+         * Get CSRF token for Power Pages Web API authentication
+         */
+        getPortalToken: function() {
+            return new Promise((resolve, reject) => {
+                if (typeof shell !== 'undefined' && shell.getTokenDeferred) {
+                    shell.getTokenDeferred().done(function(token) {
+                        resolve(token);
+                    }).fail(function() {
+                        reject(new Error('Failed to get authentication token'));
+                    });
+                } else {
+                    const tokenMeta = document.querySelector('meta[name="__RequestVerificationToken"]');
+                    if (tokenMeta) {
+                        resolve(tokenMeta.getAttribute('content'));
                     } else {
-                        target[key] = source[key];
+                        reject(new Error('Authentication token not available'));
                     }
                 }
+            });
+        },
+        
+        /**
+         * Map Dataverse fields to internal message format
+         */
+        mapPortalDataToMessages: function(records) {
+            return records.map(record => ({
+                id: record.msfed_messageid || record.id,
+                from: record.msfed_from || 'Unknown',
+                subject: record.msfed_subject || '(No Subject)',
+                body: record.msfed_body || '',
+                date: record.msfed_sentdate || new Date().toISOString(),
+                read: record.msfed_isread || false,
+                category: record.msfed_category || 'general'
+            }));
+        },
+        
+        /**
+         * Update message read status via Web API
+         */
+        updateMessageReadStatus: async function(messageId, isRead) {
+            if (this.isLocalEnvironment() || !this.config.portalDataSource) {
+                console.log('Local environment: Read status not persisted to server');
+                return;
+            }
+            
+            try {
+                const config = this.config.portalDataSource;
+                const updateOps = config.operations.update;
+                
+                if (!updateOps.enabled) {
+                    console.warn('Update operations are not enabled');
+                    return;
+                }
+                
+                const url = `${config.baseUrl}/${config.entitySetName}(${messageId})`;
+                const token = await this.getPortalToken();
+                
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        '__RequestVerificationToken': token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        msfed_isread: isRead
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                console.log('Message read status updated successfully');
+                
+            } catch (error) {
+                console.error('Failed to update message read status:', error);
             }
         },
         
         /**
-         * Setup the widget
+         * Process messages to calculate unread count
          */
-        setup: function() {
-            // Log environment and data source info
-            const isLocal = this.isLocalEnvironment();
-            console.log(`Portal Inbox Extension: Environment detected as ${isLocal ? 'LOCAL' : 'PORTAL'}`);
-            console.log(`Portal Inbox Extension: Using ${isLocal ? 'local JSON file' : 'Power Pages Web API'}`);
+        processMessages: function() {
+            this.state.unreadCount = this.state.messages.filter(msg => !msg.read).length;
+        },
+        
+        /**
+         * Mark a message as read
+         */
+        markMessageAsRead: function(messageId) {
+            const message = this.state.messages.find(msg => msg.id === messageId);
+            if (!message || message.read) return;
             
-            this.injectStyles();
-            this.createWidget();
-            this.loadMessages();
+            message.read = true;
+            this.updateMessageReadStatus(messageId, true);
+            this.processMessages();
+        },
+        
+        /**
+         * Get message by ID
+         */
+        getMessage: function(messageId) {
+            return this.state.messages.find(msg => msg.id === messageId);
+        },
+        
+        /**
+         * Get filtered messages based on view mode
+         */
+        getFilteredMessages: function() {
+            return this.state.showArchived 
+                ? this.state.messages.filter(msg => msg.read)
+                : this.state.messages.filter(msg => !msg.read);
+        },
+        
+        /**
+         * Toggle between archived and unread view
+         */
+        toggleView: function() {
+            this.state.showArchived = !this.state.showArchived;
+        }
+    };
+    
+    // ============================================================================
+    // UI NAMESPACE
+    // Handles all UI rendering, DOM manipulation, and user interactions
+    // ============================================================================
+    const UI = {
+        config: null,
+        
+        /**
+         * Initialize UI namespace with configuration
+         */
+        init: function(config) {
+            this.config = config;
         },
         
         /**
          * Inject CSS styles for the extension
          */
         injectStyles: function() {
-            // Check if styles already injected
             if (document.getElementById('portal-inbox-extension-styles')) {
                 return;
             }
@@ -323,16 +424,14 @@
             
             container.innerHTML = widgetHTML;
             
-            // Add click handler to prevent opening dropdown while loading
             const dropdownToggle = document.getElementById('portalInboxDropdown');
             dropdownToggle.addEventListener('show.bs.dropdown', (e) => {
-                if (!this.state.isLoaded) {
+                if (!Data.state.isLoaded) {
                     e.preventDefault();
                     console.log('Portal Inbox: Messages still loading...');
                 }
             });
             
-            // Create the message modal
             this.createMessageModal();
         },
         
@@ -340,7 +439,6 @@
          * Create the message detail modal
          */
         createMessageModal: function() {
-            // Check if modal already exists
             if (document.getElementById('portalMessageModal')) {
                 return;
             }
@@ -369,13 +467,9 @@
             
             document.body.insertAdjacentHTML('beforeend', modalHTML);
             
-            // Create confirmation modal for general use
             this.createConfirmationModal();
-            
-            // Create alert modal for general use
             this.createAlertModal();
             
-            // Add reply button event listener if feature is enabled
             if (this.config.features.enableReply) {
                 document.getElementById('portalReplyBtn').addEventListener('click', () => {
                     this.toggleReplyMode();
@@ -446,9 +540,6 @@
         
         /**
          * Show a Bootstrap confirmation dialog
-         * @param {string} message - The message to display
-         * @param {string} title - The title of the dialog (optional)
-         * @returns {Promise<boolean>} - Resolves to true if confirmed, false if cancelled
          */
         showConfirm: function(message, title = 'Confirm') {
             return new Promise((resolve) => {
@@ -457,18 +548,14 @@
                 const modalTitle = document.getElementById('portalConfirmModalLabel');
                 const confirmBtn = document.getElementById('portalConfirmModalConfirmBtn');
                 
-                // Set content
                 modalTitle.textContent = title;
                 modalBody.innerHTML = message.replace(/\n/g, '<br>');
                 
-                // Create Bootstrap modal instance
                 const bsModal = new bootstrap.Modal(modal);
                 
-                // Remove any existing event listeners by cloning and replacing
                 const newConfirmBtn = confirmBtn.cloneNode(true);
                 confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
                 
-                // Add new event listeners
                 const handleConfirm = () => {
                     bsModal.hide();
                     resolve(true);
@@ -481,25 +568,19 @@
                 
                 newConfirmBtn.addEventListener('click', handleConfirm);
                 
-                // Handle cancel button and backdrop click
                 modal.addEventListener('hidden.bs.modal', function cancelHandler(e) {
                     if (e.target === modal) {
                         modal.removeEventListener('hidden.bs.modal', cancelHandler);
-                        // Only resolve false if not already resolved
                         setTimeout(() => resolve(false), 0);
                     }
                 }, { once: true });
                 
-                // Show modal
                 bsModal.show();
             });
         },
         
         /**
          * Show a Bootstrap alert dialog
-         * @param {string} message - The message to display
-         * @param {string} title - The title of the dialog (optional)
-         * @returns {Promise<void>}
          */
         showAlert: function(message, title = 'Alert') {
             return new Promise((resolve) => {
@@ -507,253 +588,18 @@
                 const modalBody = document.getElementById('portalAlertModalBody');
                 const modalTitle = document.getElementById('portalAlertModalLabel');
                 
-                // Set content
                 modalTitle.textContent = title;
                 modalBody.innerHTML = message.replace(/\n/g, '<br>');
                 
-                // Create Bootstrap modal instance
                 const bsModal = new bootstrap.Modal(modal);
                 
-                // Handle modal close
                 modal.addEventListener('hidden.bs.modal', function closeHandler() {
                     modal.removeEventListener('hidden.bs.modal', closeHandler);
                     resolve();
                 }, { once: true });
                 
-                // Show modal
                 bsModal.show();
             });
-        },
-        
-        /**
-         * Load messages from data source
-         */
-        /**
-         * Detect if running in local environment
-         */
-        isLocalEnvironment: function() {
-            const hostname = window.location.hostname;
-            // Check for local development environments
-            return hostname === 'localhost' || 
-                   hostname === '127.0.0.1' || 
-                   hostname.startsWith('192.168.') ||
-                   hostname.startsWith('10.') ||
-                   hostname.endsWith('.local') ||
-                   window.location.protocol === 'file:';
-        },
-        
-        /**
-         * Load messages from appropriate data source
-         */
-        loadMessages: function() {
-            this.state.isLoading = true;
-            this.state.isLoaded = false;
-            
-            // Determine which data source to use
-            const isLocal = this.isLocalEnvironment();
-            
-            if (isLocal && this.config.localDataSource) {
-                console.log('Portal Inbox Extension: Using local data source');
-                this.loadMessagesFromLocal();
-            } else if (!isLocal && this.config.portalDataSource) {
-                console.log('Portal Inbox Extension: Using portal Web API data source');
-                this.loadMessagesFromPortal();
-            } else if (this.config.localDataSource) {
-                console.warn('Portal Inbox Extension: Portal data source not configured, falling back to local');
-                this.loadMessagesFromLocal();
-            } else {
-                console.error('Portal Inbox Extension: No valid data source configured');
-                this.state.isLoading = false;
-                this.state.isLoaded = true;
-                this.renderError();
-            }
-        },
-        
-        /**
-         * Load messages from local JSON file
-         */
-        loadMessagesFromLocal: function() {
-            // Simulate API delay (4 seconds) for realistic loading behavior
-            setTimeout(() => {
-                fetch(this.config.localDataSource)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to load messages from local source');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        this.state.messages = data.messages || [];
-                        this.processMessages();
-                        this.state.isLoading = false;
-                        this.state.isLoaded = true;
-                        this.renderMessages();
-                    })
-                    .catch(error => {
-                        console.error('Portal Inbox Widget Error:', error);
-                        this.state.isLoading = false;
-                        this.state.isLoaded = true;
-                        this.renderError();
-                    });
-            }, 4000); // 4 second delay
-        },
-        
-        /**
-         * Load messages from Power Pages Web API
-         */
-        loadMessagesFromPortal: async function() {
-            try {
-                const config = this.config.portalDataSource;
-                const readOps = config.operations.read;
-                
-                if (!readOps.enabled) {
-                    throw new Error('Read operations are not enabled');
-                }
-                
-                // Build OData query parameters
-                const params = new URLSearchParams();
-                
-                if (readOps.select) {
-                    params.append('$select', readOps.select);
-                }
-                
-                if (readOps.filter) {
-                    params.append('$filter', readOps.filter);
-                }
-                
-                if (readOps.orderBy) {
-                    params.append('$orderby', readOps.orderBy);
-                }
-                
-                if (readOps.expand) {
-                    params.append('$expand', readOps.expand);
-                }
-                
-                // Build full URL
-                const url = `${config.baseUrl}/${config.entitySetName}?${params.toString()}`;
-                
-                // Get CSRF token for authentication
-                const token = await this.getPortalToken();
-                
-                // Make API request
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        '__RequestVerificationToken': token,
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                // Map Dataverse fields to internal message format
-                this.state.messages = this.mapPortalDataToMessages(data.value || []);
-                this.processMessages();
-                this.state.isLoading = false;
-                this.state.isLoaded = true;
-                this.renderMessages();
-                
-            } catch (error) {
-                console.error('Portal Inbox Widget Error:', error);
-                this.state.isLoading = false;
-                this.state.isLoaded = true;
-                this.renderError();
-            }
-        },
-        
-        /**
-         * Get CSRF token for Power Pages Web API authentication
-         */
-        getPortalToken: function() {
-            return new Promise((resolve, reject) => {
-                // Check if shell.getTokenDeferred exists (Power Pages environment)
-                if (typeof shell !== 'undefined' && shell.getTokenDeferred) {
-                    shell.getTokenDeferred().done(function(token) {
-                        resolve(token);
-                    }).fail(function() {
-                        reject(new Error('Failed to get authentication token'));
-                    });
-                } else {
-                    // Fallback: try to get token from meta tag or cookie
-                    const tokenMeta = document.querySelector('meta[name="__RequestVerificationToken"]');
-                    if (tokenMeta) {
-                        resolve(tokenMeta.getAttribute('content'));
-                    } else {
-                        reject(new Error('Authentication token not available'));
-                    }
-                }
-            });
-        },
-        
-        /**
-         * Map Dataverse fields to internal message format
-         */
-        mapPortalDataToMessages: function(records) {
-            return records.map(record => ({
-                id: record.msfed_messageid || record.id,
-                from: record.msfed_from || 'Unknown',
-                subject: record.msfed_subject || '(No Subject)',
-                body: record.msfed_body || '',
-                date: record.msfed_sentdate || new Date().toISOString(),
-                read: record.msfed_isread || false,
-                category: record.msfed_category || 'general'
-            }));
-        },
-        
-        /**
-         * Update message read status via Web API
-         */
-        updateMessageReadStatus: async function(messageId, isRead) {
-            // Only update via API if using portal data source
-            if (this.isLocalEnvironment() || !this.config.portalDataSource) {
-                console.log('Local environment: Read status not persisted to server');
-                return;
-            }
-            
-            try {
-                const config = this.config.portalDataSource;
-                const updateOps = config.operations.update;
-                
-                if (!updateOps.enabled) {
-                    console.warn('Update operations are not enabled');
-                    return;
-                }
-                
-                const url = `${config.baseUrl}/${config.entitySetName}(${messageId})`;
-                const token = await this.getPortalToken();
-                
-                const response = await fetch(url, {
-                    method: 'PATCH',
-                    headers: {
-                        '__RequestVerificationToken': token,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        msfed_isread: isRead
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                console.log('Message read status updated successfully');
-                
-            } catch (error) {
-                console.error('Failed to update message read status:', error);
-            }
-        },
-        
-        /**
-         * Process messages to calculate unread count
-         */
-        processMessages: function() {
-            this.state.unreadCount = this.state.messages.filter(msg => !msg.read).length;
         },
         
         /**
@@ -763,39 +609,31 @@
             const messagesContainer = document.getElementById('portal-inbox-messages');
             const badge = document.getElementById('portal-inbox-badge');
             
-            // Update badge
-            if (this.state.unreadCount > 0) {
-                badge.textContent = this.state.unreadCount;
+            if (Data.state.unreadCount > 0) {
+                badge.textContent = Data.state.unreadCount;
                 badge.style.display = this.config.styles.badgeDisplay;
             } else {
                 badge.style.display = 'none';
             }
             
-            // Clear existing messages
             messagesContainer.innerHTML = '';
             
-            // Filter messages based on view mode
-            const filteredMessages = this.state.showArchived 
-                ? this.state.messages.filter(msg => msg.read)
-                : this.state.messages.filter(msg => !msg.read);
+            const filteredMessages = Data.getFilteredMessages();
             
-            // Add header
             const header = document.createElement('li');
-            const headerText = this.state.showArchived 
+            const headerText = Data.state.showArchived 
                 ? `${this.config.text.archivedHeader} (${filteredMessages.length})`
-                : `${this.config.text.messagesHeader} (${this.state.unreadCount} ${this.config.text.unreadLabel})`;
+                : `${this.config.text.messagesHeader} (${Data.state.unreadCount} ${this.config.text.unreadLabel})`;
             header.innerHTML = `<h6 class="dropdown-header">${headerText}</h6>`;
             messagesContainer.appendChild(header);
             
-            // Add divider
             const divider = document.createElement('li');
             divider.innerHTML = '<hr class="dropdown-divider">';
             messagesContainer.appendChild(divider);
             
-            // Render messages
             if (filteredMessages.length === 0) {
                 const emptyItem = document.createElement('li');
-                const emptyText = this.state.showArchived 
+                const emptyText = Data.state.showArchived 
                     ? this.config.text.noArchivedMessages
                     : this.config.text.noUnreadMessages;
                 emptyItem.innerHTML = `<span class="dropdown-item-text text-muted text-center py-3">${emptyText}</span>`;
@@ -807,16 +645,13 @@
                 });
             }
             
-            // Add archive toggle if enabled
             if (this.config.features.enableArchive) {
-                // Add divider before toggle
                 const bottomDivider = document.createElement('li');
                 bottomDivider.innerHTML = '<hr class="dropdown-divider">';
                 messagesContainer.appendChild(bottomDivider);
                 
-                // Add toggle view button
                 const toggleItem = document.createElement('li');
-                const toggleText = this.state.showArchived 
+                const toggleText = Data.state.showArchived 
                     ? `<i class="${this.config.icons.inbox} me-2"></i>${this.config.text.viewUnread}`
                     : `<i class="${this.config.icons.archive} me-2"></i>${this.config.text.viewArchived}`;
                 toggleItem.innerHTML = `
@@ -826,22 +661,13 @@
                 `;
                 messagesContainer.appendChild(toggleItem);
                 
-                // Add toggle click handler
                 const toggleLink = document.getElementById('portal-toggle-view');
                 toggleLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Prevent dropdown from closing
-                    this.toggleView();
+                    e.stopPropagation();
+                    this.handleToggleView();
                 });
             }
-        },
-        
-        /**
-         * Toggle between unread and archived view
-         */
-        toggleView: function() {
-            this.state.showArchived = !this.state.showArchived;
-            this.renderMessages();
         },
         
         /**
@@ -871,7 +697,6 @@
                 </a>
             `;
             
-            // Add click handler
             const link = li.querySelector('a');
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -882,40 +707,31 @@
         },
         
         /**
-         * Get initials from name
-         */
-        getInitials: function(name) {
-            const parts = name.trim().split(' ');
-            if (parts.length >= 2) {
-                return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-            }
-            return name.substring(0, 2).toUpperCase();
-        },
-        
-        /**
          * Handle message click
          */
         handleMessageClick: function(messageId) {
-            const message = this.state.messages.find(msg => msg.id === messageId);
+            const message = Data.getMessage(messageId);
             if (!message) return;
             
-            // Mark as read
             if (!message.read) {
-                message.read = true;
-                // Update via Web API if in portal environment
-                this.updateMessageReadStatus(messageId, true);
-                this.processMessages();
+                Data.markMessageAsRead(messageId);
                 this.renderMessages();
             }
             
-            // Show message in modal
             this.showMessageModal(message);
             
-            // Trigger custom event for external handling
             const event = new CustomEvent('portalInboxMessageClick', {
                 detail: { messageId: messageId, message: message }
             });
             document.dispatchEvent(event);
+        },
+        
+        /**
+         * Handle toggle view
+         */
+        handleToggleView: function() {
+            Data.toggleView();
+            this.renderMessages();
         },
         
         /**
@@ -954,7 +770,6 @@
             
             modalBody.innerHTML = messageHTML;
             
-            // Add link click handlers for external domain warnings if enabled
             if (this.config.features.enableExternalLinkWarning && this.config.features.allowHtmlInMessages) {
                 const links = modalBody.querySelectorAll('a[data-portal-link]');
                 links.forEach(link => {
@@ -962,7 +777,6 @@
                 });
             }
             
-            // Reset footer to default state
             footer.innerHTML = `
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.config.text.closeButton}</button>
                 ${this.config.features.enableReply ? `<button type="button" class="btn btn-primary" id="portalReplyBtn">
@@ -970,20 +784,15 @@
                 </button>` : ''}
             `;
             
-            // Re-attach reply button event listener if feature is enabled
             if (this.config.features.enableReply) {
                 document.getElementById('portalReplyBtn').addEventListener('click', () => {
                     this.toggleReplyMode();
                 });
             }
             
-            // Reset reply mode
-            this.state.replyMode = false;
+            Data.state.replyMode = false;
+            Data.state.currentMessage = message;
             
-            // Store current message
-            this.state.currentMessage = message;
-            
-            // Show modal
             const modalElement = document.getElementById('portalMessageModal');
             const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
             modal.show();
@@ -993,15 +802,12 @@
          * Toggle reply mode
          */
         toggleReplyMode: function() {
-            if (this.state.replyMode) {
-                // Cancel reply
-                this.showMessageModal(this.state.currentMessage);
+            if (Data.state.replyMode) {
+                this.showMessageModal(Data.state.currentMessage);
             } else {
-                // Enable reply mode
-                this.state.replyMode = true;
-                const message = this.state.currentMessage;
+                Data.state.replyMode = true;
+                const message = Data.state.currentMessage;
                 const modalBody = document.getElementById('portalMessageBody');
-                const replyBtn = document.getElementById('portalReplyBtn');
                 const footer = document.getElementById('portalMessageFooter');
                 
                 const messageContent = this.config.features.allowHtmlInMessages 
@@ -1031,33 +837,30 @@
                                     <small class="text-muted">${this.config.text.toLabel}</small>
                                 </div>
                                 <small class="text-muted">${this.formatDate(message.date)}</small>
+                            </div>
+                        </div>
+                        <div class="message-body opacity-75">
+                            <p>${messageContent}</p>
                         </div>
                     </div>
-                    <div class="message-body opacity-75">
-                        <p>${messageContent}</p>
-                    </div>
-                </div>
-            `;
-            
-            modalBody.innerHTML = replyHTML;
-            
-            // Add link click handlers for external domain warnings in reply mode if enabled
-            if (this.config.features.enableExternalLinkWarning && this.config.features.allowHtmlInMessages) {
-                const links = modalBody.querySelectorAll('a[data-portal-link]');
-                links.forEach(link => {
-                    link.addEventListener('click', (e) => this.handleLinkClick(e));
-                });
-            }
-            
-            // Update footer buttons
-            footer.innerHTML = `
+                `;
+                
+                modalBody.innerHTML = replyHTML;
+                
+                if (this.config.features.enableExternalLinkWarning && this.config.features.allowHtmlInMessages) {
+                    const links = modalBody.querySelectorAll('a[data-portal-link]');
+                    links.forEach(link => {
+                        link.addEventListener('click', (e) => this.handleLinkClick(e));
+                    });
+                }
+                
+                footer.innerHTML = `
                     <button type="button" class="btn btn-secondary" id="portalCancelReplyBtn">${this.config.text.cancelButton}</button>
                     <button type="button" class="btn btn-primary" id="portalSendReplyBtn">
                         <i class="${this.config.icons.send} me-2"></i>${this.config.text.sendReplyButton}
                     </button>
                 `;
                 
-                // Add event listeners
                 document.getElementById('portalCancelReplyBtn').addEventListener('click', () => {
                     this.toggleReplyMode();
                 });
@@ -1066,7 +869,6 @@
                     this.sendReply();
                 });
                 
-                // Focus on textarea
                 setTimeout(() => {
                     document.getElementById('portalReplyText').focus();
                 }, 100);
@@ -1084,43 +886,36 @@
                 return;
             }
             
-            // Confirm send
             const confirmed = await this.showConfirm(this.config.text.confirmSend, 'Confirm Send');
             
             if (confirmed) {
-                // In a real implementation, this would make an API call
                 console.log('Sending reply:', {
-                    originalMessage: this.state.currentMessage,
+                    originalMessage: Data.state.currentMessage,
                     replyText: replyText,
                     timestamp: new Date().toISOString()
                 });
                 
-                // Trigger custom event for external handling
                 const event = new CustomEvent('portalInboxReplySent', {
                     detail: {
-                        originalMessage: this.state.currentMessage,
+                        originalMessage: Data.state.currentMessage,
                         replyText: replyText,
                         timestamp: new Date().toISOString()
                     }
                 });
                 document.dispatchEvent(event);
                 
-                // Close modal properly
                 const modalElement = document.getElementById('portalMessageModal');
                 const modal = bootstrap.Modal.getInstance(modalElement);
                 if (modal) {
                     modal.hide();
                 }
                 
-                // Reset state
-                this.state.replyMode = false;
-                this.state.currentMessage = null;
+                Data.state.replyMode = false;
+                Data.state.currentMessage = null;
                 
-                // Show success message after modal closes
                 const successMessage = this.config.text.replySent;
                 modalElement.addEventListener('hidden.bs.modal', async function successHandler() {
-                    await window.PortalInboxExtention.showAlert(successMessage, 'Success');
-                    // Remove this event listener after it fires once
+                    await window.PortalInboxExtension.UI.showAlert(successMessage, 'Success');
                     modalElement.removeEventListener('hidden.bs.modal', successHandler);
                 }, { once: true });
             }
@@ -1134,6 +929,17 @@
             messagesContainer.innerHTML = `
                 <li><span class="dropdown-item-text text-danger">${this.config.text.failedToLoad}</span></li>
             `;
+        },
+        
+        /**
+         * Get initials from name
+         */
+        getInitials: function(name) {
+            const parts = name.trim().split(' ');
+            if (parts.length >= 2) {
+                return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+            }
+            return name.substring(0, 2).toUpperCase();
         },
         
         /**
@@ -1169,52 +975,38 @@
         
         /**
          * Sanitize HTML to allow only links
-         * Strips all HTML except <a> tags with href attributes
          */
         sanitizeHtmlForLinks: function(html) {
-            // Create a temporary div to parse HTML
             const temp = document.createElement('div');
             temp.innerHTML = html;
             
-            // Get all elements
             const allElements = temp.querySelectorAll('*');
             
-            // Remove all elements except <a> tags
             allElements.forEach(el => {
                 if (el.tagName.toLowerCase() !== 'a') {
-                    // Replace non-anchor tags with their text content
                     const text = document.createTextNode(el.textContent);
                     el.parentNode.replaceChild(text, el);
                 }
             });
             
-            // Get all remaining anchor tags and sanitize them
             const links = temp.querySelectorAll('a');
             links.forEach(link => {
-                // Only keep href and target attributes
                 const href = link.getAttribute('href');
                 const target = link.getAttribute('target');
-                const text = link.textContent;
                 
-                // Remove all attributes
                 while (link.attributes.length > 0) {
                     link.removeAttribute(link.attributes[0].name);
                 }
                 
-                // Re-add only safe attributes
                 if (href) {
                     link.setAttribute('href', href);
                 }
                 if (target) {
                     link.setAttribute('target', target);
                 } else {
-                    // Default to opening in new tab for safety
                     link.setAttribute('target', '_blank');
                 }
-                // Add rel for security
                 link.setAttribute('rel', 'noopener noreferrer');
-                
-                // Add data attribute to mark for external link handling
                 link.setAttribute('data-portal-link', 'true');
             });
             
@@ -1222,7 +1014,7 @@
         },
         
         /**
-         * Check if a URL is external (different domain)
+         * Check if a URL is external
          */
         isExternalLink: function(url) {
             try {
@@ -1230,7 +1022,6 @@
                 const currentUrl = new URL(window.location.href);
                 return linkUrl.hostname !== currentUrl.hostname;
             } catch (e) {
-                // If URL parsing fails, treat as external for safety
                 return true;
             }
         },
@@ -1245,11 +1036,9 @@
             const href = link.getAttribute('href');
             if (!href) return;
             
-            // Check if link is external
             if (this.isExternalLink(href)) {
                 event.preventDefault();
                 
-                // Show government-style warning
                 const domain = new URL(href, window.location.href).hostname;
                 const message = this.config.text.externalLinkWarning.replace('{domain}', domain);
                 
@@ -1259,17 +1048,203 @@
                     window.open(href, link.getAttribute('target') || '_blank', 'noopener,noreferrer');
                 }
             }
+        }
+    };
+    
+    // ============================================================================
+    // MAIN NAMESPACE
+    // Handles initialization, configuration, and orchestration
+    // ============================================================================
+    const Main = {
+        config: {
+            // Data source configuration
+            localDataSource: null,
+            portalDataSource: null,
+            
+            // Container configuration
+            containerId: null,
+            
+            // UI Text configuration
+            text: {
+                dropdownToggleIcon: 'bi bi-envelope-fill',
+                messagesHeader: 'Messages',
+                archivedHeader: 'Archived Messages',
+                unreadLabel: 'unread',
+                noUnreadMessages: 'No unread messages',
+                noArchivedMessages: 'No archived messages',
+                viewArchived: 'View Archived Messages',
+                viewUnread: 'View Unread Messages',
+                loadingMessages: 'Loading messages...',
+                failedToLoad: 'Failed to load messages',
+                modalTitle: 'Message',
+                closeButton: 'Close',
+                replyButton: 'Reply',
+                sendReplyButton: 'Send Reply',
+                cancelButton: 'Cancel',
+                replyPlaceholder: 'Type your reply here...',
+                replyLabel: 'Your Reply:',
+                originalMessageLabel: 'Original Message:',
+                toLabel: 'To: You',
+                newBadge: 'New',
+                justNow: 'Just now',
+                minuteAgo: 'minute ago',
+                minutesAgo: 'minutes ago',
+                hourAgo: 'hour ago',
+                hoursAgo: 'hours ago',
+                dayAgo: 'day ago',
+                daysAgo: 'days ago',
+                replyPrompt: 'Please enter a reply message.',
+                confirmSend: 'Are you sure you want to send this reply?',
+                replySent: 'Reply sent successfully!',
+                externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
+            },
+            
+            // Icon configuration
+            icons: {
+                inbox: 'bi bi-inbox-fill',
+                archive: 'bi bi-archive-fill',
+                reply: 'bi bi-reply-fill',
+                send: 'bi bi-send-fill'
+            },
+            
+            // Style configuration
+            styles: {
+                dropdownMinWidth: '350px',
+                dropdownMaxHeight: '400px',
+                badgeDisplay: 'inline-block'
+            },
+            
+            // Color configuration
+            colors: {
+                // Avatar colors
+                avatarGradientStart: '#0078d4',
+                avatarGradientEnd: '#005a9e',
+                avatarText: '#ffffff',
+                
+                // Header colors
+                headerGradientStart: '#0078d4',
+                headerGradientEnd: '#005a9e',
+                headerText: '#ffffff',
+                
+                // Message text colors
+                messageFrom: '#1e293b',
+                messageSubject: '#64748b',
+                messageTime: '#94a3b8',
+                
+                // Dropdown colors
+                dropdownBorder: '#e2e8f0',
+                dropdownShadow: 'rgba(0, 0, 0, 0.15)',
+                
+                // Item states
+                itemHoverBackground: '#f1f5f9',
+                itemUnreadBackground: '#f8f9ff',
+                itemBorderColor: '#e2e8f0',
+                
+                // Badge colors
+                badgeBackground: '#dc3545',
+                badgeText: '#ffffff',
+                
+                // Primary action color
+                primaryColor: '#0078d4'
+            },
+            
+            // Feature flags
+            features: {
+                enableArchive: true,
+                enableReply: true,
+                enableExternalLinkWarning: true,
+                allowHtmlInMessages: true
+            },
+            
+            // Auto-init flag
+            autoInit: false
+        },
+        
+        /**
+         * Initialize the extension
+         */
+        init: function(options) {
+            if (!options) {
+                console.error('Portal Inbox Extension: Configuration object is required');
+                return;
+            }
+            
+            if (!options.localDataSource && !options.portalDataSource) {
+                console.error('Portal Inbox Extension: Either localDataSource or portalDataSource is required in configuration');
+                return;
+            }
+            
+            if (!options.containerId) {
+                console.error('Portal Inbox Extension: containerId is required in configuration');
+                return;
+            }
+            
+            this.mergeConfig(this.config, options);
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => this.setup());
+            } else {
+                this.setup();
+            }
+        },
+        
+        /**
+         * Deep merge configuration
+         */
+        mergeConfig: function(target, source) {
+            for (const key in source) {
+                if (source.hasOwnProperty(key)) {
+                    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                        target[key] = target[key] || {};
+                        this.mergeConfig(target[key], source[key]);
+                    } else {
+                        target[key] = source[key];
+                    }
+                }
+            }
+        },
+        
+        /**
+         * Setup the widget
+         */
+        setup: function() {
+            const isLocal = Data.isLocalEnvironment();
+            console.log(`Portal Inbox Extension: Environment detected as ${isLocal ? 'LOCAL' : 'PORTAL'}`);
+            console.log(`Portal Inbox Extension: Using ${isLocal ? 'local JSON file' : 'Power Pages Web API'}`);
+            
+            Data.init(this.config);
+            UI.init(this.config);
+            
+            UI.injectStyles();
+            UI.createWidget();
+            Data.loadMessages();
         },
         
         /**
          * Public API for manual refresh
          */
         refresh: function() {
-            this.loadMessages();
+            Data.loadMessages();
         }
     };
     
-    // Expose extention to global scope
-    window.PortalInboxExtention = PortalInboxExtention;
+    // ============================================================================
+    // EXPOSE PUBLIC API
+    // ============================================================================
+    
+    // Create public interface with organized namespaces
+    const PortalInboxExtension = {
+        // Main initialization and control
+        init: Main.init.bind(Main),
+        refresh: Main.refresh.bind(Main),
+        
+        // Expose namespaces for advanced usage
+        Data: Data,
+        UI: UI,
+        Main: Main
+    };
+    
+    // Expose extension to global scope
+    window.PortalInboxExtension = PortalInboxExtension;
     
 })();

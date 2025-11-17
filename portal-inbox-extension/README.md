@@ -1,6 +1,6 @@
-# Portal Inbox Extention
+# Portal Inbox Extension
 
-A completely self-contained, namespace-isolated JavaScript extention for displaying inbox messages in Power Pages portals. Built with Bootstrap 5 and designed to work without conflicts with other JavaScript on the page.
+A completely self-contained, namespace-isolated JavaScript extension for displaying inbox messages in Power Pages portals. Built with Bootstrap 5 and designed to work without conflicts with other JavaScript on the page.
 
 ## Features
 
@@ -28,7 +28,7 @@ A completely self-contained, namespace-isolated JavaScript extention for display
 This extension follows a strict isolation pattern:
 - **Injects its own CSS** on initialization (no external stylesheets needed)
 - **Self-contained namespace** using IIFE pattern
-- **No global variables** except the extension namespace (`PortalInboxExtention`)
+- **No global variables** except the extension namespace (`PortalInboxExtension`)
 - **No host page pollution** - all styles and scripts are contained
 - **Smart environment detection** - uses hostname and protocol to determine local vs portal
 - **Automatic data source switching** - JSON files locally, Web API in production
@@ -41,16 +41,16 @@ This extension follows a strict isolation pattern:
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 ```
 
-2. Add the extention container in your navbar:
+2. Add the extension container in your navbar:
 ```html
 <ul class="navbar-nav ms-auto">
-    <li class="nav-item" id="portal-inbox-extention"></li>
+    <li class="nav-item" id="portal-inbox-extension"></li>
 </ul>
 ```
 
-3. Include the extention script:
+3. Include the extension script:
 ```html
-<script src="portal-inbox-extention.js"></script>
+<script src="portal-inbox-extension.js"></script>
 ```
 
 4. Include Bootstrap 5 JavaScript:
@@ -61,10 +61,10 @@ This extension follows a strict isolation pattern:
 5. Initialize the extension with configuration:
 ```html
 <script>
-    PortalInboxExtention.init({
+    PortalInboxExtension.init({
         enabled: true,  // Optional: Set to false to disable
         dataSource: 'localDataSource.json',
-        containerId: 'portal-inbox-extention'
+        containerId: 'portal-inbox-extension'
     });
 </script>
 ```
@@ -77,15 +77,15 @@ The extension supports **two data sources** that automatically switch based on e
 
 #### Local Development (JSON File)
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     localDataSource: 'localDataSource.json',  // Local JSON file for development
-    containerId: 'portal-inbox-extention'
+    containerId: 'portal-inbox-extension'
 });
 ```
 
 #### Production (Power Pages Web API)
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     localDataSource: 'localDataSource.json',  // Fallback for local testing
     portalDataSource: {
         entitySetName: 'msfed_messages',  // Dataverse table EntitySetName
@@ -111,7 +111,7 @@ PortalInboxExtention.init({
             }
         }
     },
-    containerId: 'portal-inbox-extention'
+    containerId: 'portal-inbox-extension'
 });
 ```
 
@@ -138,24 +138,24 @@ Portal Inbox Extension: Using Power Pages Web API
 ### Minimal Configuration (Required)
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     enabled: true,                      // Optional: Set to false to disable extension (default: true)
     localDataSource: 'localDataSource.json',   // Required: Local JSON file path
     portalDataSource: { ... },          // Optional: Web API config (required for production)
-    containerId: 'portal-inbox-extention'  // Required: ID of container element
+    containerId: 'portal-inbox-extension'  // Required: ID of container element
 });
 ```
 
 ### Basic Configuration with Common Customizations
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     // Extension control
     enabled: true,                      // Set to false to completely disable this extension
     
     // Required
     dataSource: 'api/messages',
-    containerId: 'portal-inbox-extention',
+    containerId: 'portal-inbox-extension',
     
     // Customize text labels
     text: {
@@ -176,7 +176,7 @@ PortalInboxExtention.init({
 ### Full Configuration Options
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     // Extension control (FIRST parameter)
     enabled: boolean,         // Optional: true (default) to run, false to disable entirely
     
@@ -255,10 +255,10 @@ PortalInboxExtention.init({
 Match the inbox to your site's branding:
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     enabled: true,
     dataSource: 'localDataSource.json',
-    containerId: 'portal-inbox-extention',
+    containerId: 'portal-inbox-extension',
     colors: {
         // Use your brand colors
         avatarGradientStart: '#ff6b35',    // Orange brand color
@@ -275,7 +275,7 @@ PortalInboxExtention.init({
 
 ## Message Data Format
 
-The extention expects JSON in the following format:
+The extension expects JSON in the following format:
 ```json
 {
     "messages": [
@@ -301,8 +301,8 @@ The extention expects JSON in the following format:
 
 ## API
 
-### `PortalInboxExtention.init(options)`
-Initialize the extention with configuration options.
+### `PortalInboxExtension.init(options)`
+Initialize the extension with configuration options.
 
 **Parameters:**
 - `options` (object, required): Configuration object
@@ -315,18 +315,18 @@ Initialize the extention with configuration options.
 
 **Example:**
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     dataSource: 'localDataSource.json',
-    containerId: 'portal-inbox-extention'
+    containerId: 'portal-inbox-extension'
 });
 ```
 
-### `PortalInboxExtention.refresh()`
+### `PortalInboxExtension.refresh()`
 Manually refresh messages from the data source.
 
 **Example:**
 ```javascript
-PortalInboxExtention.refresh();
+PortalInboxExtension.refresh();
 ```
 
 ## HTML Integration Examples
@@ -354,7 +354,7 @@ PortalInboxExtention.refresh();
             
             <!-- Extension Container -->
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item" id="portal-inbox-extention"></li>
+                <li class="nav-item" id="portal-inbox-extension"></li>
             </ul>
         </div>
     </nav>
@@ -363,13 +363,13 @@ PortalInboxExtention.refresh();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Portal Inbox Extension -->
-    <script src="portal-inbox-extention.js"></script>
+    <script src="portal-inbox-extension.js"></script>
     
     <!-- Initialize Extension -->
     <script>
-        PortalInboxExtention.init({
+        PortalInboxExtension.init({
             dataSource: 'localDataSource.json',
-            containerId: 'portal-inbox-extention'
+            containerId: 'portal-inbox-extension'
         });
     </script>
 </body>
@@ -380,7 +380,7 @@ PortalInboxExtention.refresh();
 
 ```html
 <script>
-    PortalInboxExtention.init({
+    PortalInboxExtension.init({
         // Required
         dataSource: 'localDataSource.json',
         containerId: 'my-custom-inbox',
@@ -426,9 +426,9 @@ PortalInboxExtention.refresh();
 ### Read-Only Display (No Reply, No Archive)
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     dataSource: 'localDataSource.json',
-    containerId: 'portal-inbox-extention',
+    containerId: 'portal-inbox-extension',
     features: {
         enableArchive: false,
         enableReply: false
@@ -439,9 +439,9 @@ PortalInboxExtention.init({
 ### Custom Styling
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     dataSource: 'localDataSource.json',
-    containerId: 'portal-inbox-extention',
+    containerId: 'portal-inbox-extension',
     styles: {
         dropdownMinWidth: '500px',
         dropdownMaxHeight: '600px'
@@ -452,9 +452,9 @@ PortalInboxExtention.init({
 ### Spanish Localization
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     dataSource: 'localDataSource.json',
-    containerId: 'portal-inbox-extention',
+    containerId: 'portal-inbox-extension',
     text: {
         messagesHeader: 'Mensajes',
         archivedHeader: 'Mensajes Archivados',
@@ -473,9 +473,9 @@ PortalInboxExtention.init({
 ### Custom Icons
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     dataSource: 'localDataSource.json',
-    containerId: 'portal-inbox-extention',
+    containerId: 'portal-inbox-extension',
     text: {
         dropdownToggleIcon: 'bi bi-chat-dots-fill'
     },
@@ -523,9 +523,9 @@ document.addEventListener('portalInboxReplySent', function(e) {
 To integrate with Power Pages Dataverse Web API:
 
 ```javascript
-PortalInboxExtention.init({
+PortalInboxExtension.init({
     dataSource: '/_api/your_entity_name?$filter=_recipient_value eq ' + userId,
-    containerId: 'portal-inbox-extention'
+    containerId: 'portal-inbox-extension'
 });
 ```
 
@@ -605,7 +605,7 @@ All modals are dynamically created and managed by the extension with proper clea
 
 ## Files
 
-- `portal-inbox-extention.js` - Main extension JavaScript file (static, no config)
+- `portal-inbox-extension.js` - Main extension JavaScript file (static, no config)
 - `localDataSource.json` - Sample JSON data file
 - `README.md` - This file
 

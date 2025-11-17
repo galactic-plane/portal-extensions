@@ -13,21 +13,21 @@ This repository includes a **manifest-based deployment system** where:
 ### Quick Links
 - 📋 **[Manifest Schema](./manifest.schema.json)** - JSON Schema for validation
 - 📐 **[Development Rules](./RULES.md)** - Repository structure and coding standards
-- � **[Extension README](./portal-inbox-extention/README.md)** - Detailed extension docs
+- 📘 **[Extension README](./portal-inbox-extension/README.md)** - Detailed extension docs
 
 ## Extensions
 
 ### Portal Inbox Extension
 A messaging extension with environment-aware data loading and full CRUD operations.
 
-- **Location:** `portal-inbox-extention/`
+- **Location:** `portal-inbox-extension/`
 - **Description:** Inbox messages with read/unread tracking, reply functionality, and archive features
 - **Data Sources:** 
   - Local: `localDataSource.json` (development/testing)
   - Portal: Power Pages Web API (production)
 - **Features:** Environment detection, OData queries, CSRF authentication, field mapping
-- **Manifest:** [View manifest.json](./portal-inbox-extention/manifest.json)
-- **Documentation:** [View Extension README](./portal-inbox-extention/README.md)
+- **Manifest:** [View manifest.json](./portal-inbox-extension/manifest.json)
+- **Documentation:** [View Extension README](./portal-inbox-extension/README.md)
 - **Demo:** See `portal-demo.html` for full demonstration
 
 ## Getting Started
@@ -52,17 +52,17 @@ The C# plugin should:
 ## Structure
 
 ```
-portal-extentions/
+portal-extensions/
 ├── manifest.schema.json              # JSON Schema for manifest validation
 ├── portal-extensions-init.js         # GENERATED - Combined initialization (DO NOT EDIT)
 ├── portal-demo.html                  # Demo page showing all extensions
 ├── portal-extensions.js              # Extension loader (static)
 ├── RULES.md                          # Development rules and standards
 ├── README.md                         # This file - master documentation
-└── portal-inbox-extention/           # Individual extension projects
+└── portal-inbox-extension/           # Individual extension projects
     ├── manifest.json                 # Deployment manifest
     ├── README.md                     # Extension-specific documentation
-    ├── portal-inbox-extention.js     # Extension code (deployed)
+    ├── portal-inbox-extension.js     # Extension code (deployed)
     └── localDataSource.json          # Local test data (NOT deployed)
 ```
 
