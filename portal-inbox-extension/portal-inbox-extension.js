@@ -451,6 +451,7 @@
                     padding: 0;
                     overflow: hidden;
                     margin-top: 0.5rem !important;
+                    background-color: white;
                 }
                 
                 .dropdown-header {
@@ -468,21 +469,24 @@
                     border-color: ${colors.dropdownBorder};
                 }
                 
-                .dropdown-item {
+                #portal-inbox-messages .dropdown-item {
                     padding: 16px 20px;
                     transition: background-color 0.15s;
                     border-bottom: 1px solid ${colors.itemBorderColor};
+                    text-decoration: none;
+                    background-color: white;
                 }
                 
-                .dropdown-item:last-child {
+                #portal-inbox-messages .dropdown-item:last-child {
                     border-bottom: none;
                 }
                 
-                .dropdown-item:hover {
-                    background-color: ${colors.itemHoverBackground};
+                #portal-inbox-messages .dropdown-item:hover {
+                    background-color: white;
+                    text-decoration: none;
                 }
                 
-                .dropdown-item.fw-bold {
+                #portal-inbox-messages .dropdown-item.fw-bold {
                     background-color: ${colors.itemUnreadBackground};
                 }
             `;
