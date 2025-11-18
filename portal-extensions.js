@@ -5,20 +5,48 @@
 (function() {
     'use strict';
     
+    // Detect environment: local development vs hosted portal
+    function isLocalEnvironment() {
+        const hostname = window.location.hostname;
+        return hostname === 'localhost' || 
+               hostname === '127.0.0.1' || 
+               hostname.startsWith('192.168.') ||
+               hostname.startsWith('10.') ||
+               hostname.endsWith('.local') ||
+               window.location.protocol === 'file:';
+    }
+    
+    const isLocal = isLocalEnvironment();
+    const portalBaseUrl = window.location.origin;
+    
     // Configuration: List of all extensions to load
     const extensions = [
         {
             name: 'Portal Inbox',
-            path: 'portal-inbox-extension/portal-inbox-extension.js',
+            filename: 'portal-inbox-extension.js', // Just the filename, always at root on portal
             enabled: true
         }
         // Add more extensions here as they are created
         // {
         //     name: 'Another Extension',
-        //     path: 'another-extension/another-extension.js',
+        //     filename: 'another-extension.js',
         //     enabled: true
         // }
     ];
+    
+    /**
+     * Get the full path for an extension
+     */
+    function getExtensionPath(filename) {
+        if (isLocal) {
+            // Local development: use relative path to extension folder
+            const extensionFolder = filename.replace('.js', '');
+            return `${extensionFolder}/${filename}`;
+        } else {
+            // Portal environment: extension is at domain root
+            return `${portalBaseUrl}/${filename}`;
+        }
+    }
     
     /**
      * Load a single extension script
@@ -31,18 +59,19 @@
                 return;
             }
             
+            const path = getExtensionPath(extension.filename);
             const script = document.createElement('script');
-            script.src = extension.path;
+            script.src = path;
             script.async = false; // Load in order
             
             script.onload = () => {
-                console.log(`Portal Extensions: Loaded ${extension.name}`);
+                console.log(`Portal Extensions: Loaded ${extension.name} from ${path}`);
                 resolve({ name: extension.name, status: 'loaded' });
             };
             
             script.onerror = () => {
-                console.error(`Portal Extensions: Failed to load ${extension.name} from ${extension.path}`);
-                reject({ name: extension.name, status: 'error', path: extension.path });
+                console.error(`Portal Extensions: Failed to load ${extension.name} from ${path}`);
+                reject({ name: extension.name, status: 'error', path: path });
             };
             
             document.head.appendChild(script);
@@ -54,6 +83,7 @@
      */
     function loadAllExtensions() {
         console.log('Portal Extensions: Starting to load extensions...');
+        console.log(`Portal Extensions: Environment = ${isLocal ? 'Local' : 'Portal (' + portalBaseUrl + ')'}`);
         
         // Load extensions sequentially to maintain order
         const loadPromises = extensions.map(ext => loadExtension(ext));
