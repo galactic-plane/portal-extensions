@@ -325,18 +325,22 @@
                 
                 const url = `${config.baseUrl}/${config.entitySetName}`;
                 
+                // Get CSRF token for authentication
+                const token = await this.getPortalToken();
+                
                 // Create the reply payload
+                // Use @odata.bind for navigation properties (regardingobjectid)
                 const replyPayload = {
                     subject: `Re: ${originalMessage.subject}`,
                     description: replyText,
-                    adx_portalcommentdirectioncode: 1, // 1 = outgoing (from contact to staff)
-                    "regardingobjectid_adx_application@odata.bind": `/adx_applications(${originalMessage.regardingObjectId})`
-                    // Note: Activity parties (from/to) may need to be set separately or via plugin
+                    adx_portalcommentdirectioncode: 1, // 1 = incoming (from contact to staff)
+                    "regardingobjectid_msfed_application@odata.bind": `/msfed_applications(${originalMessage.regardingObjectId})`
                 };
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
+                        '__RequestVerificationToken': token,
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
