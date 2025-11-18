@@ -121,7 +121,14 @@
                 const params = new URLSearchParams();
                 
                 if (readOps.select) params.append('$select', readOps.select);
-                if (readOps.filter) params.append('$filter', readOps.filter);
+                
+                // Build filter - always filter for Outgoing messages (directioncode = 2)
+                let filterParts = ['adx_portalcommentdirectioncode eq 2'];
+                if (readOps.filter) {
+                    filterParts.push(`(${readOps.filter})`);
+                }
+                params.append('$filter', filterParts.join(' and '));
+                
                 if (readOps.orderBy) params.append('$orderby', readOps.orderBy);
                 if (readOps.expand) params.append('$expand', readOps.expand);
                 
