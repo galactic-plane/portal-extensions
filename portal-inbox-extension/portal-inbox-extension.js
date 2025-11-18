@@ -403,91 +403,105 @@
             styleElement.textContent = `
                 /* Portal Inbox Extension Styles */
                 .message-avatar {
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, ${colors.avatarGradientStart} 0%, ${colors.avatarGradientEnd} 100%);
-                    color: ${colors.avatarText};
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-weight: 600;
-                    font-size: 0.875rem;
-                    flex-shrink: 0;
-                    margin-right: 0.75rem;
+                    width: 40px !important;
+                    height: 40px !important;
+                    border-radius: 50% !important;
+                    background: linear-gradient(135deg, ${colors.avatarGradientStart} 0%, ${colors.avatarGradientEnd} 100%) !important;
+                    color: ${colors.avatarText} !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    font-weight: 600 !important;
+                    font-size: 0.875rem !important;
+                    flex-shrink: 0 !important;
+                    margin-right: 0.75rem !important;
                 }
                 
                 .message-from {
-                    color: ${colors.messageFrom};
-                    font-weight: 600;
-                    font-size: 0.95rem;
+                    color: ${colors.messageFrom} !important;
+                    font-weight: 600 !important;
+                    font-size: 0.95rem !important;
                 }
                 
                 .message-subject {
-                    color: ${colors.messageSubject};
-                    font-size: 0.875rem;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
+                    color: ${colors.messageSubject} !important;
+                    font-size: 0.875rem !important;
+                    overflow: hidden !important;
+                    text-overflow: ellipsis !important;
+                    white-space: nowrap !important;
                 }
                 
                 .message-time {
-                    color: ${colors.messageTime};
-                    font-size: 0.75rem;
+                    color: ${colors.messageTime} !important;
+                    font-size: 0.75rem !important;
                 }
                 
                 #portal-inbox-badge {
-                    font-size: 0.65rem;
-                    padding: 0.25em 0.5em;
-                    font-weight: 600;
+                    font-size: 0.65rem !important;
+                    padding: 0.25em 0.5em !important;
+                    font-weight: 600 !important;
                     background-color: ${colors.badgeBackground} !important;
                     color: ${colors.badgeText} !important;
                 }
                 
+                #portal-inbox-extension .nav-link {
+                    color: ${colors.navLinkColor} !important;
+                    text-decoration: none !important;
+                }
+                
+                #portal-inbox-extension .nav-link:hover {
+                    color: ${colors.navLinkColor} !important;
+                    text-decoration: none !important;
+                }
+                
+                #portal-inbox-extension .nav-link::after {
+                    border-top-color: ${colors.navLinkCaretColor} !important;
+                }
+                
                 .dropdown-menu {
-                    border: none;
-                    border-radius: 12px;
-                    box-shadow: 0 10px 40px ${colors.dropdownShadow};
-                    padding: 0;
-                    overflow: hidden;
+                    border: none !important;
+                    border-radius: 12px !important;
+                    box-shadow: 0 10px 40px ${colors.dropdownShadow} !important;
+                    padding: 0 !important;
+                    overflow: hidden !important;
                     margin-top: 0.5rem !important;
-                    background-color: white;
+                    background-color: white !important;
                 }
                 
                 .dropdown-header {
-                    background: linear-gradient(135deg, ${colors.headerGradientStart} 0%, ${colors.headerGradientEnd} 100%);
-                    color: ${colors.headerText};
-                    font-weight: 700;
-                    font-size: 1rem;
-                    padding: 16px 20px;
-                    margin: 0;
-                    border-radius: 0;
+                    background: linear-gradient(135deg, ${colors.headerGradientStart} 0%, ${colors.headerGradientEnd} 100%) !important;
+                    color: ${colors.headerText} !important;
+                    font-weight: 700 !important;
+                    font-size: 1rem !important;
+                    padding: 16px 20px !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
                 }
                 
                 .dropdown-divider {
-                    margin: 0;
-                    border-color: ${colors.dropdownBorder};
+                    margin: 0 !important;
+                    border-color: ${colors.dropdownBorder} !important;
                 }
                 
                 #portal-inbox-messages .dropdown-item {
-                    padding: 16px 20px;
-                    transition: background-color 0.15s;
-                    border-bottom: 1px solid ${colors.itemBorderColor};
-                    text-decoration: none;
-                    background-color: white;
+                    padding: 16px 20px !important;
+                    transition: background-color 0.15s !important;
+                    border-bottom: 1px solid ${colors.itemBorderColor} !important;
+                    text-decoration: none !important;
+                    background-color: white !important;
                 }
                 
                 #portal-inbox-messages .dropdown-item:last-child {
-                    border-bottom: none;
+                    border-bottom: none !important;
                 }
                 
                 #portal-inbox-messages .dropdown-item:hover {
-                    background-color: white;
-                    text-decoration: none;
+                    background-color: white !important;
+                    text-decoration: none !important;
                 }
                 
                 #portal-inbox-messages .dropdown-item.fw-bold {
-                    background-color: ${colors.itemUnreadBackground};
+                    background-color: ${colors.itemUnreadBackground} !important;
                 }
             `;
             
@@ -1255,6 +1269,10 @@
                 // Badge colors
                 badgeBackground: '#dc3545',
                 badgeText: '#ffffff',
+                
+                // Navigation link colors
+                navLinkColor: '#ffffff',
+                navLinkCaretColor: '#ffffff',
                 
                 // Primary action color
                 primaryColor: '#0078d4'

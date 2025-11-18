@@ -14,6 +14,7 @@ function injectInboxContainer() {
         // Create the container div
         const containerDiv = document.createElement('div');
         containerDiv.id = 'portal-inbox-extension';
+        containerDiv.style.marginRight = '10px';
         
         // Append the div to the li
         utilityNavItem.appendChild(containerDiv);
@@ -68,14 +69,40 @@ document.addEventListener('portalExtensionsLoaded', function() {
         },
         containerId: 'portal-inbox-extension',
         colors: {
-            // Customize colors to match your site branding
-            avatarGradientStart: '#0078d4',
-            avatarGradientEnd: '#005a9e',
-            headerGradientStart: '#0078d4',
-            headerGradientEnd: '#005a9e',
-            primaryColor: '#0078d4',
-            badgeBackground: '#dc3545'
-            // See README for all available color options
+            // Avatar colors - circular avatar icon for each message sender
+            avatarGradientStart: '#0078d4',  // Start color of avatar gradient
+            avatarGradientEnd: '#005a9e',    // End color of avatar gradient
+            avatarText: '#ffffff',            // Text color for initials in avatar
+            
+            // Header colors - dropdown header section
+            headerGradientStart: '#0078d4',  // Start color of header gradient
+            headerGradientEnd: '#005a9e',    // End color of header gradient
+            headerText: '#ffffff',            // Text color in header
+            
+            // Message text colors - individual message items
+            messageFrom: '#1e293b',           // Sender name color
+            messageSubject: '#64748b',        // Message subject/preview color
+            messageTime: '#94a3b8',           // Timestamp color
+            
+            // Dropdown colors - the popup menu container
+            dropdownBorder: '#e2e8f0',        // Border color of dropdown
+            dropdownShadow: 'rgba(0, 0, 0, 0.15)',  // Shadow around dropdown
+            
+            // Item states - message list item backgrounds
+            itemHoverBackground: '#f1f5f9',   // Background when hovering over message
+            itemUnreadBackground: '#f8f9ff',  // Background for unread messages
+            itemBorderColor: '#e2e8f0',       // Border between message items
+            
+            // Badge colors - unread count badge
+            badgeBackground: '#dc3545',       // Background color of unread count badge
+            badgeText: '#ffffff',             // Text color of unread count badge
+            
+            // Navigation link colors - the inbox icon in the navbar
+            navLinkColor: '#ffffff',          // Color of the inbox icon
+            navLinkCaretColor: '#ffffff',     // Color of the dropdown caret/arrow
+            
+            // Primary action color - buttons and interactive elements
+            primaryColor: '#0078d4'           // Primary brand color for actions
         },
         config: {
             text: {
