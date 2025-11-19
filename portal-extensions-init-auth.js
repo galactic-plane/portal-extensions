@@ -62,10 +62,10 @@ document.addEventListener('portalExtensionsLoaded', function() {
             operations: {
                 read: {
                     enabled: true,
-                    select: 'subject,description,_regardingobjectid_value,statecode,statuscode,activityid,activitytypecode,adx_portalcommentdirectioncode,createdon,msfed_hasread',  // OData $select - comma-separated field list
-                    filter: null,  // OData $filter - additional filter beyond directioncode (null = no additional filter)
+                    select: 'subject,description,_regardingobjectid_value,statecode,statuscode,activityid,activitytypecode,adx_portalcommentdirectioncode,_createdby_value,msfed_hasread',  // OData $select - comma-separated field list
+                    filter: '(adx_portalcommentdirectioncode eq 2)',  // OData $filter - additional filter beyond directioncode (null = no additional filter)
                     orderBy: 'createdon desc',  // OData $orderby - sort order
-                    expand: 'adx_portalcomment_activity_parties($select=_partyid_value,participationtypemask;$expand=partyid_contact($select=fullname,contactid),partyid_systemuser($select=fullname,systemuserid))'  // OData $expand - related entities
+                    expand: 'adx_portalcomment_activity_parties($select=_partyid_value,participationtypemask;$expand=partyid_systemuser($select=fullname,systemuserid);$filter=(participationtypemask eq 1)),adx_portalcomment_activity_parties($select=_partyid_value;$expand=partyid_contact($select=fullname,contactid);$filter=(participationtypemask eq 2))'  // OData $expand - related entities
                 },
                 create: {
                     enabled: true  // Allow creating replies

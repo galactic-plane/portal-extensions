@@ -208,44 +208,25 @@
                     };
                 }
                 
-                // New OData format - extract activity parties
-                // Activity parties come as a single array, we need to find systemuser and contact
+                // New OData format - extract sender and recipient
+                // From: Use _createdby_value (the system user who created the comment)
+                // To: Use contact from activity parties with participationtypemask=2
+                
+                if (!comment._createdby_value) {
+                    console.error('Missing _createdby_value for comment:', comment.activityid, comment);
+                    throw new Error(`Created by value not found for comment ${comment.activityid}. Ensure $select includes _createdby_value.`);
+                }
+                
                 const parties = comment.adx_portalcomment_activity_parties;
-                
-                console.log('Processing comment:', {
-                    activityid: comment.activityid,
-                    subject: comment.subject,
-                    hasPartiesProperty: 'adx_portalcomment_activity_parties' in comment,
-                    partiesValue: parties,
-                    partiesType: typeof parties,
-                    partiesIsArray: Array.isArray(parties),
-                    partiesLength: parties?.length
-                });
-                
-                // No fallback - if parties are missing, throw error
                 if (!parties || parties.length === 0) {
-                    console.error('Missing or empty activity parties for comment:', comment.activityid);
-                    console.error('Full comment object:', comment);
-                    console.error('Parties value:', parties);
+                    console.error('Missing or empty activity parties for comment:', comment.activityid, comment);
                     throw new Error(`Activity parties not found for comment ${comment.activityid}. Ensure $expand includes adx_portalcomment_activity_parties.`);
                 }
                 
-                console.log(`Comment ${comment.activityid} has ${parties.length} parties:`, parties);
-                
-                const fromParty = parties.find(p => p.partyid_systemuser !== null && p.partyid_systemuser !== undefined);
-                const toParty = parties.find(p => p.partyid_contact !== null && p.partyid_contact !== undefined);
-                
-                if (!fromParty) {
-                    console.error('No staff (systemuser) party found for comment:', comment.activityid);
-                    console.error('Parties received:', parties);
-                    console.error('This portal comment is missing the systemuser party. Check how the comment was created in Dataverse.');
-                    throw new Error(`Staff party (systemuser) not found for comment ${comment.activityid}. The comment must have a systemuser party with participationtypemask=1.`);
-                }
+                const toParty = parties.find(p => p.participationtypemask === 2 && p.partyid_contact !== null && p.partyid_contact !== undefined);
                 
                 if (!toParty) {
-                    console.error('No contact party found for comment:', comment.activityid);
-                    console.error('Parties received:', parties);
-                    console.error('This portal comment is missing the contact party. Check how the comment was created in Dataverse.');
+                    console.error('No contact party (participationtypemask=2) found for comment:', comment.activityid, parties);
                     throw new Error(`Contact party not found for comment ${comment.activityid}. The comment must have a contact party with participationtypemask=2.`);
                 }
                 
@@ -262,23 +243,24 @@
                     isRead = createdDate <= lastCheckedDate;
                 }
                 
-                // Extract the contact ID and staff ID from the parties - no fallbacks
+                // Extract IDs - no fallbacks
                 const toContactId = toParty.partyid_contact?.contactid;
-                const fromStaffId = fromParty.partyid_systemuser?.systemuserid;
+                const fromStaffId = comment._createdby_value;
                 
                 if (!toContactId) {
                     console.error('Contact ID missing from party:', toParty);
                     throw new Error(`Contact ID not found in party data for comment ${comment.activityid}. Ensure $expand includes partyid_contact.`);
                 }
                 
-                if (!fromStaffId) {
-                    console.error('Staff ID missing from party:', fromParty);
-                    throw new Error(`Staff ID not found in party data for comment ${comment.activityid}. Ensure $expand includes partyid_systemuser.`);
+                const fromStaffName = comment['_createdby_value@OData.Community.Display.V1.FormattedValue'];
+                if (!fromStaffName) {
+                    console.error('Staff name missing from _createdby_value formatted value:', comment);
+                    throw new Error(`Staff name not found for comment ${comment.activityid}. Ensure formatted values are included.`);
                 }
                 
                 return {
                     id: comment.activityid,
-                    from: fromParty.partyid_systemuser.fullname,
+                    from: fromStaffName,
                     subject: comment.subject || '(No Subject)',
                     body: comment.description || '',
                     date: comment.createdon || new Date().toISOString(),
@@ -466,7 +448,7 @@
                 }
                 if (!originalMessage.fromStaffId) {
                     console.error('Original message:', originalMessage);
-                    throw new Error('Staff ID not found in original message. API configuration error - check $expand parameter.');
+                    throw new Error('Staff ID not found in original message. API configuration error - check _createdby_value.');
                 }
                 
                 console.log('Reply party info:', {
@@ -480,10 +462,10 @@
                 const token = await this.getPortalToken();
                 
                 // Get the original message parties
-                // In the original message, "from" is the staff member, "toContact" is the portal contact
-                // For the reply:
-                //   - From: portal contact (the current user replying)
-                //   - To: staff member (the person who sent the original message)
+                // In the original message: from = staff (_createdby_value), to = contact (party)
+                // For the reply: reverse the roles
+                //   - From: portal contact (participationtypemask=1)
+                //   - To: staff member (participationtypemask=2)
                 
                 // Create the reply payload
                 // Use @odata.bind for navigation properties (regardingobjectid)
@@ -492,14 +474,14 @@
                     description: replyText,
                     adx_portalcommentdirectioncode: 1, // 1 = incoming (from contact to staff)
                     "regardingobjectid_msfed_application@odata.bind": `/msfed_applications(${originalMessage.regardingObjectId})`,
-                    // Add activity parties for From (portal contact) and To (staff from original message)
+                    // Add activity parties - reversed from original message
                     "adx_portalcomment_activity_parties": [
                         {
                             "participationtypemask": 1, // From - portal contact replying
                             "partyid_contact@odata.bind": `/contacts(${originalMessage.toContactId})`
                         },
                         {
-                            "participationtypemask": 2, // To - staff member who sent original message
+                            "participationtypemask": 2, // To - staff member from original _createdby_value
                             "partyid_systemuser@odata.bind": `/systemusers(${originalMessage.fromStaffId})`
                         }
                     ]
