@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.2.25112.144" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.25112.144" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.25112.00146">
+  <SolutionManifest>
+    <UniqueName>PortalInboxExtension</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="Portal Inbox Extension" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions />
+    <Version>1.0.0.1</Version>
+    <Managed>0</Managed>
+    <Publisher>
+      <UniqueName>MicrosoftFederal</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="Microsoft Federal" languagecode="1033" />
+      </LocalizedNames>
+      <Descriptions />
+      <EMailAddress xsi:nil="true"></EMailAddress>
+      <SupportingWebsiteUrl xsi:nil="true"></SupportingWebsiteUrl>
+      <CustomizationPrefix>msfed</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>43247</CustomizationOptionValuePrefix>
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+        <Address>
+          <AddressNumber>2</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+      </Addresses>
+    </Publisher>
+    <RootComponents>
+      <RootComponent type="1" schemaName="adx_portalcomment" behavior="2" />
+    </RootComponents>
+    <MissingDependencies>
+      <MissingDependency>
+        <Required type="1" schemaName="adx_portalcomment" displayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="1" schemaName="adx_portalcomment" displayName="Portal Comment" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="adx_portalcomment" displayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="2" schemaName="msfed_hasread" displayName="Has Read" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="adx_portalcommentdirectioncode" displayName="Direction" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="description" displayName="Description" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="from" displayName="From" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="Active" />
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="Active" />
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="prioritycode" displayName="Priority" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="regardingobjectid" displayName="Regarding" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="Active" />
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statuscode" displayName="Status Reason" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="subject" displayName="Subject" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="to" displayName="To" parentSchemaName="adx_portalcomment" parentDisplayName="Portal Comment" solution="Active" />
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" solution="PowerPages_RuntimeCore (1.0.2509.1)" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="61" schemaName="adx_portalcomment_form.js" displayName="adx_portalcomment_form.js" solution="PowerPages_RuntimeCore (1.0.2509.1)">
+          <package appName="Power Pages Core Package" version="1.1.2510.204">PowerPages_Core (1.1.2510.204)</package>
+        </Required>
+        <Dependent type="60" displayName="Portal Comment" parentDisplayName="Portal Comment" id="{757a4ace-c057-406d-b1a9-1849bf6e5cfa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{065b041d-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{08e5a0e4-74c4-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{118af624-fcc3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{1bec3106-c6c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{4137ce27-53c5-f011-8543-002248091b6a}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{451d7ffa-c5c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{468f142f-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{5775e97f-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{700da767-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{86c57e54-fbc3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{a003a770-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{bf48a24b-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{bfe5c1cd-fec3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{c5790e06-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{cb84da57-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="powerpagesite" solution="Active" id="{8d6a1096-1a6b-4259-b91c-73c091804afa}" />
+        <Dependent type="powerpagecomponent" id="{e03aeb3b-c4c3-f011-8543-000d3a351cb3}" />
+      </MissingDependency>
+    </MissingDependencies>
+  </SolutionManifest>
+</ImportExportXml>

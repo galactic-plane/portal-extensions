@@ -6,6 +6,17 @@ A production-ready, self-contained messaging system for Microsoft Power Pages wi
 
 The Portal Inbox Extension displays messages from the `adx_portalcomments` table in a dropdown inbox with unread badges, message details, reply capabilities, and archive functionality. Built with Bootstrap 5, fully isolated, and completely configurable via manifest.
 
+### PortalInboxExtension Solution Package
+
+This extension includes a **Dataverse unmanaged solution** (`PortalInboxExtension_1_0_0_1.zip`) that contains:
+
+- **Custom Entity Configuration**: `adx_portalcomment` entity with custom fields including `msfed_hasread`
+- **Form Customizations**: Main form with ribbon customizations for the comment entity
+- **Web Files**: Portal extension JavaScript files as Power Pages components
+- **Solution Components**: All required metadata for deploying the extension to Dataverse
+
+The solution is unpacked into the `PortalInboxExtension/` folder for version control and can be repacked for deployment to other environments. This allows you to modify entity configurations, forms, and web files, then repack and deploy the solution.
+
 ### Key Highlights
 
 - ✅ **Server-Side Read Tracking** - Uses `msfed_hasread` field for cross-device consistency
@@ -266,6 +277,20 @@ All text is customizable for localization:
 ```
 
 ## 🚀 Deployment
+
+### PAC CLI Commands
+
+To work with the solution package:
+
+**Unpack solution:**
+```bash
+pac solution unpack --zipfile PortalInboxExtension_1_0_0_1.zip --folder PortalInboxExtension
+```
+
+**Pack solution:**
+```bash
+pac solution pack --zipfile PortalInboxExtension_1_0_0_1.zip --folder PortalInboxExtension
+```
 
 ### Prerequisites
 

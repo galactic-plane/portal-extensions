@@ -1,0 +1,15 @@
+<powerpagecomponent powerpagecomponentid="86c57e54-fbc3-f011-8543-000d3a351cb3">
+  <content>{
+  "display_name": "Tracking Code",
+  "type": 756150000,
+  "value": "&lt;!-- Bootstrap Icons --&gt;\n&lt;link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css\"&gt;\n\n&lt;script type=\"text/javascript\" src=\"/portal-extensions.js\"&gt;&lt;/script&gt;\n\n{% if user %}\n\n&lt;script type=\"text/javascript\" src=\"/portal-extension-init-auth.js\"&gt;&lt;/script&gt;\n\n{% endif %}\n\n&lt;script type=\"text/javascript\" src=\"/portal-extension-init-noauth.js\"&gt;&lt;/script&gt;"
+}</content>
+  <iscustomizable>1</iscustomizable>
+  <name>Tracking Code</name>
+  <powerpagecomponenttype>7</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>8d6a1096-1a6b-4259-b91c-73c091804afa</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>

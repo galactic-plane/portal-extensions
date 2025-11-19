@@ -1,0 +1,19 @@
+<powerpagecomponent powerpagecomponentid="118af624-fcc3-f011-8543-000d3a351cb3">
+  <content>{
+  "partialurl": "portal-inbox-extension.js",
+  "excludefromsearch": false,
+  "hiddenfromsitemap": false,
+  "contentdisposition": 756150000,
+  "publishingstateid": "4f40e43c-8916-4e51-ae62-a7502313b8ea",
+  "parentpageid": "4901945d-1b6d-4f4e-8dde-4bbca48f9399"
+}</content>
+  <filecontent mimetype="application/javascript">portal-inbox-extension.js</filecontent>
+  <iscustomizable>1</iscustomizable>
+  <name>portal-inbox-extension.js</name>
+  <powerpagecomponenttype>3</powerpagecomponenttype>
+  <powerpagesiteid>
+    <powerpagesiteid>8d6a1096-1a6b-4259-b91c-73c091804afa</powerpagesiteid>
+  </powerpagesiteid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</powerpagecomponent>
