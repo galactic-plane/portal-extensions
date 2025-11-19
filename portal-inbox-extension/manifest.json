@@ -30,13 +30,17 @@
       "baseUrl": "/_api",
       "operations": {
         "read": {
-          "enabled": true
+          "enabled": true,
+          "select": null,
+          "filter": null,
+          "orderBy": "createdon desc",
+          "expand": "adx_portalcomment_activity_parties($expand=partyid_contact,partyid_systemuser)"
         },
         "create": {
           "enabled": true
         },
         "update": {
-          "enabled": false
+          "enabled": true
         },
         "delete": {
           "enabled": false
@@ -47,46 +51,73 @@
     "colors": {
       "avatarGradientStart": "#0078d4",
       "avatarGradientEnd": "#005a9e",
+      "avatarText": "#ffffff",
       "headerGradientStart": "#0078d4",
       "headerGradientEnd": "#005a9e",
-      "primaryColor": "#0078d4",
-      "badgeBackground": "#dc3545"
+      "headerText": "#ffffff",
+      "messageFrom": "#1e293b",
+      "messageSubject": "#64748b",
+      "messageTime": "#94a3b8",
+      "dropdownBorder": "#e2e8f0",
+      "dropdownShadow": "rgba(0, 0, 0, 0.15)",
+      "itemHoverBackground": "#f1f5f9",
+      "itemUnreadBackground": "#f8f9ff",
+      "itemBorderColor": "#e2e8f0",
+      "badgeBackground": "#dc3545",
+      "badgeText": "#ffffff",
+      "navLinkColor": "#ffffff",
+      "navLinkCaretColor": "#ffffff",
+      "primaryColor": "#0078d4"
     },
-    "config": {
-      "text": {
-        "inboxLabel": "Messages",
-        "headerText": "Inbox",
-        "noMessagesText": "No messages",
-        "viewAllLabel": "View All Messages",
-        "fromLabel": "From:",
-        "subjectLabel": "Subject:",
-        "replyLabel": "Reply",
-        "archiveLabel": "Archive",
-        "markReadLabel": "Mark as Read",
-        "markUnreadLabel": "Mark as Unread",
-        "externalLinkWarning": "This link will open in a new window. Continue?"
-      },
-      "icons": {
-        "inbox": "bi-envelope-fill",
-        "unread": "bi-circle-fill",
-        "read": "bi-circle",
-        "reply": "bi-reply-fill",
-        "archive": "bi-archive-fill",
-        "externalLink": "bi-box-arrow-up-right"
-      },
-      "styles": {
-        "badgeClass": "bg-danger",
-        "primaryColor": "#0078d4",
-        "hoverColor": "#f1f5f9"
-      },
-      "features": {
-        "enableReplies": true,
-        "enableArchive": true,
-        "enableMarkRead": true,
-        "enableExternalLinkWarning": true,
-        "autoRefresh": false,
-        "refreshInterval": 30000
-      }
+    "text": {
+      "dropdownToggleIcon": "bi bi-envelope-fill",
+      "messagesHeader": "Messages",
+      "archivedHeader": "Archived Messages",
+      "unreadLabel": "unread",
+      "noUnreadMessages": "No unread messages",
+      "noArchivedMessages": "No archived messages",
+      "viewArchived": "View Archived Messages",
+      "viewUnread": "View Unread Messages",
+      "loadingMessages": "Loading messages...",
+      "failedToLoad": "Failed to load messages",
+      "modalTitle": "Message",
+      "closeButton": "Close",
+      "replyButton": "Reply",
+      "sendReplyButton": "Send Reply",
+      "cancelButton": "Cancel",
+      "replyPlaceholder": "Type your reply here...",
+      "replyLabel": "Your Reply:",
+      "originalMessageLabel": "Original Message:",
+      "toLabel": "To: You",
+      "newBadge": "New",
+      "justNow": "Just now",
+      "minuteAgo": "minute ago",
+      "minutesAgo": "minutes ago",
+      "hourAgo": "hour ago",
+      "hoursAgo": "hours ago",
+      "dayAgo": "day ago",
+      "daysAgo": "days ago",
+      "replyPrompt": "Please enter a reply message.",
+      "confirmSend": "Are you sure you want to send this reply?",
+      "replySent": "Reply sent successfully!",
+      "externalLinkWarning": "You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?"
+    },
+    "icons": {
+      "inbox": "bi bi-inbox-fill",
+      "archive": "bi bi-archive-fill",
+      "reply": "bi bi-reply-fill",
+      "send": "bi bi-send-fill"
+    },
+    "styles": {
+      "dropdownMinWidth": "350px",
+      "dropdownMaxHeight": "400px",
+      "badgeDisplay": "inline-block"
+    },
+    "features": {
+      "enableArchive": true,
+      "enableReply": true,
+      "enableExternalLinkWarning": true,
+      "allowHtmlInMessages": true
     }
   }
 }

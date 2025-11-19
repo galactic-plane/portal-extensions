@@ -92,7 +92,7 @@
       "description": "Configuration used to generate portal-extensions-init.js file",
       "properties": {
         "localDataSource": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Path to local JSON file for testing/development"
         },
         "portalDataSource": {
@@ -101,7 +101,7 @@
           "properties": {
             "entitySetName": {
               "type": "string",
-              "description": "Dataverse table EntitySetName (e.g., 'accounts', 'msfed_messages')"
+              "description": "Dataverse table EntitySetName (e.g., 'accounts', 'adx_portalcomments')"
             },
             "baseUrl": {
               "type": "string",
@@ -119,20 +119,20 @@
                       "description": "Enable read operations"
                     },
                     "select": {
-                      "type": "string",
-                      "description": "Comma-separated list of fields to retrieve"
+                      "type": ["string", "null"],
+                      "description": "OData $select - comma-separated list of fields to retrieve (null = all fields)"
                     },
                     "filter": {
-                      "type": "string",
-                      "description": "OData filter expression"
+                      "type": ["string", "null"],
+                      "description": "OData $filter - additional filter expression (null = no additional filter)"
                     },
                     "orderBy": {
-                      "type": "string",
-                      "description": "OData orderby expression"
+                      "type": ["string", "null"],
+                      "description": "OData $orderby - sort order expression"
                     },
                     "expand": {
-                      "type": "string",
-                      "description": "Related entities to expand"
+                      "type": ["string", "null"],
+                      "description": "OData $expand - related entities to expand"
                     }
                   }
                 },
@@ -142,10 +142,6 @@
                     "enabled": {
                       "type": "boolean",
                       "description": "Enable create operations"
-                    },
-                    "fields": {
-                      "type": "string",
-                      "description": "Comma-separated list of fields allowed for creation"
                     }
                   }
                 },
@@ -155,10 +151,6 @@
                     "enabled": {
                       "type": "boolean",
                       "description": "Enable update operations"
-                    },
-                    "fields": {
-                      "type": "string",
-                      "description": "Comma-separated list of fields allowed for updates"
                     }
                   }
                 },
@@ -181,11 +173,48 @@
         },
         "colors": {
           "type": "object",
-          "description": "Color scheme configuration"
+          "description": "Color scheme configuration",
+          "properties": {
+            "avatarGradientStart": { "type": "string" },
+            "avatarGradientEnd": { "type": "string" },
+            "avatarText": { "type": "string" },
+            "headerGradientStart": { "type": "string" },
+            "headerGradientEnd": { "type": "string" },
+            "headerText": { "type": "string" },
+            "messageFrom": { "type": "string" },
+            "messageSubject": { "type": "string" },
+            "messageTime": { "type": "string" },
+            "dropdownBorder": { "type": "string" },
+            "dropdownShadow": { "type": "string" },
+            "itemHoverBackground": { "type": "string" },
+            "itemUnreadBackground": { "type": "string" },
+            "itemBorderColor": { "type": "string" },
+            "badgeBackground": { "type": "string" },
+            "badgeText": { "type": "string" },
+            "navLinkColor": { "type": "string" },
+            "navLinkCaretColor": { "type": "string" },
+            "primaryColor": { "type": "string" }
+          }
         },
-        "config": {
+        "text": {
           "type": "object",
-          "description": "Extension-specific configuration"
+          "description": "UI text configuration",
+          "additionalProperties": { "type": "string" }
+        },
+        "icons": {
+          "type": "object",
+          "description": "Icon configuration",
+          "additionalProperties": { "type": "string" }
+        },
+        "styles": {
+          "type": "object",
+          "description": "Style configuration",
+          "additionalProperties": { "type": "string" }
+        },
+        "features": {
+          "type": "object",
+          "description": "Feature flags",
+          "additionalProperties": { "type": "boolean" }
         }
       }
     }
