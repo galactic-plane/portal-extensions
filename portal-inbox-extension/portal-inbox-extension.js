@@ -256,12 +256,57 @@
                     if (messageDate > currentLastCheckedDate) {
                         localStorage.setItem('portalInbox_lastCheckedComments', messageDate.toISOString());
                     }
+                    
+                    // Also update msfed_hasread field on the portal comment record
+                    await this.updatePortalCommentReadStatus(messageId, true);
                 }
                 
                 console.log('Message read status updated in localStorage');
                 
             } catch (error) {
                 console.error('Failed to update message read status:', error);
+            }
+        },
+        
+        /**
+         * Update the msfed_hasread field on a portal comment record
+         */
+        updatePortalCommentReadStatus: async function(messageId, hasRead) {
+            try {
+                const config = this.config.portalDataSource;
+                const updateOps = config.operations.update;
+                
+                if (!updateOps || !updateOps.enabled) {
+                    console.log('Update operations are not enabled');
+                    return;
+                }
+                
+                const url = `${config.baseUrl}/${config.entitySetName}(${messageId})`;
+                const token = await this.getPortalToken();
+                
+                const updatePayload = {
+                    msfed_hasread: hasRead
+                };
+                
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        '__RequestVerificationToken': token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(updatePayload)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+                
+                console.log('Portal comment msfed_hasread field updated successfully');
+                
+            } catch (error) {
+                console.error('Failed to update portal comment read status:', error);
             }
         },
         
@@ -1194,14 +1239,45 @@
     // ============================================================================
     const Main = {
         config: {
-            // Data source configuration
+            // ========================================================================
+            // DATA SOURCE CONFIGURATION
+            // ========================================================================
+            
+            // Local data source - path to JSON file for testing/development
             localDataSource: null,
-            portalDataSource: null,
             
-            // Container configuration
-            containerId: null,
+            // Portal data source - Power Pages Web API configuration
+            portalDataSource: {
+                entitySetName: 'adx_portalcomments',
+                baseUrl: '/_api',
+                operations: {
+                    read: {
+                        enabled: true,
+                        select: null,  // OData $select - comma-separated field list
+                        filter: null,  // OData $filter - additional filter criteria
+                        orderBy: 'createdon desc',  // OData $orderby
+                        expand: 'adx_portalcomment_activity_parties($expand=partyid_contact,partyid_systemuser)'  // OData $expand
+                    },
+                    create: {
+                        enabled: true
+                    },
+                    update: {
+                        enabled: true  // Required for updating msfed_hasread field
+                    },
+                    delete: {
+                        enabled: false
+                    }
+                }
+            },
             
-            // UI Text configuration
+            // ========================================================================
+            // CONTAINER CONFIGURATION
+            // ========================================================================
+            containerId: null,  // Required - ID of DOM element to inject widget into
+            
+            // ========================================================================
+            // UI TEXT CONFIGURATION
+            // ========================================================================
             text: {
                 dropdownToggleIcon: 'bi bi-envelope-fill',
                 messagesHeader: 'Messages',
@@ -1236,7 +1312,9 @@
                 externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
             },
             
-            // Icon configuration
+            // ========================================================================
+            // ICON CONFIGURATION
+            // ========================================================================
             icons: {
                 inbox: 'bi bi-inbox-fill',
                 archive: 'bi bi-archive-fill',
@@ -1244,14 +1322,18 @@
                 send: 'bi bi-send-fill'
             },
             
-            // Style configuration
+            // ========================================================================
+            // STYLE CONFIGURATION
+            // ========================================================================
             styles: {
                 dropdownMinWidth: '350px',
                 dropdownMaxHeight: '400px',
                 badgeDisplay: 'inline-block'
             },
             
-            // Color configuration
+            // ========================================================================
+            // COLOR CONFIGURATION
+            // ========================================================================
             colors: {
                 // Avatar colors
                 avatarGradientStart: '#0078d4',
@@ -1289,7 +1371,9 @@
                 primaryColor: '#0078d4'
             },
             
-            // Feature flags
+            // ========================================================================
+            // FEATURE FLAGS
+            // ========================================================================
             features: {
                 enableArchive: true,
                 enableReply: true,
@@ -1297,7 +1381,9 @@
                 allowHtmlInMessages: true
             },
             
-            // Auto-init flag
+            // ========================================================================
+            // AUTO-INIT FLAG
+            // ========================================================================
             autoInit: false
         },
         
@@ -1378,6 +1464,13 @@
         // Main initialization and control
         init: Main.init.bind(Main),
         refresh: Main.refresh.bind(Main),
+        
+        // Testing utilities
+        clearReadStatus: function() {
+            localStorage.removeItem('portalInbox_lastCheckedComments');
+            console.log('Portal Inbox: Read status cleared from localStorage');
+            Data.loadMessages();
+        },
         
         // Expose namespaces for advanced usage
         Data: Data,

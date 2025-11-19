@@ -47,98 +47,146 @@ document.addEventListener('portalExtensionsLoaded', function() {
     
     // Initialize Portal Inbox Extension
     PortalInboxExtension.init({
-        // Data sources for local and portal environments
+        // ========================================================================
+        // DATA SOURCE CONFIGURATION
+        // ========================================================================
+        
+        // Local data source - JSON file for development/testing
         localDataSource: 'portal-inbox-extension/localDataSource.json',
+        
+        // Portal data source - Power Pages Web API configuration
         portalDataSource: {
             entitySetName: 'adx_portalcomments',
             baseUrl: '/_api',
             operations: {
                 read: {
-                    enabled: true
+                    enabled: true,
+                    select: null,  // OData $select - comma-separated field list (null = return all fields)
+                    filter: null,  // OData $filter - additional filter beyond directioncode (null = no additional filter)
+                    orderBy: 'createdon desc',  // OData $orderby - sort order
+                    expand: 'adx_portalcomment_activity_parties($expand=partyid_contact,partyid_systemuser)'  // OData $expand - related entities
                 },
                 create: {
-                    enabled: true
+                    enabled: true  // Allow creating replies
                 },
                 update: {
-                    enabled: false
+                    enabled: true  // Allow updating msfed_hasread field
                 },
                 delete: {
-                    enabled: false
+                    enabled: false  // Disable delete operations
                 }
             }
         },
+        
+        // ========================================================================
+        // CONTAINER CONFIGURATION
+        // ========================================================================
         containerId: 'portal-inbox-extension',
+        
+        // ========================================================================
+        // COLOR CONFIGURATION
+        // ========================================================================
         colors: {
             // Avatar colors - circular avatar icon for each message sender
-            avatarGradientStart: '#0078d4',  // Start color of avatar gradient
-            avatarGradientEnd: '#005a9e',    // End color of avatar gradient
-            avatarText: '#ffffff',            // Text color for initials in avatar
+            avatarGradientStart: '#0078d4',
+            avatarGradientEnd: '#005a9e',
+            avatarText: '#ffffff',
             
             // Header colors - dropdown header section
-            headerGradientStart: '#0078d4',  // Start color of header gradient
-            headerGradientEnd: '#005a9e',    // End color of header gradient
-            headerText: '#ffffff',            // Text color in header
+            headerGradientStart: '#0078d4',
+            headerGradientEnd: '#005a9e',
+            headerText: '#ffffff',
             
             // Message text colors - individual message items
-            messageFrom: '#1e293b',           // Sender name color
-            messageSubject: '#64748b',        // Message subject/preview color
-            messageTime: '#94a3b8',           // Timestamp color
+            messageFrom: '#1e293b',
+            messageSubject: '#64748b',
+            messageTime: '#94a3b8',
             
             // Dropdown colors - the popup menu container
-            dropdownBorder: '#e2e8f0',        // Border color of dropdown
-            dropdownShadow: 'rgba(0, 0, 0, 0.15)',  // Shadow around dropdown
+            dropdownBorder: '#e2e8f0',
+            dropdownShadow: 'rgba(0, 0, 0, 0.15)',
             
             // Item states - message list item backgrounds
-            itemHoverBackground: '#f1f5f9',   // Background when hovering over message
-            itemUnreadBackground: '#f8f9ff',  // Background for unread messages
-            itemBorderColor: '#e2e8f0',       // Border between message items
+            itemHoverBackground: '#f1f5f9',
+            itemUnreadBackground: '#f8f9ff',
+            itemBorderColor: '#e2e8f0',
             
             // Badge colors - unread count badge
-            badgeBackground: '#dc3545',       // Background color of unread count badge
-            badgeText: '#ffffff',             // Text color of unread count badge
+            badgeBackground: '#dc3545',
+            badgeText: '#ffffff',
             
             // Navigation link colors - the inbox icon in the navbar
-            navLinkColor: '#ffffff',          // Color of the inbox icon
-            navLinkCaretColor: '#ffffff',     // Color of the dropdown caret/arrow
+            navLinkColor: '#ffffff',
+            navLinkCaretColor: '#ffffff',
             
             // Primary action color - buttons and interactive elements
-            primaryColor: '#0078d4'           // Primary brand color for actions
+            primaryColor: '#0078d4'
         },
-        config: {
-            text: {
-                inboxLabel: 'Messages',
-                headerText: 'Inbox',
-                noMessagesText: 'No messages',
-                viewAllLabel: 'View All Messages',
-                fromLabel: 'From:',
-                subjectLabel: 'Subject:',
-                replyLabel: 'Reply',
-                archiveLabel: 'Archive',
-                markReadLabel: 'Mark as Read',
-                markUnreadLabel: 'Mark as Unread',
-                externalLinkWarning: 'This link will open in a new window. Continue?'
-            },
-            icons: {
-                inbox: 'bi-envelope-fill',
-                unread: 'bi-circle-fill',
-                read: 'bi-circle',
-                reply: 'bi-reply-fill',
-                archive: 'bi-archive-fill',
-                externalLink: 'bi-box-arrow-up-right'
-            },
-            styles: {
-                badgeClass: 'bg-danger',
-                primaryColor: '#0078d4',
-                hoverColor: '#f1f5f9'
-            },
-            features: {
-                enableReplies: true,
-                enableArchive: true,
-                enableMarkRead: true,
-                enableExternalLinkWarning: true,
-                autoRefresh: false,
-                refreshInterval: 30000
-            }
+        
+        // ========================================================================
+        // TEXT CONFIGURATION
+        // ========================================================================
+        text: {
+            dropdownToggleIcon: 'bi bi-envelope-fill',
+            messagesHeader: 'Messages',
+            archivedHeader: 'Archived Messages',
+            unreadLabel: 'unread',
+            noUnreadMessages: 'No unread messages',
+            noArchivedMessages: 'No archived messages',
+            viewArchived: 'View Archived Messages',
+            viewUnread: 'View Unread Messages',
+            loadingMessages: 'Loading messages...',
+            failedToLoad: 'Failed to load messages',
+            modalTitle: 'Message',
+            closeButton: 'Close',
+            replyButton: 'Reply',
+            sendReplyButton: 'Send Reply',
+            cancelButton: 'Cancel',
+            replyPlaceholder: 'Type your reply here...',
+            replyLabel: 'Your Reply:',
+            originalMessageLabel: 'Original Message:',
+            toLabel: 'To: You',
+            newBadge: 'New',
+            justNow: 'Just now',
+            minuteAgo: 'minute ago',
+            minutesAgo: 'minutes ago',
+            hourAgo: 'hour ago',
+            hoursAgo: 'hours ago',
+            dayAgo: 'day ago',
+            daysAgo: 'days ago',
+            replyPrompt: 'Please enter a reply message.',
+            confirmSend: 'Are you sure you want to send this reply?',
+            replySent: 'Reply sent successfully!',
+            externalLinkWarning: 'You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?'
+        },
+        
+        // ========================================================================
+        // ICON CONFIGURATION
+        // ========================================================================
+        icons: {
+            inbox: 'bi bi-inbox-fill',
+            archive: 'bi bi-archive-fill',
+            reply: 'bi bi-reply-fill',
+            send: 'bi bi-send-fill'
+        },
+        
+        // ========================================================================
+        // STYLE CONFIGURATION
+        // ========================================================================
+        styles: {
+            dropdownMinWidth: '350px',
+            dropdownMaxHeight: '400px',
+            badgeDisplay: 'inline-block'
+        },
+        
+        // ========================================================================
+        // FEATURE FLAGS
+        // ========================================================================
+        features: {
+            enableArchive: true,
+            enableReply: true,
+            enableExternalLinkWarning: true,
+            allowHtmlInMessages: true
         }
     });
 });
