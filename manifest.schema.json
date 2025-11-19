@@ -39,6 +39,11 @@
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
           "description": "Semantic version (x.y.z)"
+        },
+        "requiresAuthentication": {
+          "type": "boolean",
+          "description": "Whether this extension requires an authenticated user",
+          "default": false
         }
       }
     },

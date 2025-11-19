@@ -7,7 +7,8 @@
   "extension": {
     "id": "portal-inbox-extension",
     "name": "Portal Inbox Extension",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "requiresAuthentication": true
   },
   "dependencies": {
     "bootstrap": "5.x",
