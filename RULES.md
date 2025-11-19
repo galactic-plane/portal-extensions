@@ -49,6 +49,17 @@
 - The host page (portal-demo.html) should have ZERO extension-specific styles
 - Extensions should check if their styles are already injected to avoid duplicates
 
+### No Fallback Code (CRITICAL):
+- **Code must either work 100% correctly or throw a clear error**
+- NO fallback values for missing required data (no "Unknown", "N/A", "Staff", "You", etc.)
+- NO optional chaining with default values for required fields
+- NO defensive coding that masks configuration errors
+- If API data is missing or incorrect, throw an error immediately with:
+  - What is missing
+  - Why it's needed
+  - How to fix it (e.g., API configuration)
+- Exception: Only use fallbacks for truly optional features, never for core functionality
+
 ### Extension JavaScript File:
 - Must be completely static
 - No hardcoded configuration values

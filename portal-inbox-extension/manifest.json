@@ -32,10 +32,10 @@
       "operations": {
         "read": {
           "enabled": true,
-          "select": null,
+          "select": "subject,description,_regardingobjectid_value,statecode,statuscode,activityid,activitytypecode,adx_portalcommentdirectioncode,createdon,msfed_hasread",
           "filter": null,
           "orderBy": "createdon desc",
-          "expand": "adx_portalcomment_activity_parties($expand=partyid_contact,partyid_systemuser)"
+          "expand": "adx_portalcomment_activity_parties($select=_partyid_value,participationtypemask;$expand=partyid_contact($select=fullname,contactid),partyid_systemuser($select=fullname,systemuserid))"
         },
         "create": {
           "enabled": true

@@ -133,6 +133,8 @@
                 if (readOps.expand) params.append('$expand', readOps.expand);
                 
                 const url = `${config.baseUrl}/${config.entitySetName}?${params.toString()}`;
+                console.log('Portal Inbox API Request URL:', url);
+                
                 const token = await this.getPortalToken();
                 
                 const response = await fetch(url, {
@@ -148,6 +150,8 @@
                 }
                 
                 const data = await response.json();
+                console.log('Portal Inbox API Response:', data);
+                console.log('First record:', data.value?.[0]);
                 
                 this.state.messages = this.mapPortalDataToMessages(data.value || []);
                 this.processMessages();
@@ -206,9 +210,44 @@
                 
                 // New OData format - extract activity parties
                 // Activity parties come as a single array, we need to find systemuser and contact
-                const parties = comment.adx_portalcomment_activity_parties || [];
+                const parties = comment.adx_portalcomment_activity_parties;
+                
+                console.log('Processing comment:', {
+                    activityid: comment.activityid,
+                    subject: comment.subject,
+                    hasPartiesProperty: 'adx_portalcomment_activity_parties' in comment,
+                    partiesValue: parties,
+                    partiesType: typeof parties,
+                    partiesIsArray: Array.isArray(parties),
+                    partiesLength: parties?.length
+                });
+                
+                // No fallback - if parties are missing, throw error
+                if (!parties || parties.length === 0) {
+                    console.error('Missing or empty activity parties for comment:', comment.activityid);
+                    console.error('Full comment object:', comment);
+                    console.error('Parties value:', parties);
+                    throw new Error(`Activity parties not found for comment ${comment.activityid}. Ensure $expand includes adx_portalcomment_activity_parties.`);
+                }
+                
+                console.log(`Comment ${comment.activityid} has ${parties.length} parties:`, parties);
+                
                 const fromParty = parties.find(p => p.partyid_systemuser !== null && p.partyid_systemuser !== undefined);
                 const toParty = parties.find(p => p.partyid_contact !== null && p.partyid_contact !== undefined);
+                
+                if (!fromParty) {
+                    console.error('No staff (systemuser) party found for comment:', comment.activityid);
+                    console.error('Parties received:', parties);
+                    console.error('This portal comment is missing the systemuser party. Check how the comment was created in Dataverse.');
+                    throw new Error(`Staff party (systemuser) not found for comment ${comment.activityid}. The comment must have a systemuser party with participationtypemask=1.`);
+                }
+                
+                if (!toParty) {
+                    console.error('No contact party found for comment:', comment.activityid);
+                    console.error('Parties received:', parties);
+                    console.error('This portal comment is missing the contact party. Check how the comment was created in Dataverse.');
+                    throw new Error(`Contact party not found for comment ${comment.activityid}. The comment must have a contact party with participationtypemask=2.`);
+                }
                 
                 // Determine read status - prioritize msfed_hasread from server, fall back to localStorage
                 let isRead = false;
@@ -223,9 +262,23 @@
                     isRead = createdDate <= lastCheckedDate;
                 }
                 
+                // Extract the contact ID and staff ID from the parties - no fallbacks
+                const toContactId = toParty.partyid_contact?.contactid;
+                const fromStaffId = fromParty.partyid_systemuser?.systemuserid;
+                
+                if (!toContactId) {
+                    console.error('Contact ID missing from party:', toParty);
+                    throw new Error(`Contact ID not found in party data for comment ${comment.activityid}. Ensure $expand includes partyid_contact.`);
+                }
+                
+                if (!fromStaffId) {
+                    console.error('Staff ID missing from party:', fromParty);
+                    throw new Error(`Staff ID not found in party data for comment ${comment.activityid}. Ensure $expand includes partyid_systemuser.`);
+                }
+                
                 return {
                     id: comment.activityid,
-                    from: fromParty?.partyid_systemuser?.fullname || 'Staff',
+                    from: fromParty.partyid_systemuser.fullname,
                     subject: comment.subject || '(No Subject)',
                     body: comment.description || '',
                     date: comment.createdon || new Date().toISOString(),
@@ -233,7 +286,9 @@
                     category: 'portal-comment',
                     // Additional metadata
                     regardingObjectId: comment._regardingobjectid_value,
-                    toContact: toParty?.partyid_contact?.fullname || 'You',
+                    toContact: toParty.partyid_contact.fullname,
+                    toContactId: toContactId,
+                    fromStaffId: fromStaffId,
                     directionCode: comment.adx_portalcommentdirectioncode,
                     statecode: comment.statecode,
                     statuscode: comment.statuscode,
@@ -404,10 +459,31 @@
                     throw new Error('Original message not found');
                 }
                 
+                // No fallback - these must exist or fail
+                if (!originalMessage.toContactId) {
+                    console.error('Original message:', originalMessage);
+                    throw new Error('Contact ID not found in original message. API configuration error - check $expand parameter.');
+                }
+                if (!originalMessage.fromStaffId) {
+                    console.error('Original message:', originalMessage);
+                    throw new Error('Staff ID not found in original message. API configuration error - check $expand parameter.');
+                }
+                
+                console.log('Reply party info:', {
+                    fromContactId: originalMessage.toContactId,
+                    toStaffId: originalMessage.fromStaffId
+                });
+                
                 const url = `${config.baseUrl}/${config.entitySetName}`;
                 
                 // Get CSRF token for authentication
                 const token = await this.getPortalToken();
+                
+                // Get the original message parties
+                // In the original message, "from" is the staff member, "toContact" is the portal contact
+                // For the reply:
+                //   - From: portal contact (the current user replying)
+                //   - To: staff member (the person who sent the original message)
                 
                 // Create the reply payload
                 // Use @odata.bind for navigation properties (regardingobjectid)
@@ -415,7 +491,18 @@
                     subject: `Re: ${originalMessage.subject}`,
                     description: replyText,
                     adx_portalcommentdirectioncode: 1, // 1 = incoming (from contact to staff)
-                    "regardingobjectid_msfed_application@odata.bind": `/msfed_applications(${originalMessage.regardingObjectId})`
+                    "regardingobjectid_msfed_application@odata.bind": `/msfed_applications(${originalMessage.regardingObjectId})`,
+                    // Add activity parties for From (portal contact) and To (staff from original message)
+                    "adx_portalcomment_activity_parties": [
+                        {
+                            "participationtypemask": 1, // From - portal contact replying
+                            "partyid_contact@odata.bind": `/contacts(${originalMessage.toContactId})`
+                        },
+                        {
+                            "participationtypemask": 2, // To - staff member who sent original message
+                            "partyid_systemuser@odata.bind": `/systemusers(${originalMessage.fromStaffId})`
+                        }
+                    ]
                 };
                 
                 const response = await fetch(url, {
