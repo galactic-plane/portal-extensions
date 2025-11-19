@@ -1,103 +1,434 @@
 # Portal Extensions
 
-This solution contains multiple portal extension projects that enhance and extend portal functionality for Microsoft Power Pages.
+A modular, manifest-based extension system for Microsoft Power Pages that enables self-contained JavaScript extensions with automatic environment detection, dual data sources, and centralized configuration management.
 
 ## 🚀 Architecture Overview
 
-This repository includes a **manifest-based deployment system** where:
-- Each extension has a `manifest.json` defining deployment configuration
-- C# plugin reads manifests and generates `portal-extensions-init.js`
-- Extensions automatically detect environment (local vs portal)
-- Dual data sources: Local JSON for dev, Power Pages Web API for production
+This solution provides a complete framework for building and deploying portal extensions:
 
-### Quick Links
-- 📋 **[Manifest Schema](./manifest.schema.json)** - JSON Schema for validation
-- 📐 **[Development Rules](./RULES.md)** - Repository structure and coding standards
-- 📘 **[Extension README](./portal-inbox-extension/README.md)** - Detailed extension docs
+- **Manifest-Based Configuration** - Each extension defines its deployment and initialization in `manifest.json`
+- **Dual Init Files** - Separate initialization for authenticated (`-auth.js`) and public (`-noauth.js`) extensions
+- **Environment Detection** - Extensions automatically switch between local JSON and Web API
+- **Static Extension Files** - All configuration externalized to init files, keeping extension code static
+- **JSON Schema Validation** - Real-time validation and IntelliSense in VS Code
 
-## Extensions
+### System Architecture
 
-### Portal Inbox Extension
-A messaging extension with environment-aware data loading and full CRUD operations.
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Power Pages Portal                                           │
+├─────────────────────────────────────────────────────────────┤
+│ Head Snippet (Tracking Code)                                │
+│ <script src="/portal-extensions/portal-extensions.js">      │
+│ <script src="/portal-extensions/init-auth.js">   (logged in)│
+│ <script src="/portal-extensions/init-noauth.js"> (public)   │
+├─────────────────────────────────────────────────────────────┤
+│ Extensions Load & Initialize Based on Auth State            │
+│ ├─ Authenticated: Portal Inbox, User Dashboard, etc.        │
+│ └─ Public: Announcement Banner, Cookie Consent, etc.        │
+└─────────────────────────────────────────────────────────────┘
+```
 
-- **Location:** `portal-inbox-extension/`
-- **Description:** Inbox messages with read/unread tracking, reply functionality, and archive features
-- **Data Sources:** 
-  - Local: `localDataSource.json` (development/testing)
-  - Portal: Power Pages Web API (production)
-- **Features:** Environment detection, OData queries, CSRF authentication, field mapping
-- **Manifest:** [View manifest.json](./portal-inbox-extension/manifest.json)
-- **Documentation:** [View Extension README](./portal-inbox-extension/README.md)
-- **Demo:** See `portal-demo.html` for full demonstration
-
-## Getting Started
-
-### For Extension Users
-
-Each extension is self-contained within its own directory. Navigate to the specific extension folder and refer to its README for detailed information about that extension.
-
-### For C# Plugin Developers
-
-The C# plugin should:
-
-1. **Read all `manifest.json` files** from extension folders
-2. **Generate `portal-extensions-init.js`** in the root with all initialization configs
-3. **Deploy web files** to Power Pages as specified in manifests
-4. **Upload to tracker code** (head content snippet):
-   ```html
-   <script src="/portal-extensions/portal-extensions.js"></script>
-   <script src="/portal-extensions/portal-extensions-init.js"></script>
-   ```
-
-## Structure
+## 📁 Repository Structure
 
 ```
 portal-extensions/
-├── manifest.schema.json              # JSON Schema for manifest validation
-├── portal-extensions-init.js         # GENERATED - Combined initialization (DO NOT EDIT)
-├── portal-demo.html                  # Demo page showing all extensions
-├── portal-extensions.js              # Extension loader (static)
-├── RULES.md                          # Development rules and standards
-├── README.md                         # This file - master documentation
-└── portal-inbox-extension/           # Individual extension projects
-    ├── manifest.json                 # Deployment manifest
-    ├── README.md                     # Extension-specific documentation
-    ├── portal-inbox-extension.js     # Extension code (deployed)
-    └── localDataSource.json          # Local test data (NOT deployed)
+├── manifest.schema.json                   # JSON Schema for manifest validation
+├── portal-extensions.js                   # Extension loader (static)
+├── portal-extension-init-auth.js          # GENERATED - Authenticated extensions init
+├── portal-extension-init-noauth.js        # GENERATED - Public extensions init
+├── portal-demo.html                       # Demo page showing all extensions
+├── RULES.md                              # Development rules and standards
+├── README.md                             # This file
+│
+└── portal-inbox-extension/               # Example extension
+    ├── manifest.json                     # Extension manifest
+    ├── portal-inbox-extension.js         # Extension code (static)
+    ├── localDataSource.json              # Local test data (NOT deployed)
+    └── README.md                         # Extension documentation
 ```
 
-## Manifest System Features
+## 🎯 Current Extensions
 
-✅ **Environment Detection** - Auto-switches between local JSON and Web API  
-✅ **Dual Data Sources** - Development (JSON) and Production (Dataverse)  
-✅ **Generated Initialization** - C# plugin creates init file from manifests  
-✅ **Web File Management** - Uploads JavaScript files to portal  
-✅ **OData Query Support** - $select, $filter, $orderby, $expand  
-✅ **CRUD Operations** - Read, Create, Update, Delete via Web API  
-✅ **CSRF Authentication** - Secure Web API calls  
-✅ **Field Mapping** - Dataverse fields mapped to internal format  
-✅ **JSON Schema Validation** - Real-time validation in VS Code  
-✅ **Static Extensions** - All config in init, extensions remain static  
+### Portal Inbox Extension
+**Status:** Production Ready  
+**Authentication:** Required (`requiresAuthentication: true`)
 
-## Adding New Extensions
+A comprehensive messaging system with read/unread tracking, reply functionality, and archive features.
 
-To add a new extension to this solution:
+**Key Features:**
+- ✅ Server-side read status tracking via `msfed_hasread` field
+- ✅ Cross-device/browser synchronization
+- ✅ localStorage fallback for backward compatibility
+- ✅ Reply functionality with direction code tracking
+- ✅ Archive view for read messages
+- ✅ Bootstrap 5 modals for confirmations/alerts
+- ✅ Full OData CRUD operations
+- ✅ Automatic environment detection
 
-1. **Create extension folder** at the root level
-2. **Add required files** (exactly 4 files per extension):
-   - `{extension-name}.js` - Extension code (static, no hardcoded config)
-   - `{data-file}.json` - Sample data for local testing (NOT deployed)
-   - `manifest.json` - Deployment configuration with initialization section
-   - `README.md` - Documentation
+**Data Source:** `adx_portalcomments` table in Dataverse
 
-3. **Configure manifest.json:**
-   ```json
-   {
-     "$schema": "../manifest.schema.json",
-     "publisher": {
-       "name": "Your Organization",
-       "prefix": "prefix"
-     },
+**See:** [Portal Inbox Extension README](./portal-inbox-extension/README.md)
+
+## 🛠️ Getting Started
+
+### For Portal Administrators
+
+1. **Deploy Extensions to Power Pages**
+   - Upload extension JavaScript files to Web Files
+   - Upload initialization files (`portal-extension-init-auth.js`, `portal-extension-init-noauth.js`)
+   - Upload loader (`portal-extensions.js`)
+
+2. **Add to Tracking Code (Head)**
+   ```html
+In Portal Management > Web Templates > Tracking Code (Head):
+
+```html
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<script type="text/javascript" src="/portal-extensions.js"></script>
+
+{% if user %}
+<script type="text/javascript" src="/portal-extension-init-auth.js"></script>
+{% endif %}
+
+<script type="text/javascript" src="/portal-extension-init-noauth.js"></script>
+```
+   ```
+
+3. **Configure Web API Permissions**
+   - Enable required entity permissions for `adx_portalcomments`
+   - Configure site settings for Web API
+   - Set up Table Permissions for authenticated users
+
+### For Developers
+
+1. **Clone Repository**
+   ```bash
+   git clone <repository-url>
+   cd portal-extensions
+   ```
+
+2. **Open in VS Code**
+   - JSON Schema provides validation and IntelliSense
+   - No build tools required
+   - Extensions are vanilla JavaScript
+
+3. **Test Locally**
+   - Open `portal-demo.html` in browser
+   - Extensions automatically use local JSON data
+
+4. **Customize Configuration**
+   - Edit `manifest.json` for your extension
+   - Modify colors, text, features as needed
+   - C# plugin generates init files from manifests
+
+## 🎨 Key Features
+
+### Environment Detection
+Extensions automatically detect whether they're running locally or in the portal:
+
+- **Local Environment**: Uses JSON files for data
+- **Portal Environment**: Uses Power Pages Web API (OData)
+- **Detection Logic**: Checks hostname, protocol, IP ranges
+
+### Dual Data Sources
+
+**Local Development:**
+```json
+{
+  "localDataSource": "portal-inbox-extension/localDataSource.json"
+}
+```
+
+**Production (Power Pages):**
+```json
+{
+  "portalDataSource": {
+    "entitySetName": "adx_portalcomments",
+    "baseUrl": "/_api",
+    "operations": {
+      "read": { "enabled": true, "select": null, "filter": null, "orderBy": "createdon desc", "expand": "..." },
+      "create": { "enabled": true },
+      "update": { "enabled": true },
+      "delete": { "enabled": false }
+    }
+  }
+}
+```
+
+### Authentication-Based Loading
+
+Extensions declare authentication requirements in their manifest:
+
+```json
+{
+  "extension": {
+    "id": "portal-inbox-extension",
+    "name": "Portal Inbox Extension",
+    "version": "1.0.0",
+    "requiresAuthentication": true  // ← Controls which init file includes this
+  }
+}
+```
+
+- **`requiresAuthentication: true`** → Loaded in `portal-extension-init-auth.js`
+- **`requiresAuthentication: false`** → Loaded in `portal-extension-init-noauth.js`
+
+### Manifest-Driven Configuration
+
+All extensions define their configuration in `manifest.json`:
+
+- Publisher information
+- Extension metadata
+- Dependencies (Bootstrap, Icons)
+- Deployment configuration
+- Initialization settings (colors, text, features)
+
+C# plugin reads manifests and generates initialization files automatically.
+
+## 📝 Adding New Extensions
+
+### Step 1: Create Extension Folder
+```bash
+mkdir portal-your-extension
+cd portal-your-extension
+```
+
+### Step 2: Create Required Files
+
+**File Structure (4 files required):**
+```
+portal-your-extension/
+├── manifest.json                  # Deployment & initialization config
+├── portal-your-extension.js       # Extension code (static)
+├── localDataSource.json          # Local test data
+└── README.md                     # Documentation
+```
+
+### Step 3: Create manifest.json
+
+```json
+{
+  "$schema": "../manifest.schema.json",
+  "publisher": {
+    "name": "Your Organization",
+    "prefix": "yourprefix"
+  },
+  "extension": {
+    "id": "portal-your-extension",
+    "name": "Your Extension",
+    "version": "1.0.0",
+    "requiresAuthentication": false
+  },
+  "dependencies": {
+    "bootstrap": "5.x",
+    "bootstrapIcons": "1.11.x",
+    "javascript": "ES6+"
+  },
+  "deployment": {
+    "webFiles": [
+      {
+        "name": "portal-your-extension.js",
+        "source": "./portal-your-extension.js",
+        "partialUrl": "portal-extensions/portal-your-extension.js"
+      }
+    ]
+  },
+  "initialization": {
+    "containerId": "portal-your-extension",
+    "features": {
+      "enableFeature1": true
+    }
+  }
+}
+```
+
+### Step 4: Create Extension JavaScript
+
+```javascript
+(function() {
+    'use strict';
+    
+    const YourExtension = {
+        config: null,
+        
+        init: function(options) {
+            this.config = options;
+            this.setup();
+        },
+        
+        setup: function() {
+            // Your extension logic here
+        }
+    };
+    
+    window.YourExtension = YourExtension;
+})();
+```
+
+### Step 5: Test & Deploy
+
+1. Test locally with `portal-demo.html`
+2. C# plugin reads your manifest
+3. Plugin generates updated init files
+4. Plugin deploys JavaScript to Web Files
+
+## 🔧 C# Deployment Plugin
+
+The C# plugin automates the deployment process:
+
+### Plugin Responsibilities
+
+1. **Read Manifests** - Scan all `manifest.json` files in extension folders
+2. **Validate** - Ensure manifests conform to schema
+3. **Generate Init Files** - Create `portal-extension-init-auth.js` and `portal-extension-init-noauth.js`
+4. **Deploy Web Files** - Upload JavaScript files to Power Pages Web Files
+5. **Update Tracking** - Ensure portal tracking code includes extension scripts
+
+### Generated Init File Logic
+
+```javascript
+// portal-extensions-init-auth.js
+document.addEventListener('portalExtensionsLoaded', function() {
+    // Only extensions with requiresAuthentication: true
+    
+    if (typeof PortalInboxExtension !== 'undefined') {
+        PortalInboxExtension.init({ /* config from manifest */ });
+    }
+});
+
+// portal-extensions-init-noauth.js
+document.addEventListener('portalExtensionsLoaded', function() {
+    // Only extensions with requiresAuthentication: false
+    
+    // Currently no public extensions
+});
+```
+
+## 📚 Documentation
+
+- **[Manifest Schema](./manifest.schema.json)** - Complete schema with validation
+- **[Development Rules](./RULES.md)** - Repository standards and conventions
+- **[Portal Inbox README](./portal-inbox-extension/README.md)** - Detailed extension docs
+
+## 🧪 Testing
+
+### Local Testing
+1. Open `portal-demo.html` in browser
+2. Extensions automatically use local JSON data
+3. Test all features without portal environment
+
+### Portal Testing
+1. Deploy to development portal
+2. Extensions automatically switch to Web API
+3. Test with real Dataverse data
+
+### Testing Utilities
+
+Extensions expose testing utilities in their public API:
+
+```javascript
+// Clear read status for testing
+PortalInboxExtension.clearReadStatus();
+
+// Refresh messages
+PortalInboxExtension.refresh();
+```
+
+## ⚙️ Advanced Configuration
+
+### OData Query Configuration
+
+Control data retrieval with OData parameters:
+
+```json
+{
+  "operations": {
+    "read": {
+      "enabled": true,
+      "select": "activityid,subject,description,createdon",
+      "filter": "statecode eq 0",
+      "orderBy": "createdon desc",
+      "expand": "related_table($select=field1,field2)"
+    }
+  }
+}
+```
+
+### Color Customization
+
+All colors are configurable to match your branding:
+
+```json
+{
+  "colors": {
+    "avatarGradientStart": "#0078d4",
+    "avatarGradientEnd": "#005a9e",
+    "badgeBackground": "#dc3545",
+    "primaryColor": "#0078d4"
+  }
+}
+```
+
+### Feature Flags
+
+Enable/disable features per environment:
+
+```json
+{
+  "features": {
+    "enableArchive": true,
+    "enableReply": true,
+    "enableExternalLinkWarning": true,
+    "allowHtmlInMessages": true
+  }
+}
+```
+
+## 🔒 Security
+
+- **CSRF Protection** - All Web API calls include anti-forgery tokens
+- **Authentication** - Extensions can require authenticated users
+- **Table Permissions** - Dataverse security enforced via Table Permissions
+- **XSS Prevention** - HTML escaping for user-generated content
+- **External Link Warnings** - Optional warnings for external URLs
+
+## 🐛 Troubleshooting
+
+### Extensions Not Loading
+- Check browser console for errors
+- Verify `portal-extensions.js` loaded before init files
+- Ensure init files fire `portalExtensionsLoaded` event
+
+### Web API Errors
+- Verify Table Permissions configured
+- Check site settings for Web API enabled
+- Confirm entity set name matches Dataverse table
+- Review browser Network tab for 401/403 errors
+
+### Data Not Showing
+- Check environment detection (local vs portal)
+- Verify local JSON file path for development
+- Confirm Web API base URL for production
+- Review OData query parameters
+
+## 📄 License
+
+[Your License Here]
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create extension in new folder
+3. Add manifest.json following schema
+4. Document in extension README
+5. Submit pull request
+
+## 📞 Support
+
+[Your Support Contact Information]
      "extension": {
        "id": "my-extension",
        "name": "My Extension",
