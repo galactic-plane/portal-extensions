@@ -210,11 +210,18 @@
                 const fromParty = parties.find(p => p.partyid_systemuser !== null && p.partyid_systemuser !== undefined);
                 const toParty = parties.find(p => p.partyid_contact !== null && p.partyid_contact !== undefined);
                 
-                // Determine read status based on localStorage
-                const lastChecked = localStorage.getItem('portalInbox_lastCheckedComments');
-                const lastCheckedDate = lastChecked ? new Date(lastChecked) : new Date(0);
-                const createdDate = new Date(comment.createdon || comment.date || new Date());
-                const isRead = createdDate <= lastCheckedDate;
+                // Determine read status - prioritize msfed_hasread from server, fall back to localStorage
+                let isRead = false;
+                if (comment.msfed_hasread !== undefined && comment.msfed_hasread !== null) {
+                    // Use server-side read status if available
+                    isRead = comment.msfed_hasread;
+                } else {
+                    // Fall back to localStorage-based calculation
+                    const lastChecked = localStorage.getItem('portalInbox_lastCheckedComments');
+                    const lastCheckedDate = lastChecked ? new Date(lastChecked) : new Date(0);
+                    const createdDate = new Date(comment.createdon || comment.date || new Date());
+                    isRead = createdDate <= lastCheckedDate;
+                }
                 
                 return {
                     id: comment.activityid,
@@ -229,7 +236,8 @@
                     toContact: toParty?.partyid_contact?.fullname || 'You',
                     directionCode: comment.adx_portalcommentdirectioncode,
                     statecode: comment.statecode,
-                    statuscode: comment.statuscode
+                    statuscode: comment.statuscode,
+                    msfed_hasread: comment.msfed_hasread
                 };
             });
         },
@@ -311,10 +319,31 @@
         },
         
         /**
-         * Process messages to calculate unread count
+         * Process messages to calculate unread count and sync localStorage
          */
         processMessages: function() {
             this.state.unreadCount = this.state.messages.filter(msg => !msg.read).length;
+            
+            // Sync localStorage with the most recent read message date from server
+            // This ensures localStorage stays in sync with server-side msfed_hasread values
+            const readMessages = this.state.messages.filter(msg => msg.read && msg.date);
+            if (readMessages.length > 0) {
+                // Find the most recent read message
+                const mostRecentRead = readMessages.reduce((latest, msg) => {
+                    const msgDate = new Date(msg.date);
+                    const latestDate = new Date(latest.date);
+                    return msgDate > latestDate ? msg : latest;
+                });
+                
+                // Update localStorage if this is newer than what's stored
+                const currentLastChecked = localStorage.getItem('portalInbox_lastCheckedComments');
+                const currentLastCheckedDate = currentLastChecked ? new Date(currentLastChecked) : new Date(0);
+                const mostRecentReadDate = new Date(mostRecentRead.date);
+                
+                if (mostRecentReadDate > currentLastCheckedDate) {
+                    localStorage.setItem('portalInbox_lastCheckedComments', mostRecentReadDate.toISOString());
+                }
+            }
         },
         
         /**
