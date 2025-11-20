@@ -3,6 +3,9 @@
  * A self-contained, namespaced extension for displaying inbox messages
  * Compatible with Bootstrap 5
  * 
+ * @author Daniel Penrod <daniel.penrod@microsoft.com>
+ * @build 20251120.0001
+ * 
  * Features:
  * - Automatic environment detection (local vs portal)
  * - Local data source: JSON file for development/testing
@@ -35,6 +38,30 @@
          */
         init: function(config) {
             this.config = config;
+        },
+        
+        /**
+         * Get configured field name from fieldMapping or return default with publisher prefix
+         */
+        getFieldName: function(fieldKey) {
+            const mapping = this.config.portalDataSource?.fieldMapping || {};
+            const prefix = this.config.publisher?.prefix || 'msfed';
+            return mapping[fieldKey] || `${prefix}_${fieldKey}`;
+        },
+        
+        /**
+         * Get regarding object configuration for reply payloads
+         * Returns object with entityName, entitySetName, and navigationProperty
+         */
+        getRegardingObjectConfig: function() {
+            const defaultConfig = this.config.portalDataSource?.regardingObject || {};
+            const prefix = this.config.publisher?.prefix || 'msfed';
+            
+            return {
+                entityName: defaultConfig.entityName || `${prefix}_application`,
+                entitySetName: defaultConfig.entitySetName || `${prefix}_applications`,
+                navigationProperty: defaultConfig.navigationProperty || `regardingobjectid_${prefix}_application`
+            };
         },
         
         /**
@@ -89,7 +116,7 @@
                         return response.json();
                     })
                     .then(data => {
-                        // Handle both old format (data.messages) and new OData format (data.value)
+                        // Supports both legacy (data.messages) and OData (data.value) formats
                         const records = data.value || data.messages || [];
                         this.state.messages = this.mapPortalDataToMessages(records);
                         this.processMessages();
@@ -194,8 +221,8 @@
          */
         mapPortalDataToMessages: function(records) {
             return records.map(comment => {
-                // Handle both old format (simple message) and new OData format (adx_portalcomment)
-                // If it's already in simple format, return as-is with minimal transformation
+                // Transform Dataverse fields to internal message format
+                // Legacy format messages pass through unchanged
                 if (comment.from && comment.body && !comment.activityid) {
                     return {
                         id: comment.id,
@@ -208,9 +235,9 @@
                     };
                 }
                 
-                // New OData format - extract sender and recipient
-                // From: Use _createdby_value (the system user who created the comment)
-                // To: Use contact from activity parties with participationtypemask=2
+                // Dataverse format - extract sender and recipient
+                // From: System user who created the comment (_createdby_value)
+                // To: Contact from activity parties (participationtypemask=2)
                 
                 if (!comment._createdby_value) {
                     console.error('Missing _createdby_value for comment:', comment.activityid, comment);
@@ -230,20 +257,21 @@
                     throw new Error(`Contact party not found for comment ${comment.activityid}. The comment must have a contact party with participationtypemask=2.`);
                 }
                 
-                // Determine read status - prioritize msfed_hasread from server, fall back to localStorage
+                // Read status priority: server field (configured hasRead field) > localStorage
                 let isRead = false;
-                if (comment.msfed_hasread !== undefined && comment.msfed_hasread !== null) {
-                    // Use server-side read status if available
-                    isRead = comment.msfed_hasread;
+                const hasReadField = this.getFieldName('hasread');
+                if (comment[hasReadField] !== undefined && comment[hasReadField] !== null) {
+                    // Server-side read status field
+                    isRead = comment[hasReadField];
                 } else {
-                    // Fall back to localStorage-based calculation
+                    // LocalStorage-based timestamp comparison
                     const lastChecked = localStorage.getItem('portalInbox_lastCheckedComments');
                     const lastCheckedDate = lastChecked ? new Date(lastChecked) : new Date(0);
                     const createdDate = new Date(comment.createdon || comment.date || new Date());
                     isRead = createdDate <= lastCheckedDate;
                 }
                 
-                // Extract IDs - no fallbacks
+                // Message ID fields
                 const toContactId = toParty.partyid_contact?.contactid;
                 const fromStaffId = comment._createdby_value;
                 
@@ -266,7 +294,7 @@
                     date: comment.createdon || new Date().toISOString(),
                     read: isRead,
                     category: 'portal-comment',
-                    // Additional metadata
+                    // Dataverse metadata fields
                     regardingObjectId: comment._regardingobjectid_value,
                     toContact: toParty.partyid_contact.fullname,
                     toContactId: toContactId,
@@ -274,7 +302,7 @@
                     directionCode: comment.adx_portalcommentdirectioncode,
                     statecode: comment.statecode,
                     statuscode: comment.statuscode,
-                    msfed_hasread: comment.msfed_hasread
+                    hasReadValue: comment[hasReadField]
                 };
             });
         },
@@ -302,7 +330,7 @@
                         localStorage.setItem('portalInbox_lastCheckedComments', messageDate.toISOString());
                     }
                     
-                    // Also update msfed_hasread field on the portal comment record
+                    // Also update configured hasRead field on the portal comment record
                     await this.updatePortalCommentReadStatus(messageId, true);
                 }
                 
@@ -314,7 +342,7 @@
         },
         
         /**
-         * Update the msfed_hasread field on a portal comment record
+         * Update the configured hasRead field on a portal comment record
          */
         updatePortalCommentReadStatus: async function(messageId, hasRead) {
             try {
@@ -329,8 +357,9 @@
                 const url = `${config.baseUrl}/${config.entitySetName}(${messageId})`;
                 const token = await this.getPortalToken();
                 
+                const hasReadField = this.getFieldName('hasread');
                 const updatePayload = {
-                    msfed_hasread: hasRead
+                    [hasReadField]: hasRead
                 };
                 
                 const response = await fetch(url, {
@@ -348,7 +377,7 @@
                     throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
                 
-                console.log('Portal comment msfed_hasread field updated successfully');
+                console.log(`Portal comment ${this.getFieldName('hasread')} field updated successfully`);
                 
             } catch (error) {
                 console.error('Failed to update portal comment read status:', error);
@@ -362,10 +391,10 @@
             this.state.unreadCount = this.state.messages.filter(msg => !msg.read).length;
             
             // Sync localStorage with the most recent read message date from server
-            // This ensures localStorage stays in sync with server-side msfed_hasread values
+            // This ensures localStorage stays in sync with server-side hasRead field values
             const readMessages = this.state.messages.filter(msg => msg.read && msg.date);
             if (readMessages.length > 0) {
-                // Find the most recent read message
+                // Most recent read message timestamp
                 const mostRecentRead = readMessages.reduce((latest, msg) => {
                     const msgDate = new Date(msg.date);
                     const latestDate = new Date(latest.date);
@@ -467,14 +496,15 @@
                 //   - From: portal contact (participationtypemask=1)
                 //   - To: staff member (participationtypemask=2)
                 
-                // Create the reply payload
-                // Use @odata.bind for navigation properties (regardingobjectid)
+                // Reply message payload
+                // Navigation property format using @odata.bind
+                const regardingConfig = this.getRegardingObjectConfig();
                 const replyPayload = {
                     subject: `Re: ${originalMessage.subject}`,
                     description: replyText,
                     adx_portalcommentdirectioncode: 1, // 1 = incoming (from contact to staff)
-                    "regardingobjectid_msfed_application@odata.bind": `/msfed_applications(${originalMessage.regardingObjectId})`,
-                    // Add activity parties - reversed from original message
+                    [`${regardingConfig.navigationProperty}@odata.bind`]: `/${regardingConfig.entitySetName}(${originalMessage.regardingObjectId})`,
+                    // Activity parties with reversed sender/recipient from original
                     "adx_portalcomment_activity_parties": [
                         {
                             "participationtypemask": 1, // From - portal contact replying
@@ -1360,7 +1390,7 @@
                         enabled: true
                     },
                     update: {
-                        enabled: true  // Required for updating msfed_hasread field
+                        enabled: true  // Required for updating hasread field
                     },
                     delete: {
                         enabled: false

@@ -57,7 +57,7 @@ portal-extensions/
 A comprehensive messaging system with read/unread tracking, reply functionality, and archive features.
 
 **Key Features:**
-- ✅ Server-side read status tracking via `msfed_hasread` field
+- ✅ Server-side read status tracking via custom boolean field
 - ✅ Cross-device/browser synchronization
 - ✅ localStorage fallback for backward compatibility
 - ✅ Reply functionality with direction code tracking
@@ -80,21 +80,20 @@ A comprehensive messaging system with read/unread tracking, reply functionality,
    - Upload loader (`portal-extensions.js`)
 
 2. **Add to Tracking Code (Head)**
+   
+   In Portal Management > Web Templates > Tracking Code (Head):
+
    ```html
-In Portal Management > Web Templates > Tracking Code (Head):
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-```html
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+   <script type="text/javascript" src="/portal-extensions.js"></script>
 
-<script type="text/javascript" src="/portal-extensions.js"></script>
+   {% if user %}
+   <script type="text/javascript" src="/portal-extension-init-auth.js"></script>
+   {% endif %}
 
-{% if user %}
-<script type="text/javascript" src="/portal-extension-init-auth.js"></script>
-{% endif %}
-
-<script type="text/javascript" src="/portal-extension-init-noauth.js"></script>
-```
+   <script type="text/javascript" src="/portal-extension-init-noauth.js"></script>
    ```
 
 3. **Configure Web API Permissions**
@@ -122,7 +121,7 @@ In Portal Management > Web Templates > Tracking Code (Head):
 4. **Customize Configuration**
    - Edit `manifest.json` for your extension
    - Modify colors, text, features as needed
-   - C# plugin generates init files from manifests
+   - Init files are generated from manifests
 
 ## 🎨 Key Features
 
@@ -186,7 +185,7 @@ All extensions define their configuration in `manifest.json`:
 - Deployment configuration
 - Initialization settings (colors, text, features)
 
-C# plugin reads manifests and generates initialization files automatically.
+> **Note:** Automated init file generation will be available in a future release.
 
 ## 📝 Adding New Extensions
 
@@ -271,41 +270,8 @@ portal-your-extension/
 ### Step 5: Test & Deploy
 
 1. Test locally with `portal-demo.html`
-2. C# plugin reads your manifest
-3. Plugin generates updated init files
-4. Plugin deploys JavaScript to Web Files
-
-## 🔧 C# Deployment Plugin
-
-The C# plugin automates the deployment process:
-
-### Plugin Responsibilities
-
-1. **Read Manifests** - Scan all `manifest.json` files in extension folders
-2. **Validate** - Ensure manifests conform to schema
-3. **Generate Init Files** - Create `portal-extension-init-auth.js` and `portal-extension-init-noauth.js`
-4. **Deploy Web Files** - Upload JavaScript files to Power Pages Web Files
-5. **Update Tracking** - Ensure portal tracking code includes extension scripts
-
-### Generated Init File Logic
-
-```javascript
-// portal-extensions-init-auth.js
-document.addEventListener('portalExtensionsLoaded', function() {
-    // Only extensions with requiresAuthentication: true
-    
-    if (typeof PortalInboxExtension !== 'undefined') {
-        PortalInboxExtension.init({ /* config from manifest */ });
-    }
-});
-
-// portal-extensions-init-noauth.js
-document.addEventListener('portalExtensionsLoaded', function() {
-    // Only extensions with requiresAuthentication: false
-    
-    // Currently no public extensions
-});
-```
+2. Manually generate init files from your manifest
+3. Deploy JavaScript files to Web Files
 
 ## 📚 Documentation
 
@@ -414,10 +380,6 @@ Enable/disable features per environment:
 - Confirm Web API base URL for production
 - Review OData query parameters
 
-## 📄 License
-
-[Your License Here]
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -428,59 +390,20 @@ Enable/disable features per environment:
 
 ## 📞 Support
 
-[Your Support Contact Information]
-     "extension": {
-       "id": "my-extension",
-       "name": "My Extension",
-       "version": "1.0.0"
-     },
-     "dependencies": {
-       "bootstrap": "5.x",
-       "javascript": "ES6+"
-     },
-     "deployment": {
-       "webFiles": [
-         {
-           "name": "my-extension.js",
-           "source": "./my-extension.js",
-           "partialUrl": "portal-extensions/my-extension.js"
-         }
-       ]
-     },
-     "initialization": {
-       "localDataSource": "my-extension/data.json",
-       "portalDataSource": {
-         "entitySetName": "prefix_tablename",
-         "baseUrl": "/_api",
-         "operations": { /* CRUD config */ }
-       },
-       "containerId": "my-extension-container",
-       "config": { /* Extension-specific config */ }
-     }
-   }
-   ```
+**Contact:** Daniel Penrod  
+**Email:** daniel.penrod@microsoft.com
 
-4. **Follow the rules** - See [RULES.md](./RULES.md) for complete guidelines
+## ⚠️ Disclaimer
 
-## C# Plugin Workflow
+This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the author or copyright holder be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
 
-The C# plugin should implement this workflow:
+Use at your own risk. The author accepts no responsibility for any issues, data loss, or damages that may occur from using this extension framework.
 
-1. ✅ **Scan** extension folders for `manifest.json` files
-2. ✅ **Validate** manifests against JSON schema
-3. ✅ **Generate** `portal-extensions-init.js` from all `initialization` sections
-4. ✅ **Deploy** web files specified in `deployment.webFiles`
-5. ✅ **Upload** both scripts to tracker code (head) content snippet:
-   ```html
-   <script src="/portal-extensions/portal-extensions.js"></script>
-   <script src="/portal-extensions/portal-extensions-init.js"></script>
-   ```
-6. ✅ **Configure** Power Pages Web API site settings (if using portalDataSource)
-7. ✅ **Publish** customizations
+## 🚀 Automated Deployment
 
-**Result:** Zero manual configuration! Extensions work locally and in production. 🎉
+> **Note:** Automated deployment tooling for manifest-based init file generation and Web File deployment will be available in a future release.
 
-## Contributing
+## 🤝 Contributing
 
 When working on extensions, please ensure:
 - Each extension has exactly 4 files (JS, JSON, manifest, README)
@@ -494,12 +417,20 @@ When working on extensions, please ensure:
 - Validate manifest against schema before committing
 - Changes are committed with clear, descriptive messages
 
-## Documentation
+## 📚 Documentation
 
 - **[manifest.schema.json](./manifest.schema.json)** - JSON Schema for validation
 - **[RULES.md](./RULES.md)** - Development rules and repository structure
 - **Extension READMEs** - Individual extension documentation
 
-## License
+## 📄 License
 
-[Add your license information here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+The MIT License allows you to:
+- ✅ Use commercially in proprietary systems
+- ✅ Modify and distribute
+- ✅ Use privately
+- ✅ Sublicense
+
+**No warranty is provided. Use at your own risk.**

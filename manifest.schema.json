@@ -96,6 +96,16 @@
       "type": "object",
       "description": "Configuration used to generate portal-extensions-init.js file",
       "properties": {
+        "publisher": {
+          "type": "object",
+          "description": "Publisher configuration for Dataverse customizations",
+          "properties": {
+            "prefix": {
+              "type": "string",
+              "description": "Publisher prefix used in Dataverse (e.g., 'msfed', 'usss'). Defaults to 'msfed' if not specified."
+            }
+          }
+        },
         "localDataSource": {
           "type": ["string", "null"],
           "description": "Path to local JSON file for testing/development"
@@ -111,6 +121,38 @@
             "baseUrl": {
               "type": "string",
               "description": "Base URL for Web API operations (typically '/_api')"
+            },
+            "fieldMapping": {
+              "type": "object",
+              "description": "Custom field name mappings for organization-specific publisher prefixes",
+              "properties": {
+                "hasread": {
+                  "type": "string",
+                  "description": "Custom field name for read status (e.g., 'msfed_hasread', 'usss_hasread'). Defaults to '{prefix}_hasread' if not specified."
+                }
+              },
+              "additionalProperties": {
+                "type": "string",
+                "description": "Additional custom field mappings"
+              }
+            },
+            "regardingObject": {
+              "type": "object",
+              "description": "Configuration for the custom entity that portal comments are regarding (e.g., applications, cases)",
+              "properties": {
+                "entityName": {
+                  "type": "string",
+                  "description": "Logical name of the regarding entity (e.g., 'msfed_application', 'usss_case'). Defaults to '{prefix}_application'."
+                },
+                "entitySetName": {
+                  "type": "string",
+                  "description": "Entity set name for Web API (e.g., 'msfed_applications', 'usss_cases'). Defaults to '{prefix}_applications'."
+                },
+                "navigationProperty": {
+                  "type": "string",
+                  "description": "Navigation property name for the regarding relationship (e.g., 'regardingobjectid_msfed_application'). Defaults to 'regardingobjectid_{prefix}_application'."
+                }
+              }
             },
             "operations": {
               "type": "object",

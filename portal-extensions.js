@@ -1,6 +1,8 @@
 /**
  * Portal Extensions Loader
  * Dynamically loads all portal extension JavaScript files
+ * 
+ * @author Daniel Penrod <daniel.penrod@microsoft.com>
  */
 (function() {
     'use strict';

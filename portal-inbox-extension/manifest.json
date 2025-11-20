@@ -25,10 +25,21 @@
     ]
   },
   "initialization": {
+    "publisher": {
+      "prefix": "msfed"
+    },
     "localDataSource": "portal-inbox-extension/localDataSource.json",
     "portalDataSource": {
       "entitySetName": "adx_portalcomments",
       "baseUrl": "/_api",
+      "fieldMapping": {
+        "hasread": "msfed_hasread"
+      },
+      "regardingObject": {
+        "entityName": "msfed_application",
+        "entitySetName": "msfed_applications",
+        "navigationProperty": "regardingobjectid_msfed_application"
+      },
       "operations": {
         "read": {
           "enabled": true,

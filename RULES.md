@@ -18,7 +18,7 @@
 3. **1 README file** - `README.md` (documentation)
 4. **1 MANIFEST file** - `manifest.json` (deployment configuration)
 5. **OPTIONAL: 1 Solution Folder** - Unpacked Dataverse solution for version control (e.g., `PortalInboxExtension/`)
-6. **OPTIONAL: 1 Solution ZIP** - Packaged solution for deployment (e.g., `PortalInboxExtension_1_0_0_1.zip`)
+6. **OPTIONAL: 1 Solution ZIP** - Packaged solution for deployment (e.g., `PortalInboxExtension_1_0_0_3.zip`)
 
 ### Total: 4 files per extension minimum (JS, JSON, manifest, README)
 ### Optional: +1 unpacked solution folder and +1 solution zip file
@@ -258,7 +258,7 @@ portal-extensions/
 │   ├── localDataSource.json              # Local test data (NOT deployed)
 │   ├── manifest.json                     # Deployment config (requiresAuthentication: true)
 │   ├── README.md                         # Documentation
-│   ├── PortalInboxExtension_1_0_0_1.zip  # Dataverse solution package (optional)
+│   ├── PortalInboxExtension_1_0_0_3.zip  # Dataverse solution package (optional)
 │   └── PortalInboxExtension/             # Unpacked solution for version control (optional)
 │       ├── Entities/
 │       ├── Other/

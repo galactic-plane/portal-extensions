@@ -8,18 +8,33 @@ The Portal Inbox Extension displays messages from the `adx_portalcomments` table
 
 ### PortalInboxExtension Solution Package
 
-This extension includes a **Dataverse unmanaged solution** (`PortalInboxExtension_1_0_0_1.zip`) that contains:
+This extension includes a **Dataverse unmanaged solution** (`PortalInboxExtension_1_0_0_3.zip`) that contains:
 
-- **Custom Entity Configuration**: `adx_portalcomment` entity with custom fields including `msfed_hasread`
+- **Custom Entity Configuration**: `adx_portalcomment` entity with custom fields including publisher-prefixed hasread field
 - **Form Customizations**: Main form with ribbon customizations for the comment entity
 - **Web Files**: Portal extension JavaScript files as Power Pages components
 - **Solution Components**: All required metadata for deploying the extension to Dataverse
 
-The solution is unpacked into the `PortalInboxExtension/` folder for version control and can be repacked for deployment to other environments. This allows you to modify entity configurations, forms, and web files, then repack and deploy the solution.
+> ⚠️ **IMPORTANT: Solution Installation Warning**
+> 
+> Installing the unmanaged solution will import **ALL** components, which may overwrite existing customizations in your environment, including:
+> - Portal Comment table (`adx_portalcomment`) and custom fields
+> - Site Components (portal-extension-init-auth.js, portal-extension-init-noauth.js, portal-extensions.js, portal-inbox-extension.js)
+> - Tracking Code
+> - Web API configurations (Webapi/activityparty/enabled, Webapi/activitypointer/enabled, Webapi/adx_portalcomment/enabled, Webapi/contact/enabled, Webapi/error/innererror, Webapi/systemuser/enabled, and related field configurations)
+> 
+> **Recommendation:** For better control and to avoid conflicts, manually install only the required components:
+> 1. Add the custom `<prefix>_hasread` field to the `adx_portalcomment` table
+> 2. Upload JavaScript files as Web Files
+> 3. Configure Table Permissions
+> 4. Update Tracking Code manually
+> 5. Configure Web API settings as needed
+> 
+> Only install the complete solution if you're deploying to a new/dedicated environment or understand the impact on existing customizations.
 
 ### Key Highlights
 
-- ✅ **Server-Side Read Tracking** - Uses `msfed_hasread` field for cross-device consistency
+- ✅ **Server-Side Read Tracking** - Uses publisher-prefixed hasread field for cross-device consistency
 - ✅ **Dual Environment Support** - Automatic switching between local JSON and Web API
 - ✅ **Reply Functionality** - Create responses with proper direction codes
 - ✅ **Archive View** - Toggle between unread and archived messages
@@ -35,7 +50,7 @@ The solution is unpacked into the `PortalInboxExtension/` folder for version con
 - **Message Display** - Dropdown inbox with avatar initials, subject, timestamp
 - **Unread Badge** - Shows count of unread messages in navbar
 - **Message Details** - Full message view in Bootstrap modal
-- **Read Status** - Server-side tracking via `msfed_hasread` field
+- **Read Status** - Server-side tracking via custom boolean field
 - **Reply** - Create responses (direction code = 1, incoming from contact)
 - **Archive** - View read messages separately from unread
 - **Auto-Sync** - localStorage synchronized with server read status
@@ -47,7 +62,7 @@ The solution is unpacked into the `PortalInboxExtension/` folder for version con
 - **CSRF Token Authentication** - Secure Web API calls
 - **Activity Party Expansion** - Retrieves sender and recipient details
 - **Field Mapping** - Maps `adx_portalcomment` fields to internal format
-- **LocalStorage Fallback** - Works when `msfed_hasread` unavailable
+- **LocalStorage Fallback** - Works when custom hasread field unavailable
 - **Cross-Device Sync** - Read status syncs across browsers/devices
 - **External Link Warnings** - Optional security warnings for external URLs
 
@@ -88,8 +103,8 @@ The solution is unpacked into the `PortalInboxExtension/` folder for version con
    └─ Portal: Fetch via Web API /_api/adx_portalcomments
    ↓
 4. Map Dataverse Fields to Internal Format
-   ├─ Check msfed_hasread field (server-side read status)
-   └─ Fallback to localStorage if msfed_hasread unavailable
+   ├─ Check custom hasread field (server-side read status)
+   └─ Fallback to localStorage if custom hasread field unavailable
    ↓
 5. Render Messages in Dropdown
    ↓
@@ -97,7 +112,7 @@ The solution is unpacked into the `PortalInboxExtension/` folder for version con
    ↓
 7. Mark as Read
    ├─ Update localStorage timestamp
-   ├─ PATCH msfed_hasread = true to server
+   ├─ PATCH custom hasread field = true to server
    └─ Re-render UI
    ↓
 8. Sync on Next Load
@@ -110,14 +125,14 @@ The solution is unpacked into the `PortalInboxExtension/` folder for version con
 Priority: Server > LocalStorage > Default (false)
 
 When Loading Messages:
-1. Check if msfed_hasread exists in comment
-2. If yes → Use msfed_hasread value
+1. Check if custom hasread field exists in comment
+2. If yes → Use custom hasread field value
 3. If no → Compare createdon with localStorage timestamp
 4. Update localStorage with most recent read message date
 
 When Marking as Read:
 1. Update localStorage with message date
-2. PATCH msfed_hasread = true to server
+2. PATCH custom hasread field = true to server
 3. On next load, server value takes precedence
 ```
 
@@ -136,7 +151,7 @@ When Marking as Read:
       "description": "Welcome to the portal!",
       "createdon": "2025-11-19T10:00:00Z",
       "adx_portalcommentdirectioncode": 2,
-      "msfed_hasread": false,
+      "<prefix>_hasread": false,
       "adx_portalcomment_activity_parties": [
         {
           "partyid_systemuser": {
@@ -149,7 +164,7 @@ When Marking as Read:
           }
         }
       ],
-      "_regardingobjectid_value": "guid-app-1",
+      "_regardingobjectid_value": "guid-record-1",
       "statecode": 0,
       "statuscode": 1
     }
@@ -174,9 +189,9 @@ When Marking as Read:
 | `subject` | `subject` | Message subject line |
 | `description` | `body` | Message body text |
 | `createdon` | `date` | Message timestamp |
-| `msfed_hasread` | `read` | Server-side read status |
+| `<prefix>_hasread` | `read` | Server-side read status |
 | `adx_portalcommentdirectioncode` | `directionCode` | 1=Incoming, 2=Outgoing |
-| `_regardingobjectid_value` | `regardingObjectId` | Related application |
+| `_regardingobjectid_value` | `regardingObjectId` | Related entity record |
 | `statecode` | `statecode` | 0=Active, 1=Inactive |
 | `statuscode` | `statuscode` | Status reason |
 
@@ -278,42 +293,98 @@ All text is customizable for localization:
 
 ## 🚀 Deployment
 
-### PAC CLI Commands
-
-To work with the solution package:
-
-**Unpack solution:**
-```bash
-pac solution unpack --zipfile PortalInboxExtension_1_0_0_1.zip --folder PortalInboxExtension
-```
-
-**Pack solution:**
-```bash
-pac solution pack --zipfile PortalInboxExtension_1_0_0_1.zip --folder PortalInboxExtension
-```
-
 ### Prerequisites
 
-1. **Power Pages Portal** with authenticated users
-2. **Bootstrap 5** and **Bootstrap Icons** in portal
-3. **Web API enabled** in site settings
-4. **Table Permissions** for `adx_portalcomment` entity
-5. **Custom Field** `msfed_hasread` (Boolean) on `adx_portalcomment`
+2. **Power Pages Portal** with authenticated users
+3. **Bootstrap 5** and **Bootstrap Icons** in portal
+4. **Web API enabled** in site settings
+5. **Table Permissions** for `adx_portalcomment` entity
+6. **Custom Field** `<prefix>_hasread` (Boolean) on `adx_portalcomment` (where `<prefix>` is your publisher prefix)
 
 ### Step 1: Add Custom Field
 
 Add to `adx_portalcomment` table:
-- **Field Name:** `msfed_hasread`
+- **Field Name:** `<prefix>_hasread` (where `<prefix>` is your publisher prefix, e.g., `contoso_hasread`)
 - **Data Type:** Yes/No (Boolean)
 - **Default Value:** No (false)
 - **Description:** Indicates if contact has read this message
 
 ### Step 2: Configure Table Permissions
 
-Create Table Permission for `adx_portalcomment`:
-- **Access Type:** Read, Write, Append
-- **Scope:** Contact
-- **Relationship:** adx_portalcomment > Contact (regardingobjectid)
+Create the following table permissions in Power Pages to enable authenticated users to read and interact with messages:
+
+| Name | Table | Access Type | Roles | Relationship | Read | Update | Create | Delete | Append | Append To |
+|------|-------|-------------|-------|--------------|------|--------|--------|--------|--------|-----------|
+| **Regarding Entity** | Regarding Entity (e.g., Application, Case, etc.) | Contact access | Authenticated Users | <relationship_to_contact> | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Portal Comment** | Portal Comment | Parent | Authenticated Users | <regardingentity>_adx_portalcomment | ✓ | ✓ | ✓ |  | ✓ | ✓ |
+| **Activity Party** | Activity Party | Parent | Authenticated Users | adx_portalcomment_activity_parties | ✓ | ✓ | ✓ |  | ✓ | ✓ |
+| **Activity Contact** | Contact | Parent | Authenticated Users | contact_activity_parties | ✓ |  |  |  | ✓ | ✓ |
+| **Activity User** | User | Parent | Authenticated Users | system_user_activity_parties | ✓ |  |  |  | ✓ | ✓ |
+| **Contact** | Contact | Global access | Authenticated Users | -- | ✓ |  |  |  | ✓ | ✓ |
+| **System User** | User | Global access | Authenticated Users | -- | ✓ |  |  |  | ✓ | ✓ |
+
+#### Instructions for Creating Table Permissions:
+
+1. **Navigate to Table Permissions**: In Power Pages, go to Security → Table Permissions
+2. **Create Regarding Entity Permission** (for the entity that portal comments are related to):
+   - Name: `Regarding Entity` (e.g., Application, Case, etc.)
+   - Table: The entity that comments are associated with (as configured in your portal)
+   - Access Type: `Contact access` (or appropriate access type)
+   - Relationship: The relationship between the regarding entity and Contact (e.g., `<prefix>_application_contact`)
+   - Privileges: Enable Read, Update, Create, Delete, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+
+3. **Create Portal Comment Permission**:
+   - Name: `Portal Comment`
+   - Table: `Portal Comment`
+   - Access Type: `Parent`
+   - Relationship: The relationship between the regarding entity and portal comment (e.g., `<prefix>_application_adx_portalcomment`)
+   - Privileges: Enable Read, Update, Create, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+   - Parent Permission: Set to your `Regarding Entity` permission
+
+4. **Create Activity Party Permission**:
+   - Name: `Activity Party`
+   - Table: `Activity Party`
+   - Access Type: `Parent`
+   - Relationship: `adx_portalcomment_activity_parties`
+   - Privileges: Enable Read, Update, Create, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+   - Parent Permission: Set to `Portal Comment` permission
+
+5. **Create Activity Contact Permission**:
+   - Name: `Activity Contact`
+   - Table: `Contact`
+   - Access Type: `Parent`
+   - Relationship: `contact_activity_parties`
+   - Privileges: Enable Read, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+   - Parent Permission: Set to `Activity Party` permission
+
+6. **Create Activity User Permission**:
+   - Name: `Activity User`
+   - Table: `User`
+   - Access Type: `Parent`
+   - Relationship: `system_user_activity_parties`
+   - Privileges: Enable Read, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+   - Parent Permission: Set to `Activity Party` permission
+
+7. **Create Contact Global Permission**:
+   - Name: `Contact`
+   - Table: `Contact`
+   - Access Type: `Global access`
+   - Privileges: Enable Read, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+
+8. **Create System User Global Permission**:
+   - Name: `System User`
+   - Table: `User`
+   - Access Type: `Global access`
+   - Privileges: Enable Read, Append, Append To
+   - Roles: Add `Authenticated Users` web role
+
+**Note**: The hierarchical structure is important. Portal Comment (Parent of Activity Party) inherits from the Regarding Entity, Activity Party (Parent of Activity Contact and Activity User) inherits from Portal Comment. This parent-child chain allows proper expansion of the `$expand=adx_portalcomment_activity_parties($expand=partyid_contact,partyid_systemuser)` query used by the extension.
 
 ### Step 3: Deploy Files
 
@@ -448,7 +519,7 @@ Dataverse security enforced via Table Permissions - users can only see their own
 ### Read Status Not Syncing
 
 **Check:**
-- `msfed_hasread` field exists on table
+- Custom `<prefix>_hasread` field exists on table
 - Update operations enabled in manifest
 - Table Permissions include Write access
 - Browser localStorage not blocked
@@ -586,11 +657,11 @@ Extension injects its own CSS - no external stylesheets needed. All styles scope
 - [ ] Batch operations (mark all read, delete)
             create: {
                 enabled: true,
-                fields: 'msfed_subject,msfed_body,msfed_from,msfed_sentdate'
+                fields: '<prefix>_subject,<prefix>_body,<prefix>_from,<prefix>_sentdate'
             },
             update: {
                 enabled: true,
-                fields: 'msfed_isread'    // Allow marking as read/unread
+                fields: '<prefix>_hasread'    // Allow marking as read/unread
             },
             delete: {
                 enabled: false            // Typically disabled for messages
