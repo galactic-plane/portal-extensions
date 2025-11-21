@@ -45,7 +45,9 @@ portal-extensions/
     ├── manifest.json                     # Extension manifest
     ├── portal-inbox-extension.js         # Extension code (static)
     ├── localDataSource.json              # Local test data (NOT deployed)
-    └── README.md                         # Extension documentation
+    ├── README.md                         # Extension documentation
+    ├── *.png, *.jpg, *.gif               # Optional: Images for documentation
+    └── *.zip                             # Optional: Packaged extension for distribution
 ```
 
 ## 🎯 Current Extensions

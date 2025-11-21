@@ -19,9 +19,10 @@
 4. **1 MANIFEST file** - `manifest.json` (deployment configuration)
 5. **OPTIONAL: 1 Solution Folder** - Unpacked Dataverse solution for version control (e.g., `PortalInboxExtension/`)
 6. **OPTIONAL: 1 Solution ZIP** - Packaged solution for deployment (e.g., `PortalInboxExtension_1_0_0_3.zip`)
+7. **OPTIONAL: Image Files** - Screenshots, diagrams, or visual guides for README (*.png, *.jpg, *.gif)
 
 ### Total: 4 files per extension minimum (JS, JSON, manifest, README)
-### Optional: +1 unpacked solution folder and +1 solution zip file
+### Optional: +1 unpacked solution folder, +1 solution zip file, and image files for documentation
 
 ### HTML files are ONLY at the solution root (portal-demo.html)
 
