@@ -35,8 +35,8 @@ This solution provides a complete framework for building and deploying portal ex
 portal-extensions/
 ├── manifest.schema.json                   # JSON Schema for manifest validation
 ├── portal-extensions.js                   # Extension loader (static)
-├── portal-extension-init-auth.js          # GENERATED - Authenticated extensions init
-├── portal-extension-init-noauth.js        # GENERATED - Public extensions init
+├── portal-extensions-init-auth.js         # GENERATED - Authenticated extensions init
+├── portal-extensions-init-noauth.js       # GENERATED - Public extensions init
 ├── portal-demo.html                       # Demo page showing all extensions
 ├── RULES.md                              # Development rules and standards
 ├── README.md                             # This file
@@ -78,7 +78,7 @@ A comprehensive messaging system with read/unread tracking, reply functionality,
 
 1. **Deploy Extensions to Power Pages**
    - Upload extension JavaScript files to Web Files
-   - Upload initialization files (`portal-extension-init-auth.js`, `portal-extension-init-noauth.js`)
+   - Upload initialization files (`portal-extensions-init-auth.js`, `portal-extensions-init-noauth.js`)
    - Upload loader (`portal-extensions.js`)
 
 2. **Add to Tracking Code (Head)**
@@ -88,14 +88,15 @@ A comprehensive messaging system with read/unread tracking, reply functionality,
    ```html
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+   <!-- Note: If you are already referencing Bootstrap icons elsewhere in your portal, you can omit the line above -->
 
    <script type="text/javascript" src="/portal-extensions.js"></script>
 
    {% if user %}
-   <script type="text/javascript" src="/portal-extension-init-auth.js"></script>
+   <script type="text/javascript" src="/portal-extensions-init-auth.js"></script>
    {% endif %}
 
-   <script type="text/javascript" src="/portal-extension-init-noauth.js"></script>
+   <script type="text/javascript" src="/portal-extensions-init-noauth.js"></script>
    ```
 
 3. **Configure Web API Permissions**
@@ -174,8 +175,8 @@ Extensions declare authentication requirements in their manifest:
 }
 ```
 
-- **`requiresAuthentication: true`** → Loaded in `portal-extension-init-auth.js`
-- **`requiresAuthentication: false`** → Loaded in `portal-extension-init-noauth.js`
+- **`requiresAuthentication: true`** → Loaded in `portal-extensions-init-auth.js`
+- **`requiresAuthentication: false`** → Loaded in `portal-extensions-init-noauth.js`
 
 ### Manifest-Driven Configuration
 
