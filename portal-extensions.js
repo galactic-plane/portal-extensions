@@ -7,6 +7,9 @@
 (function() {
     'use strict';
     
+    // Debug flag: set to false for production to suppress console output
+    const DEBUG = false;
+    
     // Detect environment: local development vs hosted portal
     function isLocalEnvironment() {
         const hostname = window.location.hostname;
@@ -56,7 +59,7 @@
     function loadExtension(extension) {
         return new Promise((resolve, reject) => {
             if (!extension.enabled) {
-                console.log(`Portal Extensions: Skipping disabled extension: ${extension.name}`);
+                if (DEBUG) console.log(`Portal Extensions: Skipping disabled extension: ${extension.name}`);
                 resolve({ name: extension.name, status: 'skipped' });
                 return;
             }
@@ -67,12 +70,12 @@
             script.async = false; // Load in order
             
             script.onload = () => {
-                console.log(`Portal Extensions: Loaded ${extension.name} from ${path}`);
+                if (DEBUG) console.log(`Portal Extensions: Loaded ${extension.name} from ${path}`);
                 resolve({ name: extension.name, status: 'loaded' });
             };
             
             script.onerror = () => {
-                console.error(`Portal Extensions: Failed to load ${extension.name} from ${path}`);
+                if (DEBUG) console.error(`Portal Extensions: Failed to load ${extension.name} from ${path}`);
                 reject({ name: extension.name, status: 'error', path: path });
             };
             
@@ -84,8 +87,8 @@
      * Load all extensions
      */
     function loadAllExtensions() {
-        console.log('Portal Extensions: Starting to load extensions...');
-        console.log(`Portal Extensions: Environment = ${isLocal ? 'Local' : 'Portal (' + portalBaseUrl + ')'}`);
+        if (DEBUG) console.log('Portal Extensions: Starting to load extensions...');
+        if (DEBUG) console.log(`Portal Extensions: Environment = ${isLocal ? 'Local' : 'Portal (' + portalBaseUrl + ')'}`);
         
         // Load extensions sequentially to maintain order
         const loadPromises = extensions.map(ext => loadExtension(ext));
@@ -96,10 +99,12 @@
                 const failed = results.filter(r => r.status === 'rejected');
                 const skipped = results.filter(r => r.status === 'fulfilled' && r.value.status === 'skipped');
                 
-                console.log(`Portal Extensions: Loading complete!`);
-                console.log(`  - Loaded: ${loaded.length}`);
-                console.log(`  - Failed: ${failed.length}`);
-                console.log(`  - Skipped: ${skipped.length}`);
+                if (DEBUG) {
+                    console.log(`Portal Extensions: Loading complete!`);
+                    console.log(`  - Loaded: ${loaded.length}`);
+                    console.log(`  - Failed: ${failed.length}`);
+                    console.log(`  - Skipped: ${skipped.length}`);
+                }
                 
                 // Dispatch custom event when all extensions are loaded
                 const event = new CustomEvent('portalExtensionsLoaded', {
@@ -125,7 +130,41 @@
     // Expose API for manual control if needed
     window.PortalExtensions = {
         reload: loadAllExtensions,
-        extensions: extensions
+        extensions: extensions,
+        debug: DEBUG,
+        
+        /**
+         * Global logging function for all portal extensions
+         * @param {string} message - The message to log
+         * @param {...any} args - Additional arguments to log
+         */
+        log: function(message, ...args) {
+            if (DEBUG) {
+                console.log(`[Portal Extensions] ${message}`, ...args);
+            }
+        },
+        
+        /**
+         * Global warning function for all portal extensions
+         * @param {string} message - The warning message to log
+         * @param {...any} args - Additional arguments to log
+         */
+        warn: function(message, ...args) {
+            if (DEBUG) {
+                console.warn(`[Portal Extensions] ${message}`, ...args);
+            }
+        },
+        
+        /**
+         * Global error function for all portal extensions
+         * @param {string} message - The error message to log
+         * @param {...any} args - Additional arguments to log
+         */
+        error: function(message, ...args) {
+            if (DEBUG) {
+                console.error(`[Portal Extensions] ${message}`, ...args);
+            }
+        }
     };
     
 })();

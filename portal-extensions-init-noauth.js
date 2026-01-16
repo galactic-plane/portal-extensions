@@ -7,7 +7,7 @@
 
 // Portal extensions loaded event handler
 document.addEventListener('portalExtensionsLoaded', function() {
-    console.log('All non-authenticated portal extensions loaded successfully');
+    window.PortalExtensions.log('All non-authenticated portal extensions loaded successfully');
     
     // Public extension initializations can be added below
     // Authenticated extensions are initialized in portal-extensions-init-auth.js

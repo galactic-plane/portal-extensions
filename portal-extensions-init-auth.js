@@ -35,15 +35,15 @@ function injectInboxContainer() {
             navbarWeblinks.appendChild(utilityNavItem);
         }
         
-        console.log('Inbox extension container injected into navbar');
+        window.PortalExtensions.log('Inbox extension container injected into navbar');
     } else {
-        console.warn('Navbar weblinks not found, could not inject inbox container');
+        window.PortalExtensions.warn('Navbar weblinks not found, could not inject inbox container');
     }
 }
 
 // Portal extensions loaded event handler
 document.addEventListener('portalExtensionsLoaded', function() {
-    console.log('All portal extensions loaded successfully');
+    window.PortalExtensions.log('All portal extensions loaded successfully');
     
     // Inject container element into DOM
     injectInboxContainer();
