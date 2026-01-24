@@ -1,0 +1,135 @@
+{
+  "$schema": "../manifest.schema.json",
+  "publisher": {
+    "name": "Microsoft Federal",
+    "prefix": "msfed"
+  },
+  "extension": {
+    "id": "portal-inbox-extension",
+    "name": "Portal Inbox Extension",
+    "version": "1.0.0",
+    "requiresAuthentication": true
+  },
+  "dependencies": {
+    "bootstrap": "5.x",
+    "bootstrapIcons": "1.11.x",
+    "javascript": "ES6+"
+  },
+  "deployment": {
+    "webFiles": [
+      {
+        "name": "portal-inbox-extension.js",
+        "source": "./portal-inbox-extension.js",
+        "partialUrl": "portal-extensions/portal-inbox-extension.js"
+      }
+    ]
+  },
+  "initialization": {
+    "publisher": {
+      "prefix": "msfed"
+    },
+    "localDataSource": "portal-inbox-extension/localDataSource.json",
+    "portalDataSource": {
+      "entitySetName": "adx_portalcomments",
+      "baseUrl": "/_api",
+      "fieldMapping": {
+        "hasread": "msfed_hasread"
+      },
+      "regardingObject": {
+        "entityName": "msfed_application",
+        "entitySetName": "msfed_applications",
+        "navigationProperty": "regardingobjectid_msfed_application"
+      },
+      "operations": {
+        "read": {
+          "enabled": true,
+          "select": "subject,description,_regardingobjectid_value,statecode,statuscode,activityid,activitytypecode,adx_portalcommentdirectioncode,createdon,msfed_hasread,_createdby_value",
+          "filter": null,
+          "orderBy": "createdon desc",
+          "expand": "adx_portalcomment_activity_parties($select=_partyid_value,participationtypemask;$expand=partyid_contact($select=fullname,contactid))"
+        },
+        "create": {
+          "enabled": true
+        },
+        "update": {
+          "enabled": true
+        },
+        "delete": {
+          "enabled": false
+        }
+      }
+    },
+    "containerId": "portal-inbox-extension",
+    "colors": {
+      "avatarGradientStart": "#0078d4",
+      "avatarGradientEnd": "#005a9e",
+      "avatarText": "#ffffff",
+      "headerGradientStart": "#0078d4",
+      "headerGradientEnd": "#005a9e",
+      "headerText": "#ffffff",
+      "messageFrom": "#1e293b",
+      "messageSubject": "#64748b",
+      "messageTime": "#94a3b8",
+      "dropdownBorder": "#e2e8f0",
+      "dropdownShadow": "rgba(0, 0, 0, 0.15)",
+      "itemHoverBackground": "#f1f5f9",
+      "itemUnreadBackground": "#f8f9ff",
+      "itemBorderColor": "#e2e8f0",
+      "badgeBackground": "#dc3545",
+      "badgeText": "#ffffff",
+      "navLinkColor": "#ffffff",
+      "navLinkCaretColor": "#ffffff",
+      "primaryColor": "#0078d4"
+    },
+    "text": {
+      "dropdownToggleIcon": "bi bi-envelope-fill",
+      "messagesHeader": "Messages",
+      "archivedHeader": "Archived Messages",
+      "unreadLabel": "unread",
+      "noUnreadMessages": "No unread messages",
+      "noArchivedMessages": "No archived messages",
+      "viewArchived": "View Archived Messages",
+      "viewUnread": "View Unread Messages",
+      "loadingMessages": "Loading messages...",
+      "failedToLoad": "Failed to load messages",
+      "modalTitle": "Message",
+      "closeButton": "Close",
+      "replyButton": "Reply",
+      "sendReplyButton": "Send Reply",
+      "cancelButton": "Cancel",
+      "replyPlaceholder": "Type your reply here...",
+      "replyLabel": "Your Reply:",
+      "originalMessageLabel": "Original Message:",
+      "toLabel": "To: You",
+      "newBadge": "New",
+      "justNow": "Just now",
+      "minuteAgo": "minute ago",
+      "minutesAgo": "minutes ago",
+      "hourAgo": "hour ago",
+      "hoursAgo": "hours ago",
+      "dayAgo": "day ago",
+      "daysAgo": "days ago",
+      "replyPrompt": "Please enter a reply message.",
+      "confirmSend": "Are you sure you want to send this reply?",
+      "replySent": "Reply sent successfully!",
+      "externalLinkWarning": "You are about to leave this website and navigate to an external site.\n\nExternal Site: {domain}\n\nThis link is being provided for your convenience. We are not responsible for the content, privacy policies, or practices of external sites.\n\nDo you wish to continue?"
+    },
+    "icons": {
+      "inbox": "bi bi-inbox-fill",
+      "archive": "bi bi-archive-fill",
+      "reply": "bi bi-reply-fill",
+      "send": "bi bi-send-fill"
+    },
+    "styles": {
+      "dropdownMinWidth": "350px",
+      "dropdownMaxHeight": "400px",
+      "badgeDisplay": "inline-block"
+    },
+    "features": {
+      "enableArchive": true,
+      "enableReply": true,
+      "enableExternalLinkWarning": true,
+      "allowHtmlInMessages": true
+    }
+  }
+}

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Extensions - Professional Components for Microsoft Power Pages</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        /* Power Pages-inspired Design System */
+        :root {
+            --primary-blue: #0078d4;
+            --primary-dark: #005a9e;
+            --accent-orange: #ff8c00;
+            --text-primary: #323130;
+            --text-secondary: #605e5c;
+            --bg-light: #faf9f8;
+            --bg-white: #ffffff;
+            --border-color: #edebe9;
+            --shadow-sm: 0 1.6px 3.6px rgba(0,0,0,.132);
+            --shadow-md: 0 3.2px 7.2px rgba(0,0,0,.132);
+            --shadow-lg: 0 6.4px 14.4px rgba(0,0,0,.132);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .site-header {
+            background-color: #0070c6;
+            border-bottom: 1px solid #005a9e;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .site-logo:hover {
+            color: #e6f3ff;
+        }
+
+        .main-nav {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin: 0;
+        }
+
+        .main-nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .main-nav a:hover {
+            color: #e6f3ff;
+        }
+
+        .utility-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content .lead {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .btn-hero {
+            display: inline-block;
+            background-color: var(--accent-orange);
+            color: white;
+            padding: 0.875rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-hero:hover {
+            background-color: #e67e00;
+            color: white;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 4rem 0;
+            background-color: var(--bg-white);
+        }
+
+        .content-section:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        /* Feature Grid */
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-item p {
+            color: var(--text-secondary);
+        }
+
+        /* Extension Cards */
+        .extension-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-blue);
+            transition: all 0.2s;
+            height: 100%;
+        }
+
+        .extension-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .extension-card h3 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .features-list i {
+            color: var(--primary-blue);
+            font-size: 1.125rem;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin: 2rem 0;
+        }
+
+        .architecture-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .architecture-box {
+            flex: 1;
+            min-width: 180px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .architecture-box h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0.75rem 0 0.5rem 0;
+            color: var(--primary-blue);
+        }
+
+        .architecture-arrow {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .architecture-box i {
+            font-size: 2rem;
+        }
+
+        .extension-card.secondary {
+            border-left-color: #6c757d;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--text-primary);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .site-footer h5 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .architecture-arrow {
+                display: none;
+            }
+
+            .architecture-flow {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="#" class="site-logo">
+                <i class="bi bi-puzzle-fill"></i>
+                Portal Extensions
+            </a>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#extensions">Extensions</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li class="utility-nav">
+                        <div id="portal-inbox-extension"></div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center hero-content">
+                    <h1>Portal Extensions Framework</h1>
+                    <p class="lead">Build powerful, self-contained extensions for Microsoft Power Pages. Modular, scalable, and production-ready.</p>
+                    <a href="#extensions" class="btn-hero">Explore Extensions</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title text-center">Why Portal Extensions?</h2>
+            <p class="section-subtitle text-center">Professional-grade components built for Microsoft Power Pages</p>
+            
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-globe"></i>
+                        <h4>Environment Detection</h4>
+                        <p>Automatically switches between local JSON and Power Pages Web API based on hostname</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-database-fill"></i>
+                        <h4>Dual Data Sources</h4>
+                        <p>Local JSON files for development, Power Pages Web API with OData for production</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-file-code-fill"></i>
+                        <h4>Manifest-Based</h4>
+                        <p>C# plugin reads manifests and generates initialization automatically</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-shield-check"></i>
+                        <h4>Isolated Namespaces</h4>
+                        <p>Each extension runs in its own namespace, preventing conflicts and ensuring stability</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-gear-fill"></i>
+                        <h4>Static Extensions</h4>
+                        <p>Extension files are static with no hardcoded config - all configuration in manifest</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-item">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        <h4>CRUD Operations</h4>
+                        <p>Full Create, Read, Update, Delete support via Power Pages Web API with CSRF authentication</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Extensions Section -->
+    <section class="content-section" id="extensions">
+        <div class="container">
+            <h2 class="section-title">Available Extensions</h2>
+            <p class="section-subtitle">Production-ready components for your Power Pages portal</p>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="extension-card">
+                        <h3><i class="bi bi-envelope-fill"></i> Portal Inbox Extension</h3>
+                        <p>A comprehensive messaging system for Power Pages portals with dual data sources and environment detection.</p>
+                        <ul class="features-list">
+                            <li><i class="bi bi-check-circle-fill"></i> Environment auto-detection (local/portal)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Local JSON for development</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Power Pages Web API for production</li>
+                            <li><i class="bi bi-check-circle-fill"></i> OData queries ($select, $filter, $orderby)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> CRUD operations with CSRF auth</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Read/unread tracking persisted to Dataverse</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Reply functionality with templates</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Archive and organize messages</li>
+                            <li><i class="bi bi-check-circle-fill"></i> External link warnings</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Fully customizable via manifest</li>
+                        </ul>
+                        <p class="mt-3"><strong>Status:</strong> <span class="badge bg-success">Production Ready</span></p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="extension-card secondary">
+                        <h3><i class="bi bi-plus-circle-fill"></i> More Extensions Coming Soon</h3>
+                        <p>We're continuously developing new extensions to enhance your Power Pages portal experience.</p>
+                        <ul class="features-list">
+                            <li><i class="bi bi-hourglass-split"></i> Notification Center</li>
+                            <li><i class="bi bi-hourglass-split"></i> User Profile Widget</li>
+                            <li><i class="bi bi-hourglass-split"></i> Document Manager</li>
+                            <li><i class="bi bi-hourglass-split"></i> Calendar Integration</li>
+                            <li><i class="bi bi-hourglass-split"></i> Task Manager</li>
+                            <li><i class="bi bi-hourglass-split"></i> Search Enhancement</li>
+                        </ul>
+                        <p class="mt-3"><strong>Status:</strong> <span class="badge bg-secondary">In Development</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="content-section" id="architecture">
+        <div class="container">
+            <h2 class="section-title">System Architecture</h2>
+            <p class="section-subtitle">Understanding the Portal Extensions framework</p>
+            
+            <div class="architecture-diagram">
+                <h4 class="text-center mb-4">Extension Loading Flow</h4>
+                <div class="architecture-flow">
+                    <div class="architecture-box">
+                        <i class="bi bi-file-code-fill"></i>
+                        <h4>C# Plugin</h4>
+                        <p class="small mb-0">Reads manifests</p>
+                    </div>
+                    <div class="architecture-arrow">→</div>
+                    <div class="architecture-box">
+                        <i class="bi bi-gear-fill"></i>
+                        <h4>Generates Init</h4>
+                        <p class="small mb-0">portal-extensions-init.js</p>
+                    </div>
+                    <div class="architecture-arrow">→</div>
+                    <div class="architecture-box">
+                        <i class="bi bi-cloud-upload-fill"></i>
+                        <h4>Deploy to Portal</h4>
+                        <p class="small mb-0">Tracker code snippet</p>
+                    </div>
+                    <div class="architecture-arrow">→</div>
+                    <div class="architecture-box">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <h4>Auto-Load</h4>
+                        <p class="small mb-0">Environment detection</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="text-primary"><i class="bi bi-folder-fill"></i> File Structure</h4>
+                            <p>Each extension contains exactly 4 files:</p>
+                            <ul class="list-unstyled">
+                                <li><code>extension.js</code> - Core logic (deployed)</li>
+                                <li><code>data.json</code> - Local test data (NOT deployed)</li>
+                                <li><code>manifest.json</code> - Config (read by C# plugin)</li>
+                                <li><code>README.md</code> - Documentation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="text-primary"><i class="bi bi-database-fill"></i> Dual Data Sources</h4>
+                            <p>Automatic environment detection:</p>
+                            <ul class="list-unstyled">
+                                <li>✓ Local: JSON files (dev/test)</li>
+                                <li>✓ Portal: Web API (production)</li>
+                                <li>✓ OData queries ($select, $filter)</li>
+                                <li>✓ CRUD operations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="text-primary"><i class="bi bi-sliders"></i> Generated Init</h4>
+                            <p>C# plugin creates initialization:</p>
+                            <ul class="list-unstyled">
+                                <li>✓ Reads all manifests</li>
+                                <li>✓ Combines configs</li>
+                                <li>✓ Generates init.js</li>
+                                <li>✓ Deploys to portal</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration Section -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">C# Plugin Integration</h2>
+            <p class="section-subtitle">Automated deployment from manifest</p>
+            
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>1. C# Plugin reads manifest.json</h4>
+                            <pre class="bg-light p-3 rounded"><code>{
+  "initialization": {
+    "localDataSource": "messages.json",
+    "portalDataSource": {
+      "entitySetName": "msfed_messages",
+      "baseUrl": "/_api",
+      "operations": { /* CRUD config */ }
+    },
+    "containerId": "portal-inbox-extension",
+    "config": { /* Extension config */ }
+  }
+}</code></pre>
+                            
+                            <h4 class="mt-4">2. Plugin generates portal-extensions-init.js</h4>
+                            <pre class="bg-light p-3 rounded"><code>document.addEventListener('portalExtensionsLoaded', function() {
+    PortalInboxExtension.init({
+        localDataSource: 'portal-inbox-extension/messages.json',
+        portalDataSource: { /* from manifest */ },
+        containerId: 'portal-inbox-extension',
+        config: { /* from manifest */ }
+    });
+});</code></pre>
+                            
+                            <h4 class="mt-4">3. Deploy to Power Pages tracker code</h4>
+                            <pre class="bg-light p-3 rounded"><code>&lt;script src="/portal-extensions/portal-extensions.js"&gt;&lt;/script&gt;
+&lt;script src="/portal-extensions/portal-extensions-init.js"&gt;&lt;/script&gt;</code></pre>
+
+                            <h4 class="mt-4">4. Extension auto-detects environment</h4>
+                            <pre class="bg-light p-3 rounded"><code>// localhost → Uses messages.json
+// portal domain → Uses /_api/msfed_messages
+// Automatic! No manual switching required.</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="content-section" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3 text-center">
+                    <h2 class="section-title">Get Started Today</h2>
+                    <p class="section-subtitle">Ready to enhance your Power Pages portal?</p>
+                    <a href="https://github.com" class="btn-hero me-2"><i class="bi bi-github"></i> View on GitHub</a>
+                    <a href="#" class="btn btn-outline-primary btn-lg"><i class="bi bi-book"></i> Documentation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Portal Extensions</h5>
+                    <p>Professional extensions for Microsoft Power Pages portals.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#extensions">Extensions</a></li>
+                        <li><a href="#architecture">Architecture</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Resources</h5>
+                    <ul class="footer-links">
+                        <li><a href="https://learn.microsoft.com/en-us/power-pages/">Power Pages Documentation</a></li>
+                        <li><a href="https://github.com">GitHub Repository</a></li>
+                        <li><a href="#">Contributing Guide</a></li>
+                        <li><a href="#">License</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Portal Extensions. Built for Microsoft Power Pages.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Portal Extensions Loader -->
+    <script src="portal-extensions.js"></script>
+    <script src="portal-extensions-init.js"></script>
+</body>
+</html>

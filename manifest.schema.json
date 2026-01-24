@@ -1,0 +1,269 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/portal-extension-manifest.json",
+  "title": "Portal Extension Manifest",
+  "description": "Simple manifest for portal extension deployment",
+  "type": "object",
+  "required": ["publisher", "extension", "dependencies", "deployment"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "publisher": {
+      "type": "object",
+      "required": ["name", "prefix"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Publisher/organization name"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Publisher prefix for Dataverse entities"
+        }
+      }
+    },
+    "extension": {
+      "type": "object",
+      "required": ["id", "name", "version"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique extension identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Extension display name"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version (x.y.z)"
+        },
+        "requiresAuthentication": {
+          "type": "boolean",
+          "description": "Whether this extension requires an authenticated user",
+          "default": false
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "bootstrap": {
+          "type": "string",
+          "description": "Bootstrap version requirement"
+        },
+        "bootstrapIcons": {
+          "type": "string",
+          "description": "Bootstrap Icons version requirement"
+        },
+        "javascript": {
+          "type": "string",
+          "enum": ["ES6+", "jQuery"],
+          "description": "JavaScript dependency type"
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "required": ["webFiles"],
+      "properties": {
+        "webFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "source", "partialUrl"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Web file name"
+              },
+              "source": {
+                "type": "string",
+                "description": "Relative path to source file"
+              },
+              "partialUrl": {
+                "type": "string",
+                "description": "Portal URL path for the file"
+              }
+            }
+          }
+        }
+      }
+    },
+    "initialization": {
+      "type": "object",
+      "description": "Configuration used to generate portal-extensions-init.js file",
+      "properties": {
+        "publisher": {
+          "type": "object",
+          "description": "Publisher configuration for Dataverse customizations",
+          "properties": {
+            "prefix": {
+              "type": "string",
+              "description": "Publisher prefix used in Dataverse (e.g., 'msfed', 'usss'). Defaults to 'msfed' if not specified."
+            }
+          }
+        },
+        "localDataSource": {
+          "type": ["string", "null"],
+          "description": "Path to local JSON file for testing/development"
+        },
+        "portalDataSource": {
+          "type": "object",
+          "description": "Power Pages Web API configuration for production data",
+          "properties": {
+            "entitySetName": {
+              "type": "string",
+              "description": "Dataverse table EntitySetName (e.g., 'accounts', 'adx_portalcomments')"
+            },
+            "baseUrl": {
+              "type": "string",
+              "description": "Base URL for Web API operations (typically '/_api')"
+            },
+            "fieldMapping": {
+              "type": "object",
+              "description": "Custom field name mappings for organization-specific publisher prefixes",
+              "properties": {
+                "hasread": {
+                  "type": "string",
+                  "description": "Custom field name for read status (e.g., 'msfed_hasread', 'usss_hasread'). Defaults to '{prefix}_hasread' if not specified."
+                }
+              },
+              "additionalProperties": {
+                "type": "string",
+                "description": "Additional custom field mappings"
+              }
+            },
+            "regardingObject": {
+              "type": "object",
+              "description": "Configuration for the custom entity that portal comments are regarding (e.g., applications, cases)",
+              "properties": {
+                "entityName": {
+                  "type": "string",
+                  "description": "Logical name of the regarding entity (e.g., 'msfed_application', 'usss_case'). Defaults to '{prefix}_application'."
+                },
+                "entitySetName": {
+                  "type": "string",
+                  "description": "Entity set name for Web API (e.g., 'msfed_applications', 'usss_cases'). Defaults to '{prefix}_applications'."
+                },
+                "navigationProperty": {
+                  "type": "string",
+                  "description": "Navigation property name for the regarding relationship (e.g., 'regardingobjectid_msfed_application'). Defaults to 'regardingobjectid_{prefix}_application'."
+                }
+              }
+            },
+            "operations": {
+              "type": "object",
+              "description": "Web API CRUD operations configuration",
+              "properties": {
+                "read": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable read operations"
+                    },
+                    "select": {
+                      "type": ["string", "null"],
+                      "description": "OData $select - comma-separated list of fields to retrieve (null = all fields)"
+                    },
+                    "filter": {
+                      "type": ["string", "null"],
+                      "description": "OData $filter - additional filter expression (null = no additional filter)"
+                    },
+                    "orderBy": {
+                      "type": ["string", "null"],
+                      "description": "OData $orderby - sort order expression"
+                    },
+                    "expand": {
+                      "type": ["string", "null"],
+                      "description": "OData $expand - related entities to expand"
+                    }
+                  }
+                },
+                "create": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable create operations"
+                    }
+                  }
+                },
+                "update": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable update operations"
+                    }
+                  }
+                },
+                "delete": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable delete operations"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "containerId": {
+          "type": "string",
+          "description": "DOM element ID for extension container"
+        },
+        "colors": {
+          "type": "object",
+          "description": "Color scheme configuration",
+          "properties": {
+            "avatarGradientStart": { "type": "string" },
+            "avatarGradientEnd": { "type": "string" },
+            "avatarText": { "type": "string" },
+            "headerGradientStart": { "type": "string" },
+            "headerGradientEnd": { "type": "string" },
+            "headerText": { "type": "string" },
+            "messageFrom": { "type": "string" },
+            "messageSubject": { "type": "string" },
+            "messageTime": { "type": "string" },
+            "dropdownBorder": { "type": "string" },
+            "dropdownShadow": { "type": "string" },
+            "itemHoverBackground": { "type": "string" },
+            "itemUnreadBackground": { "type": "string" },
+            "itemBorderColor": { "type": "string" },
+            "badgeBackground": { "type": "string" },
+            "badgeText": { "type": "string" },
+            "navLinkColor": { "type": "string" },
+            "navLinkCaretColor": { "type": "string" },
+            "primaryColor": { "type": "string" }
+          }
+        },
+        "text": {
+          "type": "object",
+          "description": "UI text configuration",
+          "additionalProperties": { "type": "string" }
+        },
+        "icons": {
+          "type": "object",
+          "description": "Icon configuration",
+          "additionalProperties": { "type": "string" }
+        },
+        "styles": {
+          "type": "object",
+          "description": "Style configuration",
+          "additionalProperties": { "type": "string" }
+        },
+        "features": {
+          "type": "object",
+          "description": "Feature flags",
+          "additionalProperties": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
